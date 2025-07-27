@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="nurdor_green">#00bf33</color>
+    <color name="nurdor_green_2">#02ab2f</color>
+    <color name="almost_black">	#2d2d2d</color>
+    <color name="selection_color_1">#9CD3AF</color>
+    <color name="almost_blacker">#0b0b0b</color>
+    <color name="beige">#FFFAF4</color>
+    <color name="transparent">#00FFFFFF</color>
+</resources>

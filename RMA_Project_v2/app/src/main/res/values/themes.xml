@@ -1,0 +1,71 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Main themes -->
+    <style name="NurdorApp_DayNight" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="colorPrimary">@color/nurdor_green</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="colorOnPrimaryContainer">@color/white</item>
+        <item name="colorPrimaryContainer">@color/nurdor_green</item>
+        <item name="android:colorControlActivated">@color/nurdor_green</item>
+        <item name="android:colorControlNormal">@color/almost_black</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:popupMenuStyle">@style/Menu_Light_1</item>
+        <item name="spinnerStyle">@style/Spinner_Light</item>
+        <item name="cardViewStyle">@style/CardView_Light_1</item>
+        <item name="android:textViewStyle">@style/TextView_Light</item>
+        <item name="editTextStyle">@style/EditText_Light</item>
+        <item name="imageButtonStyle">@style/ImageButton_Light</item>
+    </style>
+
+    <!-- Styles of individual components -->
+
+    <style name="ImageButton_Light" parent="Widget.AppCompat.ImageButton">
+        <item name="android:tint">@color/black</item>
+    </style>
+
+    <style name="FrameLayout_DayNight">
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="Menu_Light_1" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:popupBackground">@color/white</item>
+    </style>
+
+    <style name="CardView_Light_1" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/beige</item>
+    </style>
+
+    <style name="CardView_Selected_1" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/selection_color_1</item>
+        <item name="color">@color/almost_blacker</item>
+    </style>
+
+    <style name="Spinner_Light" parent="Widget.AppCompat.Spinner">
+        <item name="backgroundColor">@color/beige</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@drawable/spinner_background_light</item>
+    </style>
+
+    <style name="EditText_Light" parent="Widget.AppCompat.EditText">
+        <item name="color">@color/black</item>
+    </style>
+
+    <style name="TextView_Light" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TextView_Selected" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/almost_blacker</item>
+    </style>
+
+    <style name="DialogToolbarTitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TransparentTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+</resources>
