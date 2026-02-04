@@ -13,7 +13,7 @@ public class PasswordUtils {
     }
 
     public static void main(String[] args) {
-        String hashedPassword = hashPassword("ilija123!A");
+        String hashedPassword = hashPassword("Password123!");
         System.out.println(hashedPassword);
     }
 }
