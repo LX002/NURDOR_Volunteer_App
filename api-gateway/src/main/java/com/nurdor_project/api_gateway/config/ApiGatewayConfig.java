@@ -14,6 +14,13 @@ public class ApiGatewayConfig {
                 .route("login", r -> r.path("/login")
                         .uri("lb://VOLUNTEER-SERVICE")
                 )
+                .route("welcome", r -> r.path("/welcome")
+                        .filters(f -> f.rewritePath("/welcome", "/api/welcome"))
+                        .uri("lb://VOLUNTEER-SERVICE")
+                )
+                .route("login", r -> r.path("/logout")
+                        .uri("lb://VOLUNTEER-SERVICE")
+                )
                 .build();
     }
 }
