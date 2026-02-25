@@ -1,4 +1,4 @@
-package com.nurdor_project.volunteer_service;
+package com.nurdorproject.api_gateway_v2;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,10 +6,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class VolunteerServiceApplication {
+public class ApiGatewayV2Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(VolunteerServiceApplication.class, args);
+		SpringApplication.run(ApiGatewayV2Application.class, args);
 	}
 
 }
