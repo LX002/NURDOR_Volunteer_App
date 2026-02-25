@@ -14,6 +14,7 @@ public class SecurityConfig {
 
     private CustomAuthenticationSuccessHandler customLoginSuccessHandler;
     private CustomLogoutSuccessHandler customLogoutSuccessHandler;
+    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
 
     @Bean
@@ -29,6 +30,7 @@ public class SecurityConfig {
                         //.defaultSuccessUrl("/api/welcome", true)
                         //.defaultSuccessUrl("/welcome", true)
                         .successHandler(customLoginSuccessHandler)
+                        .failureHandler(customAuthenticationFailureHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
