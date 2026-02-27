@@ -1,5 +1,6 @@
 package com.nurdor_project.volunteer_service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,7 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "volunteer")
-public class Volunteer implements UserDetails {
+public class Volunteer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idVolunteer", nullable = false)
@@ -58,32 +59,19 @@ public class Volunteer implements UserDetails {
     @Column(name = "password", nullable = false, length = 500)
     private String password;
 
+    @JsonIgnore
     @Column(name = "profilePicture")
     private byte[] profilePicture;
 
     @NotNull
+    @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "nearestCity", nullable = false)
     private City nearestCity;
 
     @NotNull
+    @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "volunteerRole", nullable = false)
     private VolunteerRole volunteerRole;
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(volunteerRole.getRoleName()));
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
 }

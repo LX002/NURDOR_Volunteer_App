@@ -1,5 +1,6 @@
 package com.nurdor_project.volunteer_service.service;
 
+import com.nurdor_project.volunteer_service.model.Volunteer;
 import com.nurdor_project.volunteer_service.repository.VolunteerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,14 +8,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
-public class VolunteerService implements UserDetailsService {
+public class VolunteerService {
 
     private VolunteerRepository volunteerRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return volunteerRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    public List<Volunteer> findAll() {
+        return volunteerRepository.findAll();
     }
 }

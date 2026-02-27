@@ -36,11 +36,6 @@ public class SecurityConfig {
                 .build();
     }
 
-//    @Bean
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(volunteerDetailsService).passwordEncoder(passwordEncoder());
-//    }
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
