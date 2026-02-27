@@ -1,5 +1,6 @@
 package com.nurdorproject.event_service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -31,19 +33,19 @@ public class Event {
 
     @NotNull
     @Column(name = "startTime", nullable = false)
-    private Instant startTime;
+    private LocalDateTime startTime;
 
     @NotNull
     @Column(name = "endTime", nullable = false)
-    private Instant endTime;
+    private LocalDateTime endTime;
 
     @NotNull
-    @Column(name = "latitude", nullable = false, precision = 10, scale = 7)
-    private BigDecimal latitude;
+    @Column(name = "latitude", nullable = false)
+    private Double latitude;
 
     @NotNull
-    @Column(name = "longitude", nullable = false, precision = 10, scale = 7)
-    private BigDecimal longitude;
+    @Column(name = "longitude", nullable = false)
+    private Double longitude;
 
     @Size(max = 200)
     @Column(name = "locationDesc", length = 200)
@@ -55,6 +57,4 @@ public class Event {
     @NotNull
     @Column(name = "city", nullable = false)
     private String city;
-
-
 }

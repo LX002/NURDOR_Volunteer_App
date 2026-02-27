@@ -59,7 +59,6 @@ public class Volunteer {
     @Column(name = "password", nullable = false, length = 500)
     private String password;
 
-    @JsonIgnore
     @Column(name = "profilePicture")
     private byte[] profilePicture;
 

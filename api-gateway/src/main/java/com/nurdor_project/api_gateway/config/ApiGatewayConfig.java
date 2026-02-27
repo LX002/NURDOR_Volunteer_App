@@ -17,9 +17,13 @@ public class ApiGatewayConfig {
                 .route("register", r -> r.path("/register")
                         .filters(f -> f.rewritePath("/register", "/api/auth/register"))
                         .uri("lb://AUTH-SERVICE"))
+                // promeni ovu putanju
                 .route("admin-volunteers", r -> r.path("/admin/volunteers")
                         .filters(f -> f.rewritePath("/admin/volunteers", "/api/admin/volunteers/findAll"))
                         .uri("lb://VOLUNTEER-SERVICE"))
+                .route("get-events", r -> r.path("/volunteer/getEvents")
+                        .filters(f -> f.rewritePath("/volunteer/getEvents", "/api/volunteer/events/getEvents"))
+                        .uri("lb://EVENT-SERVICE"))
                 .build();
     }
 }

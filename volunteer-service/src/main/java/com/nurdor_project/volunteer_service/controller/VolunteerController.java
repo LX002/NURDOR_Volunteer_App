@@ -1,6 +1,6 @@
 package com.nurdor_project.volunteer_service.controller;
 
-import com.nurdor_project.volunteer_service.VolunteerDto;
+import com.nurdor_project.volunteer_service.dto.VolunteerDto;
 import com.nurdor_project.volunteer_service.model.Volunteer;
 import com.nurdor_project.volunteer_service.service.VolunteerService;
 import lombok.AllArgsConstructor;
