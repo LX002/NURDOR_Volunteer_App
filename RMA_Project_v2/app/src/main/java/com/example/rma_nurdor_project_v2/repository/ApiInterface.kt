@@ -14,10 +14,12 @@ import retrofit2.http.Path
 
 interface ApiInterface {
 
-    @POST("api/login")
+    @POST("/login")
+    //@POST("/api/login")
     fun login(@Body volunteer: VolunteerDto): Call<Boolean>
 
-    @POST("api/login/saveVolunteer")
+    @POST("/register")
+    //@POST("api/login/saveVolunteer")
     fun saveVolunteer(@Body volunteer: VolunteerExpandedDto): Call<Boolean>
 
     @GET("api/volunteers/getVolunteers")

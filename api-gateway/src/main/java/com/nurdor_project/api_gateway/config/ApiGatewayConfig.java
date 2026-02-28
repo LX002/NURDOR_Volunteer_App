@@ -26,6 +26,11 @@ public class ApiGatewayConfig {
                 .route("get-events", r -> r.path("/volunteer/getEvents")
                         .filters(f -> f.rewritePath("/volunteer/getEvents", "/api/volunteer/events/getEvents"))
                         .uri("lb://EVENT-SERVICE"))
+                .route("download-pdf", r -> r.path("/volunteer/eventPdf/{idEvent}")
+                        .filters(f -> f.rewritePath("/volunteer/eventPdf/(?<idEvent>.*)", "/api/volunteer/events/getPdfById/${idEvent}")
+                                .setResponseHeader("Content-Disposition", "attachment"))
+
+                        .uri("lb://EVENT-SERVICE"))
                 // events-log-service routes
                 .route("insert-log", r -> r.path("/volunteer/insertLog")
                         .filters(f -> f.rewritePath("/volunteer/insertLog", "/api/volunteer/eventsLogs/insert"))
