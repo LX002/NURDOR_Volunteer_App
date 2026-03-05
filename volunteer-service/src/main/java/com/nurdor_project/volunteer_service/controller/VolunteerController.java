@@ -22,7 +22,7 @@ public class VolunteerController {
 
     private VolunteerService volunteerService;
 
-    @GetMapping("/admin/volunteers/findAll")
+    @GetMapping("/volunteer/volunteers/findAll")
     public ResponseEntity<List<Volunteer>> findAll() {
         List<VolunteerDto> volunteerDtos = volunteerService.findAll().stream()
                 .map(VolunteerMapper::mapToDto)

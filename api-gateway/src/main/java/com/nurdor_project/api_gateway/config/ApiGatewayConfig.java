@@ -19,8 +19,8 @@ public class ApiGatewayConfig {
                         .filters(f -> f.rewritePath("/register", "/api/auth/register"))
                         .uri("lb://AUTH-SERVICE"))
                 // volunteer-service routes
-                .route("admin-volunteers", r -> r.path("/admin/volunteers")
-                        .filters(f -> f.rewritePath("/admin/volunteers", "/api/admin/volunteers/findAll"))
+                .route("admin-volunteers", r -> r.path("/volunteer/volunteers")
+                        .filters(f -> f.rewritePath("/volunteer/volunteers", "/api/volunteer/volunteers/findAll"))
                         .uri("lb://VOLUNTEER-SERVICE"))
                 // event-service routes
                 .route("get-events", r -> r.path("/volunteer/getEvents")
@@ -29,11 +29,13 @@ public class ApiGatewayConfig {
                 .route("download-pdf", r -> r.path("/volunteer/eventPdf/{idEvent}")
                         .filters(f -> f.rewritePath("/volunteer/eventPdf/(?<idEvent>.*)", "/api/volunteer/events/getPdfById/${idEvent}")
                                 .setResponseHeader("Content-Disposition", "attachment"))
-
                         .uri("lb://EVENT-SERVICE"))
                 // events-log-service routes
                 .route("insert-log", r -> r.path("/volunteer/insertLog")
                         .filters(f -> f.rewritePath("/volunteer/insertLog", "/api/volunteer/eventsLogs/insert"))
+                        .uri("lb://EVENTS-LOG-SERVICE"))
+                .route("mark-as-present", r -> r.path("/volunteer/markAsPresent")
+                        .filters(f -> f.rewritePath("/volunteer/markAsPresent", "/api/volunteer/eventLogs/markAsPresent"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
                 .build();
     }
