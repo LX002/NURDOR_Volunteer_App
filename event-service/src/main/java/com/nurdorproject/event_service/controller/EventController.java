@@ -1,16 +1,15 @@
 package com.nurdorproject.event_service.controller;
 
-import com.nurdorproject.event_service.dto.EventDto;
+import com.nurdorproject.event_service.dto.*;
 import com.nurdorproject.event_service.model.Event;
+import com.nurdorproject.event_service.proxy.DonationsProxy;
 import com.nurdorproject.event_service.service.EventService;
 import com.nurdorproject.event_service.utils.EventMapper;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -22,6 +21,7 @@ import java.util.List;
 public class EventController {
 
     private EventService eventService;
+    private DonationsProxy donationsProxy;
 
     @GetMapping("/volunteer/events/getEvents")
     public ResponseEntity<List<EventDto>> findAll() {
@@ -60,5 +60,20 @@ public class EventController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PatchMapping("/admin/events/start")
+    public ResponseEntity<StartEventResultDto> startEvent(@RequestBody @Valid StartEventDto startEventDto) {
+        return ResponseEntity.ok(new StartEventResultDto(
+                "Started event: " + startEventDto.getIdEvent(),
+                donationsProxy.attachStandsToEvent(startEventDto)
+        ));
+    }
+
+    @PatchMapping("/admin/events/end/{idEvent}")
+    public ResponseEntity<EndEventResultDto> endEvent(@PathVariable Integer idEvent) {
+        List<StandDto> stands = donationsProxy.detachStandsFromEvent(idEvent);
+        Integer totalDonations = stands.stream().mapToInt(StandDto::getDonations).sum();
+        return ResponseEntity.ok(new EndEventResultDto("Ended event: " + idEvent, totalDonations, stands));
     }
 }

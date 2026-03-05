@@ -11,7 +11,7 @@ public class EventMapper {
     public static EventDto mapToDto(Event e) {
         byte[] pic = e.getEventImg();
         return new EventDto(
-                e.getId(), e.getEventName(), e.getDescription(),
+                e.getId(), e.getEventName(), e.getDescription(), e.getIsStarted(),
                 e.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
                 e.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
                 e.getLatitude(), e.getLongitude(), pic != null ? Base64.getEncoder().encodeToString(pic) : null,

@@ -1,0 +1,15 @@
+package com.nurdor_project.donations_service.dto;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class StartEventDto {
+
+    private int idEvent;
+    @Min(1) @Max(5)
+    private int numberOfStands;
+}
