@@ -1,4 +1,4 @@
-package com.nurdor_project.events_log_service.dto;
+package com.nurdor_project.donations_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

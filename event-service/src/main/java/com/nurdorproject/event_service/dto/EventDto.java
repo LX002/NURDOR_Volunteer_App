@@ -14,6 +14,8 @@ public class EventDto {
     String eventName;
     @JsonProperty("description")
     String description;
+    @JsonProperty("isStarted")
+    Byte isStarted;
     @JsonProperty("startTime")
     String startTime;
     @JsonProperty("endTime")

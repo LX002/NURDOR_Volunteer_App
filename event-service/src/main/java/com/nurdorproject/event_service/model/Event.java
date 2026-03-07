@@ -32,6 +32,10 @@ public class Event {
     private String description;
 
     @NotNull
+    @Column(name = "isStarted", nullable = false)
+    private Byte isStarted;
+
+    @NotNull
     @Column(name = "startTime", nullable = false)
     private LocalDateTime startTime;
 
