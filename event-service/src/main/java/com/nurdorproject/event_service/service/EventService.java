@@ -68,6 +68,10 @@ public class EventService {
         return byteArrayOutputStream.toByteArray();
     }
 
+    public List<Event> findFinishedEvents() {
+        return eventRepository.findFinishedEvents(LocalDateTime.now());
+    }
+
     private String getTimeString(LocalDateTime startTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy'T'HH:mm");
         return startTime.format(formatter).split("T")[1];

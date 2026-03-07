@@ -10,6 +10,6 @@ import java.util.List;
 public class EndEventResultDto {
 
     private String message;
-    private Integer totalDonations;
+    private Long totalDonations;
     private List<StandDto> stands;
 }

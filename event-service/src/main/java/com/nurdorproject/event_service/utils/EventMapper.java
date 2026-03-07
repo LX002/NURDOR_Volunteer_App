@@ -15,6 +15,6 @@ public class EventMapper {
                 e.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
                 e.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
                 e.getLatitude(), e.getLongitude(), pic != null ? Base64.getEncoder().encodeToString(pic) : null,
-                e.getLocationDesc(), e.getCity());
+                e.getLocationDesc(), e.getTotalDonations(), e.getCity());
     }
 }

@@ -1,21 +1,20 @@
-package com.rzk.nurdor.dto;
+package com.nurdor_project.statistics_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Value;
-
-import java.io.Serializable;
 
 @Getter
 @AllArgsConstructor
-public class EventDto implements Serializable {
+public class EventDto {
     @JsonProperty("id")
     int id;
     @JsonProperty("eventName")
     String eventName;
     @JsonProperty("description")
     String description;
+    @JsonProperty("isStarted")
+    Byte isStarted;
     @JsonProperty("startTime")
     String startTime;
     @JsonProperty("endTime")
@@ -28,6 +27,8 @@ public class EventDto implements Serializable {
     String eventImg;
     @JsonProperty("locationDesc")
     String locationDesc;
+    @JsonProperty("totalDonations")
+    Long totalDonations;
     @JsonProperty("city")
-    String city;;
+    String city;
 }

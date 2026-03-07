@@ -6,15 +6,11 @@ import com.nurdorproject.event_service.proxy.DonationsProxy;
 import com.nurdorproject.event_service.service.EventService;
 import com.nurdorproject.event_service.utils.EventMapper;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -32,6 +28,11 @@ public class EventController {
         return !events.isEmpty()
                 ? ResponseEntity.ok(events)
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/admin/events/finished")
+    public ResponseEntity<List<Event>> findFinishedEvents() {
+        return ResponseEntity.ok(eventService.findFinishedEvents());
     }
 
     @GetMapping("/volunteer/events/findById/{idEvent}")
@@ -67,7 +68,7 @@ public class EventController {
     @PostMapping("/admin/events/start")
     public ResponseEntity<StartEventResultDto> startEvent(@RequestBody @Valid StartEventDto startEventDto) {
         int idEvent = startEventDto.getIdEvent();
-        updateIsStarted(idEvent, (byte) 1);
+        updateEvent(idEvent, (byte) 1, 0L);
         return ResponseEntity.ok(new StartEventResultDto(
                 "Started event: " + idEvent,
                 donationsProxy.attachStandsToEvent(startEventDto)
@@ -76,15 +77,16 @@ public class EventController {
 
     @PostMapping("/admin/events/end/{idEvent}")
     public ResponseEntity<EndEventResultDto> endEvent(@PathVariable Integer idEvent) {
-        updateIsStarted(idEvent, (byte) 0);
         List<StandDto> stands = donationsProxy.detachStandsFromEvent(idEvent);
-        Integer totalDonations = stands.stream().mapToInt(StandDto::getDonations).sum();
+        long totalDonations = stands.stream().mapToLong(StandDto::getDonations).sum();
+        updateEvent(idEvent, (byte) 0, totalDonations);
         return ResponseEntity.ok(new EndEventResultDto("Ended event: " + idEvent, totalDonations, stands));
     }
 
-    private void updateIsStarted(int idEvent, byte isStarted) {
+    private void updateEvent(int idEvent, byte isStarted, Long totalDonations) {
         Event event = eventService.findById(idEvent);
         event.setIsStarted(isStarted);
+        event.setTotalDonations(totalDonations);
         eventService.save(event);
     }
 }

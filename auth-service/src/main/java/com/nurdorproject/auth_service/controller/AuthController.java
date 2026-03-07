@@ -3,6 +3,7 @@ package com.nurdorproject.auth_service.controller;
 import com.nurdorproject.auth_service.dto.LoginDTO;
 import com.nurdorproject.auth_service.dto.LoginResponse;
 import com.nurdorproject.auth_service.dto.RegisterDTO;
+import com.nurdorproject.auth_service.exception.VolunteerAlreadyExistsException;
 import com.nurdorproject.auth_service.service.AuthServiceImpl;
 import com.nurdorproject.auth_service.service.VolunteerDetailsService;
 import com.nurdorproject.auth_service.utils.JwtUtil;
@@ -35,12 +36,17 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Object> register(@Valid @RequestBody RegisterDTO registerDTO) {
+        if(volunteerDetailsService.findByEmail(registerDTO.getEmail()) != null || volunteerDetailsService.findByUsername(registerDTO.getUsername()) != null) {
+            throw new VolunteerAlreadyExistsException("Cannot register volunteer that already exists!");
+        }
+
         return ResponseHandler.generateResponse("User registered successfully", HttpStatus.OK, authService.register(registerDTO));
     }
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
+            //remove authenticate?
             Authentication authenticate = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
             UserDetails userDetails = volunteerDetailsService.loadUserByUsername(loginDTO.getUsername());

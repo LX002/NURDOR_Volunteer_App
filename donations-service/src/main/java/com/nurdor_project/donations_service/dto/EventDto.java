@@ -27,6 +27,8 @@ public class EventDto {
     String eventImg;
     @JsonProperty("locationDesc")
     String locationDesc;
+    @JsonProperty("totalDonations")
+    Long totalDonations;
     @JsonProperty("city")
     String city;
 }

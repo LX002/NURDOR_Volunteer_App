@@ -58,6 +58,9 @@ public class Event {
     @Column(name = "eventImg")
     private byte[] eventImg;
 
+    @Column(name = "totalDonations", nullable = false)
+    private Long totalDonations;
+
     @NotNull
     @Column(name = "city", nullable = false)
     private String city;
