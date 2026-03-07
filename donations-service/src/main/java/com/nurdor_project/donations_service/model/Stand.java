@@ -3,12 +3,16 @@ package com.nurdor_project.donations_service.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "stand")
 public class Stand {
     @Id
@@ -25,7 +29,6 @@ public class Stand {
     @Column(name = "donations", nullable = false)
     private Integer donations;
 
-    @NotNull
     @Column(name = "event")
     private Integer idEvent;
 }

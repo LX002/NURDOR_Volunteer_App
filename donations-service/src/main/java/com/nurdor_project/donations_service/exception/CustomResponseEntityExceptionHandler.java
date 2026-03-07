@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 @ControllerAdvice
 public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
@@ -19,5 +21,24 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     @ExceptionHandler(StandNotFoundException.class)
     public ResponseEntity<ErrorEntity> handleStandNotFoundException(StandNotFoundException e) {
         return new ResponseEntity<>(new ErrorEntity(e.getMessage(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotEnoughStandsException.class)
+    public ResponseEntity<ErrorEntity> handleNotEnoughStandsException(NotEnoughStandsException e) {
+        return new ResponseEntity<>(new ErrorEntity(e.getMessage(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotStartedEventException.class)
+    public ResponseEntity<ErrorEntity> handleNotStartedEventException(NotStartedEventException e) {
+        return new ResponseEntity<>(new ErrorEntity(e.getMessage(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorEntity> handleException(Exception e) {
+        List<String> splitMessage = Arrays.stream(e.getMessage().split("\"")).map(String::toString).toList();
+        if(!splitMessage.isEmpty()) {
+            return new ResponseEntity<>(new ErrorEntity(splitMessage.get(3), LocalDateTime.now()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(new ErrorEntity(e.getMessage(), LocalDateTime.now()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

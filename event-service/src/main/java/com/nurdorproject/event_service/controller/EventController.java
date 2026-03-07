@@ -6,6 +6,8 @@ import com.nurdorproject.event_service.proxy.DonationsProxy;
 import com.nurdorproject.event_service.service.EventService;
 import com.nurdorproject.event_service.utils.EventMapper;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.http.*;
@@ -62,18 +64,27 @@ public class EventController {
         }
     }
 
-    @PatchMapping("/admin/events/start")
+    @PostMapping("/admin/events/start")
     public ResponseEntity<StartEventResultDto> startEvent(@RequestBody @Valid StartEventDto startEventDto) {
+        int idEvent = startEventDto.getIdEvent();
+        updateIsStarted(idEvent, (byte) 1);
         return ResponseEntity.ok(new StartEventResultDto(
-                "Started event: " + startEventDto.getIdEvent(),
+                "Started event: " + idEvent,
                 donationsProxy.attachStandsToEvent(startEventDto)
         ));
     }
 
-    @PatchMapping("/admin/events/end/{idEvent}")
+    @PostMapping("/admin/events/end/{idEvent}")
     public ResponseEntity<EndEventResultDto> endEvent(@PathVariable Integer idEvent) {
+        updateIsStarted(idEvent, (byte) 0);
         List<StandDto> stands = donationsProxy.detachStandsFromEvent(idEvent);
         Integer totalDonations = stands.stream().mapToInt(StandDto::getDonations).sum();
         return ResponseEntity.ok(new EndEventResultDto("Ended event: " + idEvent, totalDonations, stands));
+    }
+
+    private void updateIsStarted(int idEvent, byte isStarted) {
+        Event event = eventService.findById(idEvent);
+        event.setIsStarted(isStarted);
+        eventService.save(event);
     }
 }

@@ -12,6 +12,6 @@ public class StartEventDto {
     @Min(1)
     private int idEvent;
 
-    @Min(1) @Max(5)
+    @Min(1)
     private int numberOfStands;
 }

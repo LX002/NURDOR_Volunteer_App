@@ -37,7 +37,7 @@ public class ApiGatewayConfig {
                         .filters(f -> f.rewritePath("/admin/start", "/api/admin/events/start"))
                         .uri("lb://EVENT-SERVICE"))
                 .route("end-event", r -> r.path("/admin/end/{idEvent}")
-                        .filters(f -> f.rewritePath("/end/(?<idEvent>.*)", "/api/admin/events/end/${idEvent}"))
+                        .filters(f -> f.rewritePath("/admin/end/(?<idEvent>.*)", "/api/admin/events/end/${idEvent}"))
                         .uri("lb://EVENT-SERVICE"))
 
                 // events-log-service routes
@@ -47,6 +47,11 @@ public class ApiGatewayConfig {
                 .route("mark-as-present", r -> r.path("/volunteer/markAsPresent")
                         .filters(f -> f.rewritePath("/volunteer/markAsPresent", "/api/volunteer/eventLogs/markAsPresent"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
+
+                // donations-service routes
+                .route("donate", r -> r.path("/volunteer/addDonation")
+                        .filters(f -> f.rewritePath("/volunteer/addDonation", "/api/volunteer/stands/addDonation"))
+                        .uri("lb://DONATIONS-SERVICE"))
                 .build();
     }
 }
