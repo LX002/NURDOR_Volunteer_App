@@ -59,6 +59,8 @@ public class Volunteer {
     @Column(name = "password", nullable = false, length = 500)
     private String password;
 
+    // kasnije ukloni json ignore za RMA projekat!!!
+    @JsonIgnore
     @Column(name = "profilePicture")
     private byte[] profilePicture;
 
