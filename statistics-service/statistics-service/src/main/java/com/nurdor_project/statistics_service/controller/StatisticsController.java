@@ -3,6 +3,7 @@ package com.nurdor_project.statistics_service.controller;
 import com.nurdor_project.statistics_service.dto.CityDto;
 import com.nurdor_project.statistics_service.dto.EventDto;
 import com.nurdor_project.statistics_service.dto.TotalDonationsDto;
+import com.nurdor_project.statistics_service.dto.VolunteerDto;
 import com.nurdor_project.statistics_service.exception.InvalidGroupTypeException;
 import com.nurdor_project.statistics_service.proxy.EventProxy;
 import com.nurdor_project.statistics_service.proxy.VolunteerProxy;
@@ -24,10 +25,10 @@ import java.util.stream.Collectors;
 public class StatisticsController {
 
     /* TODO add following stuff here
-    * ukupne donacije za sve zavrsene eventove (uzima se danasnji datetime kao gornja granica zavrsetka dogadjaja) (event-service, dodaj totalDonations kolonu u event)
-    * volonteri po (najblizim) gradovima
-    * broj prijavljenih volontera za odredjeni dogadjaj
-    * broj prisutnih volontera za odredjeni dogadjaj koji je u toku
+    * [DONE] ukupne donacije za sve zavrsene eventove (uzima se danasnji datetime kao gornja granica zavrsetka dogadjaja) (event-service, dodaj totalDonations kolonu u event)
+    * [DONE] volonteri po (najblizim) gradovima (volunteer-service) (broj volontera?)
+    * broj prijavljenih volontera za odredjeni dogadjaj (events-log)
+    * broj prisutnih volontera za odredjeni dogadjaj koji je u toku (events-log)
     * broj tekucih dogadjaja, njihovo izlistavanje zajedno sa standovima? (koristi HATEOAS)
     * mozda da iskoristis hateoas na ostalim?
     * */
@@ -35,7 +36,7 @@ public class StatisticsController {
     private VolunteerProxy volunteerProxy;
     private EventProxy eventProxy;
 
-    // TODO: test this!!! do the rest of functionalities!!!
+    // TODO: maybe change key from zipCode to cityName?
     @GetMapping("/totalDonations/{groupType}")
     public ResponseEntity<List<TotalDonationsDto>> calculateTotalDonations(@PathVariable String groupType) {
         List<EventDto> events = eventProxy.findFinishedEvents();
@@ -63,7 +64,7 @@ public class StatisticsController {
                 }
             }
             default -> {
-                boolean isCity = cities.stream().map(CityDto::getCityName).toList().contains(groupType);
+                boolean isCity = cities.stream().map(CityDto::getZipCode).toList().contains(groupType);
                 if(!isCity)
                     throw new InvalidGroupTypeException(groupType + " is not in available cities!");
 
@@ -79,5 +80,12 @@ public class StatisticsController {
         }
 
         return ResponseEntity.ok(totalDonationsDtos);
+    }
+
+    @GetMapping("/count/volunteersByCities")
+    public ResponseEntity<Map<String, Long>> countVolunteersByCities() {
+        System.out.println(volunteerProxy.findAll());
+        return ResponseEntity.ok(volunteerProxy.findAll().stream()
+                .collect(Collectors.groupingBy(VolunteerDto::getNearestCity, Collectors.counting())));
     }
 }

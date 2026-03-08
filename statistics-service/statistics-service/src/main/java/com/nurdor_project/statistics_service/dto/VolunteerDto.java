@@ -2,12 +2,14 @@ package com.nurdor_project.statistics_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @AllArgsConstructor
-@Getter
+@Data
 public class VolunteerDto implements Serializable {
     @JsonProperty("id")
     int id;
@@ -30,5 +32,5 @@ public class VolunteerDto implements Serializable {
     @JsonProperty("nearestCity")
     String nearestCity;
     @JsonProperty("volunteerRole")
-    int volunteerRole;
+    Integer volunteerRole;
 }

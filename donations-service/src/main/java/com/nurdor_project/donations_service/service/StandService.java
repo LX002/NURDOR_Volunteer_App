@@ -1,8 +1,6 @@
 package com.nurdor_project.donations_service.service;
 
-import com.nurdor_project.donations_service.dto.DonationDto;
 import com.nurdor_project.donations_service.dto.EventDto;
-import com.nurdor_project.donations_service.exception.EventNotFoundException;
 import com.nurdor_project.donations_service.exception.NotEnoughStandsException;
 import com.nurdor_project.donations_service.exception.NotValidStandIdException;
 import com.nurdor_project.donations_service.exception.StandNotFoundException;
@@ -10,7 +8,6 @@ import com.nurdor_project.donations_service.model.Stand;
 import com.nurdor_project.donations_service.proxy.EventProxy;
 import com.nurdor_project.donations_service.repository.StandRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 

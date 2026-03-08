@@ -25,7 +25,6 @@ public class ApiGatewayConfig {
                         .uri("lb://VOLUNTEER-SERVICE"))
 
                 // event-service routes
-                // TODO: testiraj nove 2: start i end service!!!
                 .route("get-events", r -> r.path("/volunteer/getEvents")
                         .filters(f -> f.rewritePath("/volunteer/getEvents", "/api/volunteer/events/getEvents"))
                         .uri("lb://EVENT-SERVICE"))
@@ -52,6 +51,14 @@ public class ApiGatewayConfig {
                 .route("donate", r -> r.path("/volunteer/addDonation")
                         .filters(f -> f.rewritePath("/volunteer/addDonation", "/api/volunteer/stands/addDonation"))
                         .uri("lb://DONATIONS-SERVICE"))
+
+                // statistics-service routes
+                .route("total-donations", r -> r.path("/admin/donations/{groupType}")
+                        .filters(f -> f.rewritePath("/admin/donations/(?<groupType>.*)", "/api/admin/statistics/totalDonations/${groupType}"))
+                        .uri("lb://STATISTICS-SERVICE"))
+                .route("count-volunteers-by-cities", r -> r.path("/admin/countVolunteers")
+                        .filters(f -> f.rewritePath("/admin/countVolunteers", "/api/admin/statistics/count/volunteersByCities"))
+                        .uri("lb://STATISTICS-SERVICE"))
                 .build();
     }
 }

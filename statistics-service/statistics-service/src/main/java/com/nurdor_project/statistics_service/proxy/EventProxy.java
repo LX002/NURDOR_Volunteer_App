@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-@FeignClient(name = "event-proxy")
+@FeignClient(name = "event-service")
 public interface EventProxy {
 
     @GetMapping("/api/admin/events/finished")

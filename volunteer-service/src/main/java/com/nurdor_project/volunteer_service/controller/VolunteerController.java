@@ -26,13 +26,13 @@ public class VolunteerController {
     private CityService cityService;
 
     @GetMapping("/volunteer/volunteers/findAll")
-    public ResponseEntity<List<Volunteer>> findAll() {
+    public ResponseEntity<List<VolunteerDto>> findAll() {
         List<VolunteerDto> volunteerDtos = volunteerService.findAll().stream()
                 .map(VolunteerMapper::mapToDto)
                 .toList();
 
         return !volunteerDtos.isEmpty()
-                ? ResponseEntity.ok(volunteerService.findAll())
+                ? ResponseEntity.ok(volunteerDtos)
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
