@@ -65,6 +65,11 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>nurdor/eureka-server:0.1</name>
+					</image>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

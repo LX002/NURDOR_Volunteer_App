@@ -142,6 +142,9 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<image>
+						<name>nurdor/events-log-service:0.1</name>
+					</image>
 				</configuration>
 			</plugin>
 		</plugins>

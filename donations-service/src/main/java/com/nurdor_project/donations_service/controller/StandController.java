@@ -5,6 +5,7 @@ import com.nurdor_project.donations_service.dto.StartEventDto;
 import com.nurdor_project.donations_service.model.Stand;
 import com.nurdor_project.donations_service.service.StandService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class StandController {
     private StandService standService;
 
     @GetMapping("/volunteer/findByIdEvent/{idEvent}")
-    public ResponseEntity<List<Stand>> findByIdEvent(@PathVariable Integer idEvent) {
+    public ResponseEntity<List<Stand>> findByIdEvent(@PathVariable @Min(1) Integer idEvent) {
         return ResponseEntity.ok(standService.findTakenStands(idEvent));
     }
 
@@ -34,7 +35,7 @@ public class StandController {
     }
 
     @PostMapping("/admin/stands/detachFromEvent/{idEvent}")
-    public ResponseEntity<List<Stand>> detachStandsFromEvent(@PathVariable Integer idEvent) {
+    public ResponseEntity<List<Stand>> detachStandsFromEvent(@PathVariable @Min(1) Integer idEvent) {
         return ResponseEntity.ok(standService.tieStandsToEvent(0, idEvent));
     }
 }

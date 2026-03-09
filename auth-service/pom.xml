@@ -157,6 +157,9 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<image>
+						<name>nurdor/auth-service:0.1</name>
+					</image>
 				</configuration>
 			</plugin>
 		</plugins>

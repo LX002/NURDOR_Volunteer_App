@@ -25,14 +25,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/admin/statistics")
 public class StatisticsController {
 
-    /* TODO add following stuff here
-    * [DONE] ukupne donacije za sve zavrsene eventove (uzima se danasnji datetime kao gornja granica zavrsetka dogadjaja) (event-service, dodaj totalDonations kolonu u event)
-    * [DONE] volonteri po (najblizim) gradovima (volunteer-service) (broj volontera?)
-    * [DONE] broj prijavljenih volontera za odredjeni dogadjaj + njihov spisak (events-log)
-    * [DONE] broj / lista prisutnih volontera za dogadjaje koji su u toku (events-log)
-    * broj tekucih dogadjaja, njihovo izlistavanje zajedno sa standovima? (koristi HATEOAS)
-    * mozda da iskoristis hateoas na ostalim?
-    * */
+
 
     private VolunteerProxy volunteerProxy;
     private EventProxy eventProxy;
