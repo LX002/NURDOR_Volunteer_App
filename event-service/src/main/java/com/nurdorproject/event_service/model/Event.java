@@ -55,8 +55,12 @@ public class Event {
     @Column(name = "locationDesc", length = 200)
     private String locationDesc;
 
+    @JsonIgnore
     @Column(name = "eventImg")
     private byte[] eventImg;
+
+    @Column(name = "totalDonations", nullable = false)
+    private Long totalDonations;
 
     @NotNull
     @Column(name = "city", nullable = false)

@@ -30,6 +30,14 @@ public class VolunteerDetailsService implements UserDetailsService {
                 .build();
     }
 
+    public Volunteer findByEmail(String email) {
+        return volunteerRepository.findByEmail(email).orElse(null);
+    }
+
+    public Volunteer findByUsername(String username) {
+        return volunteerRepository.findByEmail(username).orElse(null);
+    }
+
     private String mapRoleIdToRole(int roleId) {
         return switch(roleId) {
             case 1 -> "ROLE_ADMIN";

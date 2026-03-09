@@ -18,6 +18,11 @@ public class StandController {
 
     private StandService standService;
 
+    @GetMapping("/volunteer/findByIdEvent/{idEvent}")
+    public ResponseEntity<List<Stand>> findByIdEvent(@PathVariable Integer idEvent) {
+        return ResponseEntity.ok(standService.findTakenStands(idEvent));
+    }
+
     @PatchMapping("/volunteer/stands/addDonation")
     public ResponseEntity<String> donate(@RequestBody @Valid DonationDto donationDto) {
         return ResponseEntity.ok(standService.donateToStand(donationDto.getAmount(), donationDto.getIdStand(), donationDto.getIdEvent()));

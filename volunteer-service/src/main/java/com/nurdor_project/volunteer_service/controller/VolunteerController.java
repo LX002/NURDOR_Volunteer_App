@@ -1,7 +1,10 @@
 package com.nurdor_project.volunteer_service.controller;
 
+import com.nurdor_project.volunteer_service.dto.PresentVolunteerEventDto;
 import com.nurdor_project.volunteer_service.dto.VolunteerDto;
+import com.nurdor_project.volunteer_service.model.City;
 import com.nurdor_project.volunteer_service.model.Volunteer;
+import com.nurdor_project.volunteer_service.service.CityService;
 import com.nurdor_project.volunteer_service.service.VolunteerService;
 import com.nurdor_project.volunteer_service.utils.VolunteerMapper;
 import lombok.AllArgsConstructor;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -21,15 +25,16 @@ import java.util.List;
 public class VolunteerController {
 
     private VolunteerService volunteerService;
+    private CityService cityService;
 
     @GetMapping("/volunteer/volunteers/findAll")
-    public ResponseEntity<List<Volunteer>> findAll() {
+    public ResponseEntity<List<VolunteerDto>> findAll() {
         List<VolunteerDto> volunteerDtos = volunteerService.findAll().stream()
                 .map(VolunteerMapper::mapToDto)
                 .toList();
 
         return !volunteerDtos.isEmpty()
-                ? ResponseEntity.ok(volunteerService.findAll())
+                ? ResponseEntity.ok(volunteerDtos)
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -37,5 +42,27 @@ public class VolunteerController {
     public ResponseEntity<VolunteerDto> findById(@PathVariable Integer idVolunteer) {
         VolunteerDto volunteerDto = VolunteerMapper.mapToDto(volunteerService.findById(idVolunteer));
         return ResponseEntity.ok(volunteerDto);
+    }
+
+    @GetMapping("/volunteer/volunteers/cities")
+    public ResponseEntity<List<City>> findAllCities() {
+        return ResponseEntity.ok(cityService.findAll());
+    }
+
+    @GetMapping("/admin/volunteers/findByEvent/{idEvent}")
+    public ResponseEntity<List<VolunteerDto>> findByIdEvent(@PathVariable Integer idEvent) {
+        List<VolunteerDto> volunteerDtos = volunteerService.findByIdEvent(idEvent).stream()
+                .map(VolunteerMapper::mapToDto)
+                .toList();
+
+        return !volunteerDtos.isEmpty()
+                ? ResponseEntity.ok(volunteerDtos)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // TODO: dodaj hateoas da odes na event pomocu idEventa koji je key u mapi
+    @GetMapping("/admin/volunteers/groupByEvent")
+    public ResponseEntity<Map<Integer, PresentVolunteerEventDto>> groupPresentVolunteersByEvent() {
+        return ResponseEntity.ok(volunteerService.groupPresentVolunteersByEvent());
     }
 }

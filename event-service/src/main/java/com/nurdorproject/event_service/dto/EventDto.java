@@ -1,5 +1,6 @@
 package com.nurdorproject.event_service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,10 +25,13 @@ public class EventDto {
     double latitude;
     @JsonProperty("longitude")
     double longitude;
+    @JsonIgnore
     @JsonProperty("eventImg")
     String eventImg;
     @JsonProperty("locationDesc")
     String locationDesc;
+    @JsonProperty("totalDonations")
+    Long totalDonations;
     @JsonProperty("city")
     String city;
 }
