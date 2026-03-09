@@ -2,6 +2,7 @@ package com.nurdor_project.events_log_service.repository;
 
 import com.nurdor_project.events_log_service.model.EventsLog;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -20,4 +21,10 @@ public interface EventsLogRepository extends JpaRepository<EventsLog, Integer> {
 
     @Query("select e from EventsLog e where e.isPresent = 1 and e.event in :ids")
     List<EventsLog> findEventsLogsByActiveEventsIds(@Param("ids") List<Integer> ids);
+
+    Optional<EventsLog> findByVolunteerAndIsPresent(Integer volunteer, byte isPresent);
+
+    @Modifying
+    @Query("update EventsLog set isPresent = 0 where volunteer in :ids")
+    void dismissVolunteers(@Param("ids") List<Integer> ids);
 }

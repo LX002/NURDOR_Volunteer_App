@@ -3,6 +3,7 @@ package com.nurdorproject.event_service.controller;
 import com.nurdorproject.event_service.dto.*;
 import com.nurdorproject.event_service.model.Event;
 import com.nurdorproject.event_service.proxy.DonationsProxy;
+import com.nurdorproject.event_service.proxy.EventsLogProxy;
 import com.nurdorproject.event_service.service.EventService;
 import com.nurdorproject.event_service.utils.EventMapper;
 import jakarta.validation.Valid;
@@ -20,6 +21,7 @@ public class EventController {
 
     private EventService eventService;
     private DonationsProxy donationsProxy;
+    private EventsLogProxy eventsLogProxy;
 
     @GetMapping("/volunteer/events/getEvents")
     public ResponseEntity<List<EventDto>> findAll() {
@@ -82,6 +84,7 @@ public class EventController {
 
     @PostMapping("/admin/events/end/{idEvent}")
     public ResponseEntity<EndEventResultDto> endEvent(@PathVariable Integer idEvent) {
+        eventsLogProxy.dismissVolunteers(idEvent);
         List<StandDto> stands = donationsProxy.detachStandsFromEvent(idEvent);
         long totalDonations = stands.stream().mapToLong(StandDto::getDonations).sum();
         updateEvent(idEvent, (byte) 0, totalDonations);

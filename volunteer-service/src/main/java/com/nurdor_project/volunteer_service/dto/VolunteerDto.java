@@ -1,5 +1,6 @@
 package com.nurdor_project.volunteer_service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class VolunteerDto implements Serializable {
     String username;
     @JsonProperty("password")
     String password;
+    @JsonIgnore
     @JsonProperty("profilePicture")
     String profilePicture;
     @JsonProperty("nearestCity")

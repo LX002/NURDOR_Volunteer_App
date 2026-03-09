@@ -12,7 +12,7 @@ import java.util.List;
 public interface EventProxy {
 
     @GetMapping("/api/volunteer/events/findById/{idEvent}")
-    ResponseEntity<EventDto> findEventById(@PathVariable Integer idEvent);
+    EventDto findEventById(@PathVariable Integer idEvent);
 
     @GetMapping("/api/admin/events/started")
     List<EventDto> findStartedEvents();

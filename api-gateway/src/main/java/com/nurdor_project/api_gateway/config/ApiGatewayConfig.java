@@ -46,7 +46,7 @@ public class ApiGatewayConfig {
                 .route("insert-log", r -> r.path("/volunteer/insertLog")
                         .filters(f -> f.rewritePath("/volunteer/insertLog", "/api/volunteer/eventsLogs/insert"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
-                .route("mark-as-present", r -> r.path("/volunteer/updatePresence")
+                .route("update-presence", r -> r.path("/volunteer/updatePresence")
                         .filters(f -> f.rewritePath("/volunteer/updatePresence", "/api/volunteer/eventLogs/updatePresence"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
 

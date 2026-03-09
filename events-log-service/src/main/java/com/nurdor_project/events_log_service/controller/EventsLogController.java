@@ -42,9 +42,11 @@ public class EventsLogController {
         return ResponseEntity.ok(eventsLogService.findEventsLogsByActiveEventsIds());
     }
 
-//    @PatchMapping("/volunteer/eventLogs/markAsPresent")
-//    public ResponseEntity<Boolean> markAsPresent(@RequestBody EventsLogDto eventsLogDto) {
-//        // != null ?
-//        return ResponseEntity.ok(eventsLogService.updatePresence(eventsLogDto) == null);
-//    }
+    @PostMapping("/admin/eventsLogs/dismissVolunteers/{idEvent}")
+    public ResponseEntity<String> dismissVolunteers(@PathVariable Integer idEvent) {
+        String[] results = eventsLogService.dismissVolunteers(idEvent).split(":");
+        return results[0].equals("204")
+                ? new ResponseEntity<>(results[1], HttpStatus.NO_CONTENT)
+                : ResponseEntity.ok(results[1]);
+    }
 }

@@ -8,6 +8,7 @@ import com.nurdor_project.events_log_service.proxy.EventProxy;
 import com.nurdor_project.events_log_service.proxy.VolunteerProxy;
 import com.nurdor_project.events_log_service.repository.EventsLogRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,13 +39,13 @@ public class EventsLogService {
     }
 
     public EventsLog insertLog(EventsLog eventsLog) {
-        volunteerAndEventCheck(eventsLog.getVolunteer(), eventsLog.getEvent(), false);
+        volunteerAndEventCheck(eventsLog.getVolunteer(), eventsLog.getEvent(), eventsLog.getIsPresent(), false);
         return eventsLogRepository.save(eventsLog);
     }
 
     @Transactional
     public EventsLog updatePresence(EventsLogDto eventsLogDto) {
-        volunteerAndEventCheck(eventsLogDto.getVolunteer(), eventsLogDto.getEvent(), true);
+        volunteerAndEventCheck(eventsLogDto.getVolunteer(), eventsLogDto.getEvent(), eventsLogDto.getIsPresent(), true);
 
         EventsLog eventsLog = eventsLogRepository
                 .findInitLogByVolunteerAndEvent(eventsLogDto.getVolunteer(), eventsLogDto.getEvent())
@@ -57,12 +58,24 @@ public class EventsLogService {
         return eventsLogRepository.save(eventsLog);
     }
 
-    private void volunteerAndEventCheck(int idVolunteer, int idEvent, boolean isUpdating) {
+    private void volunteerAndEventCheck(int idVolunteer, int idEvent, byte isPresent, boolean isUpdating) {
         if(volunteerProxy.findVolunteerById(idVolunteer) == null) {
             throw new InvalidEventsLogException("Invalid event's log: volunteer with id: " + idVolunteer  + " doesn't exist!");
         }
-        if(eventProxy.findEventById(idEvent) == null) {
+
+        EventDto eventDto = eventProxy.findEventById(idEvent);
+        if(eventDto == null) {
             throw new InvalidEventsLogException("Invalid event's log: event with id: " + idEvent  + " doesn't exist!");
+        }
+
+        if(isPresent == (byte) 1) {
+            EventsLog logByVolunteer = eventsLogRepository.findByVolunteerAndIsPresent(idVolunteer, isPresent).orElse(null);
+            if(logByVolunteer != null) {
+                throw new InvalidEventsLogException("Invalid event's log: the volunteer with id: " + idVolunteer + " is already present on some other event, with id: " + logByVolunteer.getEvent());
+            }
+            if(eventDto.getIsStarted() == (byte) 0) {
+                throw new InvalidEventsLogException("Invalid event's log: can't join to the event with id: " + idEvent + " hasn't started yet!");
+            }
         }
 
         if(!isUpdating) {
@@ -71,5 +84,16 @@ public class EventsLogService {
                 throw new InvalidEventsLogException("Invalid event's log: log with idEvent: " + idEvent  + " and idVolunteer: " + idVolunteer + " already exists!");
             }
         }
+    }
+
+    @Transactional
+    public String dismissVolunteers(Integer idEvent) {
+        List<Integer> volunteerIds = eventsLogRepository.findVolunteerIdsByIdEvent(idEvent);
+
+        if(volunteerIds.isEmpty())
+            return "204:No volunteers have picked event with id: " + idEvent;
+
+        eventsLogRepository.dismissVolunteers(volunteerIds);
+        return "200:Volunteers are dimissed from event with id: " + idEvent;
     }
 }
