@@ -1,18 +1,16 @@
 package com.nurdor_project.statistics_service.controller;
 
-import com.nurdor_project.statistics_service.dto.CityDto;
-import com.nurdor_project.statistics_service.dto.EventDto;
-import com.nurdor_project.statistics_service.dto.TotalDonationsDto;
-import com.nurdor_project.statistics_service.dto.VolunteerDto;
+import com.nurdor_project.statistics_service.dto.*;
 import com.nurdor_project.statistics_service.exception.InvalidGroupTypeException;
+import com.nurdor_project.statistics_service.proxy.DonationsProxy;
 import com.nurdor_project.statistics_service.proxy.EventProxy;
 import com.nurdor_project.statistics_service.proxy.VolunteerProxy;
 import lombok.AllArgsConstructor;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +25,15 @@ public class StatisticsController {
     /* TODO add following stuff here
     * [DONE] ukupne donacije za sve zavrsene eventove (uzima se danasnji datetime kao gornja granica zavrsetka dogadjaja) (event-service, dodaj totalDonations kolonu u event)
     * [DONE] volonteri po (najblizim) gradovima (volunteer-service) (broj volontera?)
-    * broj prijavljenih volontera za odredjeni dogadjaj (events-log)
-    * broj prisutnih volontera za odredjeni dogadjaj koji je u toku (events-log)
+    * [DONE] broj prijavljenih volontera za odredjeni dogadjaj + njihov spisak (events-log)
+    * [DONE] broj / lista prisutnih volontera za dogadjaje koji su u toku (events-log)
     * broj tekucih dogadjaja, njihovo izlistavanje zajedno sa standovima? (koristi HATEOAS)
     * mozda da iskoristis hateoas na ostalim?
     * */
 
     private VolunteerProxy volunteerProxy;
     private EventProxy eventProxy;
+    private DonationsProxy donationsProxy;
 
     // TODO: maybe change key from zipCode to cityName?
     @GetMapping("/totalDonations/{groupType}")
@@ -87,5 +86,43 @@ public class StatisticsController {
         System.out.println(volunteerProxy.findAll());
         return ResponseEntity.ok(volunteerProxy.findAll().stream()
                 .collect(Collectors.groupingBy(VolunteerDto::getNearestCity, Collectors.counting())));
+    }
+
+    @GetMapping("/count/volunteers")
+    public ResponseEntity<VolunteersEventDto> countAndFindVolunteersOnEvent(@RequestParam("idEvent") Integer idEvent) {
+        EventDto event = eventProxy.findById(idEvent);
+        List<VolunteerDto> volunteers = volunteerProxy.findByIdEvent(idEvent);
+        return ResponseEntity.ok(new VolunteersEventDto(event.getEventName(), volunteers.size(), volunteers));
+    }
+
+    // TODO: dodaj hateoas poziv za idEvent-a
+    @GetMapping("/count/presentVolunteers")
+    public EntityModel<Map<String, PresentVolunteerEventDto>> countPresentVolunteersByEvent() {
+        Map<String, PresentVolunteerEventDto> result = volunteerProxy.groupPresentVolunteersByEvent()
+                .entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> String.valueOf(e.getKey()),
+                        Map.Entry::getValue
+                ));
+
+        EntityModel<Map<String, PresentVolunteerEventDto>> em = EntityModel.of(result);
+        for(String idEvent: em.getContent().keySet()) {
+            em.add(Link.of("http://localhost:8765/volunteer/event/" + idEvent).withRel("event" + idEvent + "-details"));
+        }
+        em.add(Link.of("http://localhost:8765/admin/startedEvents").withRel("started-events-with-stands"));
+        return em;
+    }
+
+    @GetMapping("/count/startedEvents")
+    public ResponseEntity<EventCountDto> countStartedEvents() {
+        List<DetailedEventDto> detailedEventDtos =
+                eventProxy.findStartedEvents().stream()
+                .map(e -> {
+                    DetailedEventDto detailedEventDto = new DetailedEventDto();
+                    detailedEventDto.setEvent(e);
+                    detailedEventDto.setStands(donationsProxy.findByIdEvent(e.getId()));
+                    return detailedEventDto;
+                }).toList();
+        return ResponseEntity.ok(new EventCountDto(detailedEventDtos.size(), detailedEventDtos));
     }
 }

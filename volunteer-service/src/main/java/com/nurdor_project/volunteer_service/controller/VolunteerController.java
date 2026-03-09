@@ -1,5 +1,6 @@
 package com.nurdor_project.volunteer_service.controller;
 
+import com.nurdor_project.volunteer_service.dto.PresentVolunteerEventDto;
 import com.nurdor_project.volunteer_service.dto.VolunteerDto;
 import com.nurdor_project.volunteer_service.model.City;
 import com.nurdor_project.volunteer_service.model.Volunteer;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -45,5 +47,22 @@ public class VolunteerController {
     @GetMapping("/volunteer/volunteers/cities")
     public ResponseEntity<List<City>> findAllCities() {
         return ResponseEntity.ok(cityService.findAll());
+    }
+
+    @GetMapping("/admin/volunteers/findByEvent/{idEvent}")
+    public ResponseEntity<List<VolunteerDto>> findByIdEvent(@PathVariable Integer idEvent) {
+        List<VolunteerDto> volunteerDtos = volunteerService.findByIdEvent(idEvent).stream()
+                .map(VolunteerMapper::mapToDto)
+                .toList();
+
+        return !volunteerDtos.isEmpty()
+                ? ResponseEntity.ok(volunteerDtos)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // TODO: dodaj hateoas da odes na event pomocu idEventa koji je key u mapi
+    @GetMapping("/admin/volunteers/groupByEvent")
+    public ResponseEntity<Map<Integer, PresentVolunteerEventDto>> groupPresentVolunteersByEvent() {
+        return ResponseEntity.ok(volunteerService.groupPresentVolunteersByEvent());
     }
 }

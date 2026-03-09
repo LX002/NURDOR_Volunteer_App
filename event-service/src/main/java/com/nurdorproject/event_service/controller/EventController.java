@@ -40,6 +40,11 @@ public class EventController {
         return ResponseEntity.ok(EventMapper.mapToDto(eventService.findById(idEvent)));
     }
 
+    @GetMapping("/admin/events/started")
+    public ResponseEntity<List<Event>> findStartedEvents() {
+        return ResponseEntity.ok(eventService.findByIsStarted((byte) 1));
+    }
+
     @GetMapping("/volunteer/events/getPdfById/{idEvent}")
     public ResponseEntity<byte[]> downloadEventPdf(@PathVariable int idEvent) {
         // check exceptions via exception handlers....

@@ -55,6 +55,7 @@ public class Event {
     @Column(name = "locationDesc", length = 200)
     private String locationDesc;
 
+    @JsonIgnore
     @Column(name = "eventImg")
     private byte[] eventImg;
 

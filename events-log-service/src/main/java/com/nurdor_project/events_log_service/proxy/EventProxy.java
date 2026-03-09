@@ -6,9 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @FeignClient(name = "event-service")
 public interface EventProxy {
 
     @GetMapping("/api/volunteer/events/findById/{idEvent}")
     ResponseEntity<EventDto> findEventById(@PathVariable Integer idEvent);
+
+    @GetMapping("/api/admin/events/started")
+    List<EventDto> findStartedEvents();
 }
