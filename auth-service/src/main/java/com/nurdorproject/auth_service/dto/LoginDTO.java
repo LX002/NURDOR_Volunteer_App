@@ -1,0 +1,21 @@
+package com.nurdorproject.auth_service.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class LoginDTO {
+
+    @NotNull
+    @NotBlank
+    private String username;
+
+    @NotNull
+    @NotBlank
+    private String password;
+}

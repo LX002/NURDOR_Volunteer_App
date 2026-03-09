@@ -14,34 +14,41 @@ import retrofit2.http.Path
 
 interface ApiInterface {
 
-    @POST("api/login")
+    @POST("/login")
+    //@POST("/api/login")
     fun login(@Body volunteer: VolunteerDto): Call<Boolean>
 
-    @POST("api/login/saveVolunteer")
+    @POST("/register")
+    //@POST("api/login/saveVolunteer")
     fun saveVolunteer(@Body volunteer: VolunteerExpandedDto): Call<Boolean>
 
-    @GET("api/volunteers/getVolunteers")
+    @GET("/volunteer/volunteers")
+    //@GET("api/volunteers/getVolunteers")
     fun getVolunteers(): Call<List<VolunteerExpandedDto>>
 
     @GET("api/login/getCities")
     fun getCities(): Call<List<CityDto>>
 
     @GET("api/login/getRoles")
+    // ovo nema potrebe vise da koristis, napravi listu rola sa 1, 2
     fun getRoles(): Call<List<VolunteerRoleDto>>
 
-    @GET("api/events/getEvents")
+    @GET("/volunteer/getEvents")
+    //@GET("api/events/getEvents")
     fun getEvents(): Call<List<EventDto>>
 
     @GET("api/events/getEventsLogs")
     fun getEventsLogs(): Call<List<EventsLogDto>>
 
-    @GET("api/events/downloadEventPdf/{idEvent}")
+    @GET("/volunteer/eventPdf/{idEvent}")
+    //@GET("api/events/downloadEventPdf/{idEvent}")
     fun getEventPdf(@Path("idEvent") idEvent: Int): Call<ResponseBody>
 
     @POST("api/events/insertEvent")
     fun insertEvent(@Body eventDto: EventDto): Call<Boolean>
 
-    @POST("api/events/insertLog")
+    @POST("/volunteer/insertLog")
+    //@POST("api/events/insertLog")
     fun insertLog(@Body eventsLogDto: EventsLogDto): Call<Boolean>
 
     @POST("api/events/markAsPresent")

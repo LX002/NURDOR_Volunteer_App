@@ -1,0 +1,68 @@
+package com.nurdor_project.volunteer_service.controller;
+
+import com.nurdor_project.volunteer_service.dto.PresentVolunteerEventDto;
+import com.nurdor_project.volunteer_service.dto.VolunteerDto;
+import com.nurdor_project.volunteer_service.model.City;
+import com.nurdor_project.volunteer_service.model.Volunteer;
+import com.nurdor_project.volunteer_service.service.CityService;
+import com.nurdor_project.volunteer_service.service.VolunteerService;
+import com.nurdor_project.volunteer_service.utils.VolunteerMapper;
+import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@AllArgsConstructor
+@RequestMapping("/api")
+public class VolunteerController {
+
+    private VolunteerService volunteerService;
+    private CityService cityService;
+
+    @GetMapping("/volunteer/volunteers/findAll")
+    public ResponseEntity<List<VolunteerDto>> findAll() {
+        List<VolunteerDto> volunteerDtos = volunteerService.findAll().stream()
+                .map(VolunteerMapper::mapToDto)
+                .toList();
+
+        return !volunteerDtos.isEmpty()
+                ? ResponseEntity.ok(volunteerDtos)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/volunteer/volunteers/findById/{idVolunteer}")
+    public ResponseEntity<VolunteerDto> findById(@PathVariable @Min(1) Integer idVolunteer) {
+        VolunteerDto volunteerDto = VolunteerMapper.mapToDto(volunteerService.findById(idVolunteer));
+        return ResponseEntity.ok(volunteerDto);
+    }
+
+    @GetMapping("/volunteer/volunteers/cities")
+    public ResponseEntity<List<City>> findAllCities() {
+        return ResponseEntity.ok(cityService.findAll());
+    }
+
+    @GetMapping("/admin/volunteers/findByEvent/{idEvent}")
+    public ResponseEntity<List<VolunteerDto>> findByIdEvent(@PathVariable @Min(1) Integer idEvent) {
+        List<VolunteerDto> volunteerDtos = volunteerService.findByIdEvent(idEvent).stream()
+                .map(VolunteerMapper::mapToDto)
+                .toList();
+
+        return !volunteerDtos.isEmpty()
+                ? ResponseEntity.ok(volunteerDtos)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/admin/volunteers/groupByEvent")
+    public ResponseEntity<Map<Integer, PresentVolunteerEventDto>> groupPresentVolunteersByEvent() {
+        return ResponseEntity.ok(volunteerService.groupPresentVolunteersByEvent());
+    }
+}
