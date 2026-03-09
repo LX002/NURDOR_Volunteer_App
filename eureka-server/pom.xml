@@ -67,7 +67,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>nurdor/eureka-server:0.1</name>
+						<name>aleksam02/eureka-server:0.1</name>
 					</image>
 				</configuration>
 			</plugin>

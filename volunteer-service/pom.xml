@@ -133,7 +133,7 @@
 						</exclude>
 					</excludes>
 					<image>
-						<name>nurdor/volunteer-service:0.1</name>
+						<name>aleksam02/volunteer-service:0.1</name>
 					</image>
 				</configuration>
 			</plugin>

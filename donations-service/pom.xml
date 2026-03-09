@@ -138,7 +138,7 @@
 						</exclude>
 					</excludes>
 					<image>
-						<name>nurdor/donations-service:0.1</name>
+						<name>aleksam02/donations-service:0.1</name>
 					</image>
 				</configuration>
 			</plugin>

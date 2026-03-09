@@ -89,7 +89,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>nurdor/api-gateway:0.1</name>
+						<name>aleksam02/api-gateway:0.1</name>
 					</image>
 				</configuration>
 			</plugin>

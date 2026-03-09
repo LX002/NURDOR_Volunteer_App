@@ -141,7 +141,7 @@
 						</exclude>
 					</excludes>
 					<image>
-						<name>nurdor/statistics-service:0.1</name>
+						<name>aleksam02/statistics-service:0.1</name>
 					</image>
 				</configuration>
 			</plugin>
