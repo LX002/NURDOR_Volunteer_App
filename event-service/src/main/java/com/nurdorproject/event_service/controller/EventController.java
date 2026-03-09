@@ -7,6 +7,7 @@ import com.nurdorproject.event_service.proxy.EventsLogProxy;
 import com.nurdorproject.event_service.service.EventService;
 import com.nurdorproject.event_service.utils.EventMapper;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.http.*;
@@ -38,7 +39,7 @@ public class EventController {
     }
 
     @GetMapping("/volunteer/events/findById/{idEvent}")
-    public ResponseEntity<EventDto> findById(@PathVariable Integer idEvent) {
+    public ResponseEntity<EventDto> findById(@PathVariable @Min(1) Integer idEvent) {
         return ResponseEntity.ok(EventMapper.mapToDto(eventService.findById(idEvent)));
     }
 
@@ -48,7 +49,7 @@ public class EventController {
     }
 
     @GetMapping("/volunteer/events/getPdfById/{idEvent}")
-    public ResponseEntity<byte[]> downloadEventPdf(@PathVariable int idEvent) {
+    public ResponseEntity<byte[]> downloadEventPdf(@PathVariable @Min(1) int idEvent) {
         // check exceptions via exception handlers....
         try {
             Event event = eventService.findById(idEvent);
@@ -83,7 +84,7 @@ public class EventController {
     }
 
     @PostMapping("/admin/events/end/{idEvent}")
-    public ResponseEntity<EndEventResultDto> endEvent(@PathVariable Integer idEvent) {
+    public ResponseEntity<EndEventResultDto> endEvent(@PathVariable @Min(1) Integer idEvent) {
         eventsLogProxy.dismissVolunteers(idEvent);
         List<StandDto> stands = donationsProxy.detachStandsFromEvent(idEvent);
         long totalDonations = stands.stream().mapToLong(StandDto::getDonations).sum();

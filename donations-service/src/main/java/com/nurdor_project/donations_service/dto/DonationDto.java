@@ -12,9 +12,11 @@ public class DonationDto {
     @Min(1)
     @NotNull
     private Integer amount;
+
     @Min(1)
     @NotNull
     private Integer idEvent;
+
     @Min(1)
     @NotNull
     private Integer idStand;

@@ -35,10 +35,6 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorEntity> handleException(Exception e) {
-        List<String> splitMessage = Arrays.stream(e.getMessage().split("\"")).map(String::toString).toList();
-        if(!splitMessage.isEmpty()) {
-            return new ResponseEntity<>(new ErrorEntity(splitMessage.get(3), LocalDateTime.now()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
         return new ResponseEntity<>(new ErrorEntity(e.getMessage(), LocalDateTime.now()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

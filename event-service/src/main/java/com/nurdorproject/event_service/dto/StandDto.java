@@ -10,12 +10,16 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 public class StandDto implements Serializable {
+
     private final Integer id;
+
     @NotNull
     @Size(max = 100)
     private final String standName;
+
     @NotNull
     private final Integer donations;
+
     @NotNull
     private final Integer idEvent;
 }

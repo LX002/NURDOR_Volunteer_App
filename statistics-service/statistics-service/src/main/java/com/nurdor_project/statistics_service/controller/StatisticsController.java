@@ -5,10 +5,13 @@ import com.nurdor_project.statistics_service.exception.InvalidGroupTypeException
 import com.nurdor_project.statistics_service.proxy.DonationsProxy;
 import com.nurdor_project.statistics_service.proxy.EventProxy;
 import com.nurdor_project.statistics_service.proxy.VolunteerProxy;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +38,7 @@ public class StatisticsController {
     private EventProxy eventProxy;
     private DonationsProxy donationsProxy;
 
-    // TODO: maybe change key from zipCode to cityName?
+    @RateLimiter(name = "calculateTotalDonations", fallbackMethod = "fallback")
     @GetMapping("/totalDonations/{groupType}")
     public ResponseEntity<List<TotalDonationsDto>> calculateTotalDonations(@PathVariable String groupType) {
         List<EventDto> events = eventProxy.findFinishedEvents();
@@ -81,6 +84,7 @@ public class StatisticsController {
         return ResponseEntity.ok(totalDonationsDtos);
     }
 
+    @RateLimiter(name = "volunteersByCities", fallbackMethod = "fallback")
     @GetMapping("/count/volunteersByCities")
     public ResponseEntity<Map<String, Long>> countVolunteersByCities() {
         System.out.println(volunteerProxy.findAll());
@@ -88,20 +92,22 @@ public class StatisticsController {
                 .collect(Collectors.groupingBy(VolunteerDto::getNearestCity, Collectors.counting())));
     }
 
+    @RateLimiter(name = "volunteersOnEvent", fallbackMethod = "fallback")
     @GetMapping("/count/volunteers")
-    public ResponseEntity<VolunteersEventDto> countAndFindVolunteersOnEvent(@RequestParam("idEvent") Integer idEvent) {
+    public ResponseEntity<VolunteersEventDto> countAndFindVolunteersOnEvent(@RequestParam("idEvent") @Min(1) Integer idEvent) {
         EventDto event = eventProxy.findById(idEvent);
         List<VolunteerDto> volunteers = volunteerProxy.findByIdEvent(idEvent);
         return ResponseEntity.ok(new VolunteersEventDto(event.getEventName(), volunteers.size(), volunteers));
     }
 
-    // TODO: dodaj hateoas poziv za idEvent-a
+
+    @RateLimiter(name = "presentVolunteers", fallbackMethod = "fallback")
     @GetMapping("/count/presentVolunteers")
     public EntityModel<Map<String, PresentVolunteerEventDto>> countPresentVolunteersByEvent() {
         Map<String, PresentVolunteerEventDto> result = volunteerProxy.groupPresentVolunteersByEvent()
                 .entrySet().stream()
                 .collect(Collectors.toMap(
-                        e -> String.valueOf(e.getKey()),
+                        e -> "EVENT_ID: " + e.getKey(),
                         Map.Entry::getValue
                 ));
 
@@ -113,6 +119,7 @@ public class StatisticsController {
         return em;
     }
 
+    @RateLimiter(name = "startedEvents", fallbackMethod = "fallback")
     @GetMapping("/count/startedEvents")
     public ResponseEntity<EventCountDto> countStartedEvents() {
         List<DetailedEventDto> detailedEventDtos =
@@ -124,5 +131,9 @@ public class StatisticsController {
                     return detailedEventDto;
                 }).toList();
         return ResponseEntity.ok(new EventCountDto(detailedEventDtos.size(), detailedEventDtos));
+    }
+
+    public ResponseEntity<?> fallback(Exception e) {
+        return new ResponseEntity<>("Too many requests!\n" + e.getMessage(), HttpStatus.TOO_MANY_REQUESTS);
     }
 }

@@ -9,7 +9,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class StartEventDto {
 
+    @Min(1)
     private int idEvent;
+
     @Min(1)
     private int numberOfStands;
 }
