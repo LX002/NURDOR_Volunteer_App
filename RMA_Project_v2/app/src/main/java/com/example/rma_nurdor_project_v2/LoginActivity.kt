@@ -8,11 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
-import com.example.rma_nurdor_project_v2.utils.PreferenceHelper
-import com.example.rma_nurdor_project_v2.viewModel.LoginViewModel
-import com.example.rma_project_demo_v1.fragments.LoginFragment
-import com.example.rma_project_demo_v1.fragments.SignInFragment
+import com.example.rma_nurdor_project_v2.fragments.LoginFragment
+import com.example.rma_nurdor_project_v2.fragments.SignInFragment
 
 class LoginActivity : AppCompatActivity(), LoginFragment.OnSignInFragmentListener, SignInFragment.OnLoginFragmentListener {
 

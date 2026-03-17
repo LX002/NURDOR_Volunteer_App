@@ -1,6 +1,6 @@
-package com.example.rma_project_demo_v1.dto
+package com.example.rma_nurdor_project_v2.dto
 
-data class VolunteerExpandedDto(
+data class RegisterDTO(
     val id: Int,
     val name: String,
     val surname: String,

@@ -1,12 +1,9 @@
 package com.example.rma_nurdor_project_v2.repository
 
-import android.content.Context
 import android.util.Log
 import com.example.rma_nurdor_project_v2.AppDatabase
-import com.example.rma_nurdor_project_v2.DatabaseClient
-import com.example.rma_nurdor_project_v2.model.City
 import com.example.rma_nurdor_project_v2.model.Volunteer
-import com.example.rma_project_demo_v1.dto.VolunteerExpandedDto
+import com.example.rma_nurdor_project_v2.dto.RegisterDTO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,7 +35,7 @@ class VolunteerRepository(db: AppDatabase) {
         //insertovanje u mysql bazu, retrofit (kasnije update deo)
         if(id > 0) {
             Log.i("insertVolunteer", "Volunteer $id saved in sqlite!")
-            retrofitApi.saveVolunteer(VolunteerExpandedDto(
+            retrofitApi.saveVolunteer(RegisterDTO(
                 id.toInt(), volunteer.name, volunteer.surname,
                 volunteer.address, volunteer.phoneNumber,
                 volunteer.email, volunteer.username,
@@ -88,8 +85,8 @@ class VolunteerRepository(db: AppDatabase) {
     }
 
     private fun getRetrofitVolunteers() {
-        retrofitApi.getVolunteers().enqueue(object : Callback<List<VolunteerExpandedDto>> {
-            override fun onResponse(call: Call<List<VolunteerExpandedDto>>, response: Response<List<VolunteerExpandedDto>>) {
+        retrofitApi.getVolunteers().enqueue(object : Callback<List<RegisterDTO>> {
+            override fun onResponse(call: Call<List<RegisterDTO>>, response: Response<List<RegisterDTO>>) {
                 if(response.isSuccessful) {
                     val volunteersList = response.body()!!.map {
                         Volunteer(it.id, it.name, it.surname,
@@ -111,7 +108,7 @@ class VolunteerRepository(db: AppDatabase) {
                 }
             }
 
-            override fun onFailure(call: Call<List<VolunteerExpandedDto>>, t: Throwable) {
+            override fun onFailure(call: Call<List<RegisterDTO>>, t: Throwable) {
                 Log.e("retrofitApi1", "Volunteer list is empty and error occurred: ${t.message}\n${t.stackTrace}")
             }
 

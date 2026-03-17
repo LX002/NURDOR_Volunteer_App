@@ -26,7 +26,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        String[] PUBLIC_URLS = {"/login", "/register"};
+        String[] PUBLIC_URLS = {"/login", "/register", "/cities", "/api/cities"};
 
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)

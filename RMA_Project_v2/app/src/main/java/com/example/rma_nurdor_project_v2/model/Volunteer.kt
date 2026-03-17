@@ -15,7 +15,7 @@ data class Volunteer(
     val phoneNumber: String,
     val email: String,
     val username: String,
-    val password: String,
+    // removed password
     val profilePicture: String?,
     val nearestCity: String,
     val volunteerRole: Int

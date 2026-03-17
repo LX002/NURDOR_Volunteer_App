@@ -1,4 +1,4 @@
-package com.example.rma_project_demo_v1.fragments
+package com.example.rma_nurdor_project_v2.fragments
 
 import android.content.Context
 import android.content.Intent

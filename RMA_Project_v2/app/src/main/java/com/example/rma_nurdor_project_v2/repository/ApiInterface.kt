@@ -1,12 +1,11 @@
 import com.example.rma_nurdor_project_v2.dto.EventDto
 import com.example.rma_nurdor_project_v2.dto.EventsLogDto
-import com.example.rma_project_demo_v1.dto.CityDto
-import com.example.rma_project_demo_v1.dto.VolunteerDto
-import com.example.rma_project_demo_v1.dto.VolunteerExpandedDto
-import com.example.rma_project_demo_v1.dto.VolunteerRoleDto
+import com.example.rma_nurdor_project_v2.dto.CityDto
+import com.example.rma_nurdor_project_v2.dto.LoginDto
+import com.example.rma_nurdor_project_v2.dto.RegisterDTO
+import com.example.rma_nurdor_project_v2.dto.VolunteerRoleDto
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -16,15 +15,15 @@ interface ApiInterface {
 
     @POST("/login")
     //@POST("/api/login")
-    fun login(@Body volunteer: VolunteerDto): Call<Boolean>
+    fun login(@Body volunteer: LoginDto): Call<Boolean>
 
     @POST("/register")
     //@POST("api/login/saveVolunteer")
-    fun saveVolunteer(@Body volunteer: VolunteerExpandedDto): Call<Boolean>
+    fun saveVolunteer(@Body volunteer: RegisterDTO): Call<Boolean>
 
     @GET("/volunteer/volunteers")
     //@GET("api/volunteers/getVolunteers")
-    fun getVolunteers(): Call<List<VolunteerExpandedDto>>
+    fun getVolunteers(): Call<List<RegisterDTO>>
 
     @GET("api/login/getCities")
     fun getCities(): Call<List<CityDto>>

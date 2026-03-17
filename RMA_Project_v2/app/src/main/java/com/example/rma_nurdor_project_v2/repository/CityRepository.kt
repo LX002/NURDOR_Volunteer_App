@@ -1,11 +1,9 @@
 package com.example.rma_nurdor_project_v2.repository
 
-import android.content.Context
 import android.util.Log
 import com.example.rma_nurdor_project_v2.AppDatabase
-import com.example.rma_nurdor_project_v2.DatabaseClient
 import com.example.rma_nurdor_project_v2.model.City
-import com.example.rma_project_demo_v1.dto.CityDto
+import com.example.rma_nurdor_project_v2.dto.CityDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

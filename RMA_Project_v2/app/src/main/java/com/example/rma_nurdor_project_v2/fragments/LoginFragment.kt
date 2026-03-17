@@ -1,10 +1,9 @@
-package com.example.rma_project_demo_v1.fragments
+package com.example.rma_nurdor_project_v2.fragments
 
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,9 +21,6 @@ import com.example.rma_nurdor_project_v2.model.Volunteer
 import com.example.rma_nurdor_project_v2.model.VolunteerRole
 import com.example.rma_nurdor_project_v2.utils.PasswordUtils
 import com.example.rma_nurdor_project_v2.utils.PreferenceHelper
-import com.example.rma_nurdor_project_v2.repository.CityRepository
-import com.example.rma_nurdor_project_v2.repository.VolunteerRepository
-import com.example.rma_nurdor_project_v2.repository.VolunteerRoleRepository
 import com.example.rma_nurdor_project_v2.viewModel.EventViewModel
 import com.example.rma_nurdor_project_v2.viewModel.LoginViewModel
 import kotlinx.coroutines.CoroutineScope

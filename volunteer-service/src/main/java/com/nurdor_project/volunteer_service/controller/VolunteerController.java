@@ -1,11 +1,13 @@
 package com.nurdor_project.volunteer_service.controller;
 
+import com.nurdor_project.volunteer_service.dto.CityDto;
 import com.nurdor_project.volunteer_service.dto.PresentVolunteerEventDto;
 import com.nurdor_project.volunteer_service.dto.VolunteerDto;
 import com.nurdor_project.volunteer_service.model.City;
 import com.nurdor_project.volunteer_service.model.Volunteer;
 import com.nurdor_project.volunteer_service.service.CityService;
 import com.nurdor_project.volunteer_service.service.VolunteerService;
+import com.nurdor_project.volunteer_service.utils.CityMapper;
 import com.nurdor_project.volunteer_service.utils.VolunteerMapper;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -45,9 +47,13 @@ public class VolunteerController {
         return ResponseEntity.ok(volunteerDto);
     }
 
-    @GetMapping("/volunteer/volunteers/cities")
-    public ResponseEntity<List<City>> findAllCities() {
-        return ResponseEntity.ok(cityService.findAll());
+    @GetMapping("/cities")
+    public ResponseEntity<List<CityDto>> findAllCities() {
+        return ResponseEntity.ok(cityService.findAll()
+                .stream()
+                .map(CityMapper::mapToDto)
+                .toList()
+        );
     }
 
     @GetMapping("/admin/volunteers/findByEvent/{idEvent}")

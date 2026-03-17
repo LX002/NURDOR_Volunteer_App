@@ -23,6 +23,9 @@ public class ApiGatewayConfig {
                 .route("admin-volunteers", r -> r.path("/volunteer/volunteers")
                         .filters(f -> f.rewritePath("/volunteer/volunteers", "/api/volunteer/volunteers/findAll"))
                         .uri("lb://VOLUNTEER-SERVICE"))
+                .route("all-cities", r -> r.path("/cities")
+                        .filters(f -> f.rewritePath("/cities", "/api/cities"))
+                        .uri("lb://VOLUNTEER-SERVICE"))
 
                 // event-service routes
                 .route("get-event", r -> r.path("/volunteer/event/{idEvent}")
