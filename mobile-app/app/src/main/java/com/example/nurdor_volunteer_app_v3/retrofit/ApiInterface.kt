@@ -12,10 +12,10 @@ interface ApiInterface {
 
     // auth-service calls
     @POST("/login")
-    fun login(@Body volunteer: LoginDto): Call<Boolean>
+    fun login(@Body volunteer: LoginDto): Call<Map<String, Object>>
 
     @POST("/register")
-    fun register(@Body volunteer: RegisterDto): Call<Boolean>
+    fun register(@Body volunteer: RegisterDto): Call<Map<String, Object>>
 
     // volunteer-service calls
     @GET("/cities")

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -35,7 +36,7 @@ public class AuthController {
     private VolunteerDetailsService volunteerDetailsService;
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@Valid @RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDTO registerDTO) {
         if(volunteerDetailsService.findByEmail(registerDTO.getEmail()) != null || volunteerDetailsService.findByUsername(registerDTO.getUsername()) != null) {
             throw new VolunteerAlreadyExistsException("Cannot register volunteer that already exists!");
         }
@@ -44,7 +45,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             //remove authenticate?
             Authentication authenticate = authenticationManager
@@ -60,7 +61,7 @@ public class AuthController {
                     .build();
             return ResponseHandler.generateResponse("Volunteer logged in successfully!", HttpStatus.OK, loginResponse);
         } catch(Exception ex) {
-            return new ResponseEntity<>("Incorrect credentials, try again!", HttpStatus.BAD_REQUEST);
+            return ResponseHandler.generateResponse("Invalid credentials!", HttpStatus.BAD_REQUEST, null);
         }
     }
 }

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RMA_Project_demo_v2</string>
+    <string name="enter_username">Unesite korisničko ime</string>
+    <string name="enter_password">Unesite lozinku</string>
+    <string name="login_button">Login</string>
+    <string name="welcome_to_app">Dobrodošli</string>
+    <string name="app_name_display">NurdorApp 0.1</string>
+    <string name="hello_blank_fragment">Ydravo prazni fragmentu</string>
+    <string name="create_new_account">Kreirajte novi nalog</string>
+    <string name="name_sign_in">Ime</string>
+    <string name="surname_sign_in">Prezime</string>
+    <string name="address_format">[Ul] [br], [poštanski br] [grad]</string>
+    <string name="phone_sign_in">Broj telefona</string>
+    <string name="email_sign_in">Email</string>
+    <string name="username_sign_in">Korisničko ime</string>
+    <string name="password_sign_in">Lozinka</string>
+    <string name="repeat_password_sign_in">Ponovite lozinku</string>
+    <string name="sign_in">Kreirajte nalog</string>
+    <string name="menu_settings">Podešavanja</string>
+    <string name="menu_logout">Log out</string>
+    <string name="app_name_heading">Nurdor</string>
+    <string name="admin_window">Admin opcije</string>
+    <string name="qr_code">QR kod</string>
+    <string name="event_archive">Arhiva događaja</string>
+    <string name="create_event">Kreiraj događaj</string>
+    <string name="nurdor_volunteer">NURDOR volonter</string>
+    <string name="donations_qr">QR za donacije</string>
+    <string name="present_volunteers">Prisutni volonteri</string>
+    <string name="profile_image_picker">Izaberi</string>
+    <string name="choose_profile_picture">Izaberite profilnu sliku</string>
+    <string name="nearest_city">Najbliži grad</string>
+    <string name="volunteer_role">Uloga volontera</string>
+    <string name="add_to_your_events">Dodaj događaj</string>
+    <string name="events_near_you">Obližnji događaji</string>
+    <string name="other_events">Ostali događaji</string>
+    <string name="filter_results">Filtrirani događaji</string>
+    <string name="done">Završeno</string>
+    <string name="date_with_colon">Datum:</string>
+    <string name="time_with_colon">Vreme:</string>
+    <string name="select_event">Izaberi događaj</string>
+    <string name="deselect_event">Deselektuj događaj</string>
+    <string name="volunteer_menu">Volonter meni</string>
+    <string name="event_image">Slika događaja</string>
+    <string name="event_menu">Događaj meni</string>
+    <string name="volunteer_image">Slika volontera</string>
+    <string name="location_with_colon">Lokacija:</string>
+    <string name="description_with_colon">Opis:</string>
+    <string name="location">Lokacija</string>
+    <string name="download_pdf">Brošura</string>
+    <string name="join">Pridruži se</string>
+    <string name="duration_with_colon">Trajanje:</string>
+    <string name="volunteers">Volonteri</string>
+    <string name="close">Zatvori</string>
+    <string name="event_name_with_colon">Naziv događaja:</string>
+    <string name="enter_event_name">Unesite naziv</string>
+    <string name="event_description_with_colon">Opis događaja:</string>
+    <string name="enter_description">Unesite opis</string>
+    <string name="start_date_with_colon">Datum poč.:</string>
+    <string name="pick">Izbor</string>
+    <string name="start_time_w_colon">Vreme poč.:</string>
+    <string name="end_date_w_colon">Datum zav.:</string>
+    <string name="end_time_w_colon">Vreme zav.:</string>
+    <string name="pick_image_w_colon">Slika:</string>
+    <string name="city_w_colon">Grad:</string>
+    <string name="profile_picture">Profilna slika</string>
+    <string name="role_w_colon">Uloga:</string>
+    <string name="email_w_colon">Email:</string>
+    <string name="role">Uloga</string>
+    <string name="email">Email</string>
+    <string name="call">Pozovi</string>
+    <string name="message">SMS</string>
+    <string name="add">Dodaj</string>
+    <string name="remove">Ukloni</string>
+    <string name="write_a_note">Ostavite komentar</string>
+    <string name="send">Pošalji</string>
+    <string name="leave_event">Napusti događaj</string>
+    <string name="filter_archive">Filtriraj arhivu</string>
+    <string name="expand_filters">Proširi filtere</string>
+    <string name="collapse_filters">Zatvori filtere</string>
+    <string name="name">Naziv</string>
+    <string name="sort_by">Sort</string>
+    <string name="date">Datum</string>
+    <string name="city">Grad</string>
+    <string name="apply_filters">Primeni filtere</string>
+    <string name="reset_filters">Resetuj filtere</string>
+    <string name="filter_events">Filtriraj događaje</string>
+    <string name="pick_start_date">Datum početka</string>
+    <string name="pick_start_time">Vreme početka</string>
+    <string name="pick_location">Odaberite lokaciju</string>
+    <string name="profile_details">Profil</string>
+    <string name="event_details">Event details</string>
+    <string name="channel_name">nurdor_app_channel</string>
+    <string name="channel_description">Notification channel for NURDOR volunteer app.</string>
+    <string name="unknown">Nepoznat</string>
+    <string name="check_your_internet_connection">Proverite Vašu internet konekciju</string>
+    <string name="refresh">Osveži</string>
+    <string name="about_nurdor">O NURDOR-u</string>
+    <string name="about_text">s</string>
+    <string-array name="sort_add_events_types">
+        <item></item>
+        <item>Naziv</item>
+        <item>Grad (poš. br.)</item>
+        <item>Datum</item>
+    </string-array>
+    <string-array name="months">
+        <item></item>
+        <item>Januar</item>
+        <item>Februar</item>
+        <item>Mart</item>
+        <item>April</item>
+        <item>Mjy</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Avgust</item>
+        <item>Septembar</item>
+        <item>Oktobar</item>
+        <item>Novembar</item>
+        <item>Decembar</item>
+    </string-array>
+</resources>

@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.activity.AuthActivity
+import com.example.nurdor_volunteer_app_v3.activity.NoInternetConnectionActivity
 import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
 import kotlinx.coroutines.launch
 
@@ -60,7 +61,10 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             // checkpoint 1
-            // nonetworkactivity???
+            val intent = Intent(this, NoInternetConnectionActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            }
+            startActivity(intent)
         }
     }
 

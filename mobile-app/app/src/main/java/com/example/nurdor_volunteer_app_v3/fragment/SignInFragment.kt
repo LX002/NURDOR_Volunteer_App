@@ -1,4 +1,6 @@
 package com.example.nurdor_volunteer_app_v3.fragment
 
-class SignInFragment {
+import androidx.fragment.app.Fragment
+
+class SignInFragment: Fragment() {
 }

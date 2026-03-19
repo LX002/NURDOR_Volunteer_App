@@ -76,16 +76,18 @@ dependencies {
     implementation (libs.material)
 
     // Glide lib for images
-    implementation(libs.glide) // or the latest version
+    implementation(libs.glide)
     annotationProcessor(libs.compiler)
 
     implementation(libs.compose.material)
 
     // Open Street Map
-    //implementation(libs.osmdroid.parent.x.x.x0)
     implementation(libs.osmdroid.android)
 
+    // fragments?
     implementation(libs.androidx.fragment.ktx)
-
     implementation(libs.androidx.work.runtime.ktx)
+
+    // security
+    implementation(libs.androidx.security.crypto)
 }
