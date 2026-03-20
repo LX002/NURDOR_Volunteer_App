@@ -1,6 +1,8 @@
 package com.example.nurdor_volunteer_app_v3.retrofit
 
-import com.example.nurdor_volunteer_app_v3.utils.NetworkUtils
+import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import com.example.nurdor_volunteer_app_v3.NurdorVolunteerApplication
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -10,6 +12,7 @@ object RetrofitInstance {
     private const val BASE_URL = "http://192.168.0.102:8765"
 
     private val client = OkHttpClient.Builder()
+        .addInterceptor(AuthInterceptor(NurdorVolunteerApplication.encryptedPrefs))
         .connectTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)

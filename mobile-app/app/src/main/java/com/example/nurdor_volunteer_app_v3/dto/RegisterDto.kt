@@ -1,7 +1,6 @@
-package com.example.rma_project_demo_v1.dto
+package com.example.nurdor_volunteer_app_v3.dto
 
 data class RegisterDto(
-    val id: Int,
     val name: String,
     val surname: String,
     val address: String,
@@ -10,6 +9,6 @@ data class RegisterDto(
     val username: String,
     val password: String,
     val profilePicture: String,
-    val nearestCity: String?,
-    val volunteerRole: Int?
+    val nearestCity: String,
+    val volunteerRole: Int
 )

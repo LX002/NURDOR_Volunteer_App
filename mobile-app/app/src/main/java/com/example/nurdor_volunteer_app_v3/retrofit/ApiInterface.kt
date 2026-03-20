@@ -2,7 +2,7 @@ package com.example.nurdor_volunteer_app_v3.retrofit
 
 import com.example.nurdor_volunteer_app_v3.dto.CityDto
 import com.example.rma_project_demo_v1.dto.LoginDto
-import com.example.rma_project_demo_v1.dto.RegisterDto
+import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
