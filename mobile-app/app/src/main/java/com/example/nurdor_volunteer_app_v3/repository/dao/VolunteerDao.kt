@@ -11,7 +11,7 @@ import com.example.nurdor_volunteer_app_v3.model.Volunteer
 interface VolunteerDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    fun insert(volunteer: Volunteer): Int
+    fun insert(volunteer: Volunteer): Long
 
     @Query("SELECT * FROM volunteer WHERE email = :email")
     fun findVolunteerByEmail(email: String): Volunteer?

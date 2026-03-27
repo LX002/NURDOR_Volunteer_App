@@ -25,7 +25,7 @@ class CityRepository(db: AppDatabase) {
                 }
             } else {
                 // create dialog that displays this
-                Log.e("retrofitApi1", "Error: ${response.errorBody()?.string()}")
+                Log.e("retrofitApi1", "Error during city fetching: ${response.raw().message}")
             }
         } catch(e: Exception) {
             // create dialog that displays this

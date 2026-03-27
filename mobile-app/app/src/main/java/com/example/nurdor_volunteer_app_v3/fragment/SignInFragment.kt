@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
@@ -221,6 +222,8 @@ class SignInFragment: Fragment() {
             authViewModel.validatePhone(text)
         }
 
+
+        // klik na sign in i nista se ne desava, proveri validacije i ostalo (retrofit poziv nije a mozda i jeste)
         btnSignIn?.setOnClickListener {
             val isFormFilled = authViewModel.isFormFilled()
             when(isFormFilled) {
@@ -238,10 +241,32 @@ class SignInFragment: Fragment() {
                             nearestCity = authViewModel.selectedCity.zipCode,
                             volunteerRole = authViewModel.selectedRole.idVolunteerRole
                         )
-                        authViewModel.register(registerDto)
+                        val result = authViewModel.register(registerDto)
+                        when {
+                            result > 0 -> {
+                                Toast.makeText(requireContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show()
+                                callback.newSignInHandling()
+                            }
+                            result == 0 -> {
+                                Toast.makeText(requireContext(), "Sign in response unsuccessful", Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {
+                                Toast.makeText(requireContext(), "Successfully signed in!", Toast.LENGTH_LONG).show()
+                            }
+                        }
                     }
                     // TODO() - countinue this register functionality, branch it into when options, also continue
                     // with AuthActivity afterwards... you'll know the rest... checkpoint 3 btw and beware of fragment indicator above!!!
+                }
+                0 -> {
+                    // [NOTE TO SELF] change to dialog later
+                    Toast.makeText(requireContext(), "All text fields must be filled!", Toast.LENGTH_SHORT).show()
+                }
+                -1 -> {
+                    Toast.makeText(requireContext(), "City and role must be selected!", Toast.LENGTH_SHORT).show()
+                }
+                -2 -> {
+                    Toast.makeText(requireContext(), "Passwords don't match!", Toast.LENGTH_SHORT).show()
                 }
             }
         }

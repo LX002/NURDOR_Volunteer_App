@@ -22,6 +22,9 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
     private val authRepository = AuthRepository(db)
     private val cityRepository = CityRepository(db)
 
+    var loginUsername = ""
+    var loginPassword = ""
+
     val isSignInEnabled = MutableLiveData<Boolean>(false)
 
     var selectedCity = City("", "")
@@ -114,11 +117,14 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
 
     fun isFormFilled(): Int {
         if(signInTextFieldsValues[6] != signInTextFieldsValues[7]) {
-            Log.i("fieldValidation", "Passwords don't match!")
             return -2
         }
+
         if(selectedCity == City("", "") || selectedRole == VolunteerRole(0, "")) return -1
-        signInTextFieldsValues.forEach { if(it?.isBlank() == true) return 0 }
+
+        for (i in 0..7) {
+            if(signInTextFieldsValues[i]?.isBlank() == true) return 0
+        }
         return 1
     }
 

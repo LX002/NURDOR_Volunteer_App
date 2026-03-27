@@ -22,14 +22,11 @@ import com.example.nurdor_volunteer_app_v3.viewModel.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class LoginFragment: Fragment() {
 
     private lateinit var callback : OnSignInFragmentListener
     private lateinit var authViewModel: AuthViewModel
-    private var usernameValue: CharSequence? = ""
-    private var passwordValue: CharSequence? = ""
 
     private var txtUsername : EditText? = null
     private var txtPassword : EditText? = null
@@ -64,17 +61,17 @@ class LoginFragment: Fragment() {
         txtUsername = view.findViewById(R.id.txtUsername)
         txtPassword = view.findViewById(R.id.txtPassword)
 
-        if(authViewModel.usernameValue.isNotBlank()) txtUsername?.setText(authViewModel.usernameValue)
-        if(authViewModel.passwordValue.isNotBlank()) txtPassword?.setText(authViewModel.passwordValue)
+        if(authViewModel.loginUsername.isNotBlank()) txtUsername?.setText(authViewModel.loginUsername)
+        if(authViewModel.loginPassword.isNotBlank()) txtPassword?.setText(authViewModel.loginPassword)
 
         txtUsername?.doAfterTextChanged { text ->
-            authViewModel.usernameValue = text.toString()
-            Log.i("loginFragment", "username value: ${authViewModel.usernameValue}")
+            authViewModel.loginUsername = text.toString()
+            Log.i("loginFragment", "username value: ${authViewModel.loginUsername}")
         }
 
         txtPassword?.doAfterTextChanged { text ->
-            authViewModel.passwordValue = text.toString()
-            Log.i("loginFragment", "password value: ${authViewModel.passwordValue}")
+            authViewModel.loginPassword = text.toString()
+            Log.i("loginFragment", "password value: ${authViewModel.loginPassword}")
         }
 
         btnLogin?.setOnClickListener {

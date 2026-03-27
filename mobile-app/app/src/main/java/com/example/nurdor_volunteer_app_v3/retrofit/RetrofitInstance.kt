@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://192.168.0.102:8765"
+    private const val BASE_URL = "http://192.168.40.141:8765"
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(AuthInterceptor(NurdorVolunteerApplication.encryptedPrefs))

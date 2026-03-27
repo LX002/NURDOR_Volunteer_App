@@ -7,6 +7,8 @@ import com.example.nurdor_volunteer_app_v3.model.Volunteer
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
 import com.example.rma_project_demo_v1.dto.LoginDto
 import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
+import com.google.gson.Gson
+import com.google.gson.internal.LinkedTreeMap
 import retrofit2.awaitResponse
 
 class AuthRepository(db: AppDatabase) {
@@ -19,9 +21,11 @@ class AuthRepository(db: AppDatabase) {
         try {
             val response = api.login(loginDto).awaitResponse()
             if(response.isSuccessful) {
-                val loginData = response.body()?.get("data") as LoginResponseDto?
-                // [NOTE TO MYSELF] change this to DataStore in later version of project
-                // encryptedshared preferences in AuthViewModel, use application.context
+                val gson = Gson()
+                val loginData = gson.fromJson(
+                    gson.toJson(response.body()?.get("data") as? LinkedTreeMap<*, *>),
+                    LoginResponseDto::class.java
+                )
                 return loginData
             } else {
                 Log.e("retrofitApi1", "Login response failure! ${response.body()?.get("message")}")
@@ -38,7 +42,11 @@ class AuthRepository(db: AppDatabase) {
         return try {
             val response = api.register(registerDto).awaitResponse()
             if(response.isSuccessful) {
-                val registerData = response.body()?.get("data") as RegisterResponseDto
+                val gson = Gson()
+                val registerData = gson.fromJson(
+                    gson.toJson(response.body()?.get("data") as? LinkedTreeMap<*, *>),
+                    RegisterResponseDto::class.java)
+
                 val volunteer = Volunteer(
                     registerData.id,
                     registerDto.name,
@@ -51,7 +59,7 @@ class AuthRepository(db: AppDatabase) {
                     registerDto.nearestCity,
                     registerDto.volunteerRole
                 )
-                mVolunteerDao.insert(volunteer)
+                mVolunteerDao.insert(volunteer).toInt()
             } else {
                 0
             }
