@@ -46,9 +46,9 @@ class LoginFragment: Fragment() {
     ): View? {
         authViewModel = ViewModelProvider(this)[AuthViewModel::class]
         val view: View? = if(isLandscape()) {
-           inflater.inflate(R.layout.fragment_login, container, false)
+           inflater.inflate(R.layout.fragment_login_land, container, false)
         } else {
-            inflater.inflate(R.layout.fragment_login_land, container, false)
+            inflater.inflate(R.layout.fragment_login, container, false)
         }
         return view
     }
@@ -79,6 +79,7 @@ class LoginFragment: Fragment() {
             val password = txtPassword?.text.toString()
 
             CoroutineScope(Dispatchers.IO).launch {
+                // [NOTE TO SELF] use https because of this
                 val success = authViewModel.login(username, password)
                 if(success) {
                     val intent = Intent(requireContext(), HomeActivity::class.java)
@@ -88,7 +89,7 @@ class LoginFragment: Fragment() {
                     startActivity(intent)
                     requireActivity().finish()
                 } else {
-                    Log.e("loginFragment", "Login failure! No details available!")
+                    Log.e("loginListener", "Login failure! No details available!")
                 }
             }
 

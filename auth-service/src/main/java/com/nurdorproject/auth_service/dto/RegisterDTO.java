@@ -46,12 +46,12 @@ public class RegisterDTO implements Serializable {
     @Size(max = 500)
     private final String password;
 
-    private final byte[] profilePicture;
+    private final String profilePicture;
 
     @NotNull
     private final String zipCode;
 
     @NotNull
     @Min(1) @Max(2)
-    private final String volunteerRole;
+    private final Integer volunteerRole;
 }

@@ -8,7 +8,7 @@ data class RegisterDto(
     val email: String,
     val username: String,
     val password: String,
-    val profilePicture: String,
-    val nearestCity: String,
+    val profilePicture: String?,
+    val zipCode: String,
     val volunteerRole: Int
 )

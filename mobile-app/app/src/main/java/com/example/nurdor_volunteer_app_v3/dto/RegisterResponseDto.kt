@@ -6,7 +6,7 @@ data class RegisterResponseDto(
     val id: Int,
     val username: String,
     val email: String,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    val createdAt: String,
+    val updatedAt: String,
     val message: String
 )

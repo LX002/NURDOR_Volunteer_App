@@ -26,14 +26,14 @@ class AuthRepository(db: AppDatabase) {
                     gson.toJson(response.body()?.get("data") as? LinkedTreeMap<*, *>),
                     LoginResponseDto::class.java
                 )
+                Log.i("loginListener", "Login response successful")
                 return loginData
             } else {
-                Log.e("retrofitApi1", "Login response failure! ${response.body()?.get("message")}")
+                Log.e("loginListener", "Login response unsuccessful ${response.raw().message} ${response.errorBody()?.string()}")
             }
         } catch(e: Exception) {
-            // [NOTE TO SELF] change this to dialog popup...
-            Log.e("retrofitApi1", "Exception during login: ${e.message}")
-            return null
+            // [NOTE TO SELF] change this to dialog / toast popup...
+            Log.e("loginListener", "Exception during login: ${e.message}")
         }
         return null
     }
@@ -56,14 +56,17 @@ class AuthRepository(db: AppDatabase) {
                     registerDto.email,
                     registerDto.username,
                     registerDto.profilePicture,
-                    registerDto.nearestCity,
+                    registerDto.zipCode,
                     registerDto.volunteerRole
                 )
+                Log.i("signInButtonListener", "register response successful!")
                 mVolunteerDao.insert(volunteer).toInt()
             } else {
+                Log.i("signInButtonListener", "Register unsuccessful: ${response.raw().message}!")
                 0
             }
         } catch (e: Exception) {
+            Log.i("signInButtonListener", "Exception during registration: ${e.message}!")
             -1
         }
     }

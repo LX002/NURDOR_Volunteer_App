@@ -41,6 +41,8 @@ public class AuthController {
             throw new VolunteerAlreadyExistsException("Cannot register volunteer that already exists!");
         }
 
+        System.out.println("Registering with password: " + registerDTO.getPassword());
+
         // [NOTE TO SELF] you are assuming that everything goes well with saving... fix this?
         return ResponseHandler.generateResponse("User registered successfully", HttpStatus.OK, authService.register(registerDTO));
     }

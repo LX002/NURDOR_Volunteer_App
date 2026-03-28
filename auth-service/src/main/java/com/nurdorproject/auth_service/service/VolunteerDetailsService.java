@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,6 +24,9 @@ public class VolunteerDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Volunteer not found: " + username));
         String roleName = mapRoleIdToRole(volunteer.getVolunteerRole());
 
+        boolean match = BCrypt.checkpw("Password123!", volunteer.getPassword());
+        System.out.println("Password match is... " + match);
+
         return User.builder()
                 .username(volunteer.getUsername())
                 .password(volunteer.getPassword())
@@ -35,7 +39,7 @@ public class VolunteerDetailsService implements UserDetailsService {
     }
 
     public Volunteer findByUsername(String username) {
-        return volunteerRepository.findByEmail(username).orElse(null);
+        return volunteerRepository.findByUsername(username).orElse(null);
     }
 
     private String mapRoleIdToRole(int roleId) {

@@ -90,6 +90,7 @@ class SignInFragment: Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
         callback = context as OnLoginFragmentListener
     }
 
@@ -105,17 +106,13 @@ class SignInFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            if (isAdded && isVisible) {
-                Log.i("signInFragment", "Sign in is added to backStack and visible")
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.mainFrame, LoginFragment())
-                    .commit().also { (requireActivity() as AuthActivity).fragmentIndicator = 1 }
-            } else {
-                // Handle the case when the fragment isn't in a valid state to handle the back press
-                Log.i("signInFragment", "Sign in is added: $isAdded visible: $isVisible")
-            }
-        }
+//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+//            if (isAdded && isVisible) {
+//                parentFragmentManager.beginTransaction()
+//                    .replace(R.id.mainFrame, LoginFragment())
+//                    .commit().also { (requireActivity() as AuthActivity).fragmentIndicator = 1 }
+//            }
+//        }
 
         btnSignIn = view.findViewById(R.id.btnSignIn)
         authViewModel.isSignInEnabled.observe(requireActivity()) {
@@ -226,6 +223,7 @@ class SignInFragment: Fragment() {
         // klik na sign in i nista se ne desava, proveri validacije i ostalo (retrofit poziv nije a mozda i jeste)
         btnSignIn?.setOnClickListener {
             val isFormFilled = authViewModel.isFormFilled()
+            Log.i("signInButtonListener", "isFormFilled: $isFormFilled")
             when(isFormFilled) {
                 1 -> {
                     val registerAsync = CoroutineScope(Dispatchers.IO).async {
@@ -236,12 +234,17 @@ class SignInFragment: Fragment() {
                             txtPhone?.text.toString(),
                             txtEmail?.text.toString(),
                             txtUsername?.text.toString(),
-                            PasswordUtils.hashPassword(txtPassword?.text.toString()),
-                            profilePicture = profileImg?.let { Base64.getEncoder().encodeToString(profileImg).replace("\n", "") } as String,
-                            nearestCity = authViewModel.selectedCity.zipCode,
-                            volunteerRole = authViewModel.selectedRole.idVolunteerRole
+                            txtPassword?.text.toString(),
+                            profileImg?.let { Base64.getEncoder().encodeToString(profileImg).replace("\n", "") },
+                            authViewModel.selectedCity.zipCode,
+                            authViewModel.selectedRole.idVolunteerRole
                         )
-                        val result = authViewModel.register(registerDto)
+                        authViewModel.register(registerDto)
+                    }
+
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val result = registerAsync.await()
+                        Log.i("signInButtonListener", "registerResult: $result")
                         when {
                             result > 0 -> {
                                 Toast.makeText(requireContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show()
@@ -255,8 +258,6 @@ class SignInFragment: Fragment() {
                             }
                         }
                     }
-                    // TODO() - countinue this register functionality, branch it into when options, also continue
-                    // with AuthActivity afterwards... you'll know the rest... checkpoint 3 btw and beware of fragment indicator above!!!
                 }
                 0 -> {
                     // [NOTE TO SELF] change to dialog later

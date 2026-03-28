@@ -20,6 +20,7 @@ class AuthActivity : AppCompatActivity(), LoginFragment.OnSignInFragmentListener
     private var oldScreenOrientation: Int? = null
     private var newScreenOrientation: Int? = null
     var fragmentIndicator = 0
+    var previousPortraitFragmentIndicator = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,77 +32,42 @@ class AuthActivity : AppCompatActivity(), LoginFragment.OnSignInFragmentListener
             insets
         }
 
+        val sfm = supportFragmentManager
+
         onBackPressedDispatcher.addCallback(this) {
-            val fragmentManager = supportFragmentManager
-            if (fragmentManager.backStackEntryCount > 0) {
-                fragmentManager.popBackStack()
+            if (sfm.backStackEntryCount > 0) {
+                sfm.popBackStack()
             } else {
                 finish()
             }
         }
 
-        oldScreenOrientation = resources.configuration.orientation
         signInFragment = SignInFragment()
         loginFragment = LoginFragment()
 
-        savedInstanceState?.getInt("fragmentIndicator")?.let { f ->
-            Log.i("fragmentIndicator", "$f <-> $fragmentIndicator")
-
-            val newOri = savedInstanceState.getInt("newOrientation")
-            val oldOri = savedInstanceState.getInt("oldOrientation")
-            val transaction = supportFragmentManager.beginTransaction()
-
-            when(fragmentIndicator) {
-                0 -> {
-                    if(newOri == oldOri) {
-                        transaction.replace(R.id.loginFrame, loginFragment)
-                        transaction.replace(R.id.signInFrame, signInFragment)
-                        Log.i("authFragmentsTracker", "initial layout - landscape")
-                    } else {
-                        transaction.replace(R.id.mainFrame, loginFragment)
-                        fragmentIndicator = 1
-                        Log.i("authFragmentsTracker", "initial layout - portrait")
-                    }
-                }
-                1 -> {
-                    when (newOri) {
-                        Configuration.ORIENTATION_LANDSCAPE -> {
-                            transaction.replace(R.id.loginFrame, loginFragment)
-                            transaction.replace(R.id.signInFrame, signInFragment)
-                        }
-                        Configuration.ORIENTATION_PORTRAIT -> {
-                            transaction.replace(R.id.mainFrame, loginFragment)
-                        }
-                    }
-                }
-                2 -> {
-                    when (newOri) {
-                        Configuration.ORIENTATION_LANDSCAPE -> {
-                            transaction.replace(R.id.loginFrame, loginFragment)
-                            transaction.replace(R.id.signInFrame, signInFragment)
-                        }
-                        Configuration.ORIENTATION_PORTRAIT -> {
-                            transaction.replace(R.id.mainFrame, signInFragment)
-                        }
-                    }
-                }
-            }
-            transaction.commit()
-        } ?: let {
-            Log.i("authFragmentsTracker", "indicator null <-> $fragmentIndicator")
-            val transaction = supportFragmentManager.beginTransaction()
-            if(!isTwoPanelView()) {
-                transaction.replace(R.id.mainFrame, loginFragment)
-                fragmentIndicator = 1
-            } else {
-                transaction.replace(R.id.loginFrame, loginFragment)
-                transaction.replace(R.id.signInFrame, signInFragment)
-                fragmentIndicator = 0
-            }
-            transaction.commit()
+        if(isTwoPanelView()) {
+            fragmentIndicator = 0
+            previousPortraitFragmentIndicator = savedInstanceState?.getInt("fragmentIndicator") ?: 0
+            Log.i("fragmentIndicator", "ind: $fragmentIndicator")
+            sfm.beginTransaction()
+                .replace(R.id.loginFrame, loginFragment, "loginFrgLand")
+                .replace(R.id.signInFrame, signInFragment, "signInFrgLand")
+                .commit()
+        } else {
+            fragmentIndicator = savedInstanceState?.getInt("fragmentIndicator") ?: 1
+            Log.i("fragmentIndicator", "ind: $fragmentIndicator")
+            sfm.beginTransaction()
+                .replace(
+                    R.id.mainFrame,
+                    if(fragmentIndicator == 1) loginFragment else signInFragment,
+                    if(fragmentIndicator == 1) "loginFrgPort" else "signInFrgPort")
+                .commit()
         }
     }
 
+    private fun isTwoPanelView(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
 
     override fun showSignInForm() {
         if(!isTwoPanelView()) {
@@ -125,20 +91,12 @@ class AuthActivity : AppCompatActivity(), LoginFragment.OnSignInFragmentListener
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        newScreenOrientation = newConfig.orientation
-        recreate()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("fragmentIndicator", fragmentIndicator)
-        oldScreenOrientation?.let { outState.putInt("oldOrientation", oldScreenOrientation!!) }
-        newScreenOrientation?.let { outState.putInt("newOrientation", newScreenOrientation!!) }
+        val indicatorToSave = if(isTwoPanelView()) previousPortraitFragmentIndicator else fragmentIndicator
+        Log.i("fragmentIndicator", "onsaveinstance ind: $indicatorToSave")
+        outState.putInt("fragmentIndicator", indicatorToSave)
+
     }
 
-    private fun isTwoPanelView(): Boolean {
-        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    }
 }

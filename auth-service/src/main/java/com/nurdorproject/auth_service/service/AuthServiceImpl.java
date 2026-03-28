@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 @Service
 @AllArgsConstructor
@@ -23,6 +24,11 @@ public class AuthServiceImpl implements AuthService{
             // replace this with new exception, error detail etc
             throw new RuntimeException("User with that username already exists!");
         } else {
+            String encodedPicture = registerDTO.getProfilePicture();
+            byte[] picture = encodedPicture != null
+                    ? Base64.getDecoder().decode(encodedPicture)
+                    : null;
+
             Volunteer newVol = new Volunteer(
                     registerDTO.getName(),
                     registerDTO.getSurname(),
@@ -31,9 +37,9 @@ public class AuthServiceImpl implements AuthService{
                     registerDTO.getEmail(),
                     registerDTO.getUsername(),
                     passwordEncoder.encode(registerDTO.getPassword()),
-                    registerDTO.getProfilePicture(),
+                    picture,
                     registerDTO.getZipCode(),
-                    registerDTO.getVolunteerRole().equals("ADMIN") ? 1 : 2
+                    registerDTO.getVolunteerRole()
             );
 
             Volunteer saved = volunteerRepository.save(newVol);
@@ -41,8 +47,8 @@ public class AuthServiceImpl implements AuthService{
                     .id(saved.getId())
                     .username(saved.getUsername())
                     .email(saved.getEmail())
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
+                    .createdAt(LocalDateTime.now().toString())
+                    .updatedAt(LocalDateTime.now().toString())
                     .message("Volunteer saved successfuly!")
                     .build();
         }
