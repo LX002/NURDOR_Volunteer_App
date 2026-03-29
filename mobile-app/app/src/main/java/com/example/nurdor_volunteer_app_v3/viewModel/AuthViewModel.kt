@@ -39,7 +39,8 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
             authRepository.login(username, password)?.let { loginData ->
                 // [NOTE TO MYSELF] change this to DataStore in later version of project
                 val encryptedPrefs = NurdorVolunteerApplication.encryptedPrefs
-                encryptedPrefs.edit { putString("jwt_token", loginData.token) }
+                Log.i("loginViewModel", "token: ${loginData.accessToken}")
+                encryptedPrefs.edit { putString("jwt_token", loginData.accessToken) }
                 success = true
             }
 

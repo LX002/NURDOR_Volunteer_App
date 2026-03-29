@@ -4,10 +4,13 @@ data class EventDto(
     val id: Int,
     val eventName: String,
     val description: String,
+    val isStarted: Byte,
     val startTime: String,
     val endTime: String,
     val latitude: Double,
     val longitude: Double,
     val eventImg: String?,
     val locationDesc: String?,
-    val city: String)
+    val totalDonations: Long,
+    val city: String
+)

@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.repository.CityRepository
 import com.example.nurdor_volunteer_app_v3.repository.DatabaseClient
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
 class CityViewModel(application: Application): AndroidViewModel(application) {
@@ -19,9 +21,11 @@ class CityViewModel(application: Application): AndroidViewModel(application) {
     suspend fun findAll() = withContext(Dispatchers.IO) { cityRepository.findAll() }
 
     suspend fun fetchAll() {
-        withContext(Dispatchers.IO) {
+        val awaitCitiesFetch = CoroutineScope(Dispatchers.IO).async {
             cityRepository.fetchAll()
+            cityRepository.findAll()
         }
-        allCities.value = cityRepository.findAll()
+
+        allCities.value = awaitCitiesFetch.await()
     }
 }

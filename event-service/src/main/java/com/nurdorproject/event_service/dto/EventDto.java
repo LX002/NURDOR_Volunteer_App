@@ -33,7 +33,6 @@ public class EventDto {
     @JsonProperty("longitude")
     double longitude;
 
-    @JsonIgnore
     @JsonProperty("eventImg")
     String eventImg;
 

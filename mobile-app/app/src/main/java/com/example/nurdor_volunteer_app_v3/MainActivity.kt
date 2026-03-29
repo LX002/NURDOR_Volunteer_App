@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.activity.AuthActivity
+import com.example.nurdor_volunteer_app_v3.activity.HomeActivity
 import com.example.nurdor_volunteer_app_v3.activity.NoInternetConnectionActivity
 import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
 import kotlinx.coroutines.launch
@@ -53,10 +54,17 @@ class MainActivity : AppCompatActivity() {
 
             cityViewModel.allCities.observe(this) { cities ->
                 if(cities.isNotEmpty()) {
-                    val intent = Intent(this@MainActivity, AuthActivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    if(!NurdorVolunteerApplication.encryptedPrefs.getString("jwt_token", null).isNullOrBlank()) {
+                        val intent = Intent(this@MainActivity, HomeActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        }
+                        startActivity(intent)
+                    } else {
+                        val intent = Intent(this@MainActivity, AuthActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        }
+                        startActivity(intent)
                     }
-                    startActivity(intent)
                 }
             }
         } else {

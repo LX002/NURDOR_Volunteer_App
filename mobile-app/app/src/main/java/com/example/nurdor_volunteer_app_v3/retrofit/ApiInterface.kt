@@ -1,6 +1,7 @@
 package com.example.nurdor_volunteer_app_v3.retrofit
 
 import com.example.nurdor_volunteer_app_v3.dto.CityDto
+import com.example.nurdor_volunteer_app_v3.dto.EventDto
 import com.example.rma_project_demo_v1.dto.LoginDto
 import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
 import retrofit2.Call
@@ -20,5 +21,8 @@ interface ApiInterface {
     // volunteer-service calls
     @GET("/cities")
     fun fetchCities(): Call<List<CityDto>>
+
+    @GET("/volunteer/getEvents")
+    fun fetchEvents(): Call<List<EventDto>>
 
 }
