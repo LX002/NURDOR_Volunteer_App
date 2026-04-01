@@ -6,8 +6,6 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,12 +15,18 @@ import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.activity.AuthActivity
 import com.example.nurdor_volunteer_app_v3.activity.HomeActivity
 import com.example.nurdor_volunteer_app_v3.activity.NoInternetConnectionActivity
+import com.example.nurdor_volunteer_app_v3.utils.NotificationConstants
 import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.EventViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var cityViewModel: CityViewModel
+    private lateinit var eventViewModel: EventViewModel
+
+    private lateinit var eventsLogsViewModel: EventsLogViewModel
 
     override fun onStart() {
         super.onStart()
@@ -39,45 +43,46 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // add fetching remote data and storing into room?
-        // yes, fetch cities only, volunteer has login / register dto, after login rest of data (except other volunteers if volunteer role?)
-        // if admin logs in fetch other volunteers
-        // after login do another logo load and then activity with events
-
         cityViewModel = ViewModelProvider(this)[CityViewModel::class]
+        eventViewModel = ViewModelProvider(this)[EventViewModel::class]
+        eventsLogsViewModel = ViewModelProvider(this)[EventsLogViewModel::class]
 
+        var eventsAreFetched = false
+        var eventsLogsAreFetched = false
         val networkState = checkNetworkConnection()
         if(networkState.first || networkState.second) {
-            lifecycleScope.launch {
-                cityViewModel.fetchAll()
-            }
+            if(!NurdorVolunteerApplication.encryptedPrefs.getString("jwt_token", null).isNullOrBlank()) {
+                lifecycleScope.launch {
+                    eventViewModel.fetchAll()
+                    eventsLogsViewModel.fetchAll()
+                }
 
-            cityViewModel.allCities.observe(this) { cities ->
-                if(cities.isNotEmpty()) {
-                    if(!NurdorVolunteerApplication.encryptedPrefs.getString("jwt_token", null).isNullOrBlank()) {
-                        val intent = Intent(this@MainActivity, HomeActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        }
-                        startActivity(intent)
-                    } else {
-                        val intent = Intent(this@MainActivity, AuthActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        }
-                        startActivity(intent)
+                eventViewModel.allEvents.observe(this) {
+                    eventsAreFetched = true
+                    if(eventsLogsAreFetched) launchActivity(HomeActivity::class.java)
+                }
+
+                eventsLogsViewModel.allEventsLogs.observe(this) {
+                    eventsLogsAreFetched = true
+                    if(eventsAreFetched) launchActivity(HomeActivity::class.java)
+                }
+            } else {
+                lifecycleScope.launch {
+                    cityViewModel.fetchAll()
+                }
+                cityViewModel.allCities.observe(this) { cities ->
+                    if(cities.isNotEmpty()) {
+                        launchActivity(AuthActivity::class.java)
                     }
                 }
             }
         } else {
-            // checkpoint 1
-            val intent = Intent(this, NoInternetConnectionActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            }
-            startActivity(intent)
+            launchActivity(NoInternetConnectionActivity::class.java)
         }
     }
 
     private fun createNotificationChannel() {
-        val name = "nurdor_app_channel"
+        val name = NotificationConstants.CHANNEL_ID
         val description = "Nurdor App notifications"
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel = NotificationChannel(name, description, importance)
@@ -95,5 +100,12 @@ class MainActivity : AppCompatActivity() {
         val isCellular = networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
 
         return Pair(isWifi, isCellular)
+    }
+
+    private fun launchActivity(cls: Class<*>) {
+        val intent = Intent(this, cls).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+        startActivity(intent)
     }
 }

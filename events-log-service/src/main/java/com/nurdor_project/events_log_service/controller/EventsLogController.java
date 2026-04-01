@@ -51,4 +51,12 @@ public class EventsLogController {
                 ? new ResponseEntity<>(results[1], HttpStatus.NO_CONTENT)
                 : ResponseEntity.ok(results[1]);
     }
+
+    @GetMapping("/volunteer/eventsLogs/findAll")
+    public ResponseEntity<List<EventsLog>> findAll() {
+        List<EventsLog> eventsLogs = eventsLogService.findAll();
+        return !eventsLogs.isEmpty()
+                ? ResponseEntity.ok(eventsLogs)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

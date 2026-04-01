@@ -8,15 +8,19 @@ import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.nurdor_volunteer_app_v3.model.Event
+import java.time.LocalDateTime
 
 @Dao
 interface EventDao {
 
     @Query("SELECT * FROM event")
-    fun getEvents(): List<Event>
+    fun findAll(): List<Event>
 
-    @Query("SELECT * FROM event WHERE idEvent IN (:eventIds)")
-    fun getEventsWithIds(eventIds: List<Int>): List<Event>
+    @Query("SELECT * FROM event WHERE idEvent IN (SELECT idEvent FROM events_log WHERE volunteer = :volunteerId) AND startTime >= :now")
+    fun findUpcomingEventsByVolunteerId(volunteerId: Int, now: LocalDateTime): List<Event>
+
+    @Query("SELECT * FROM event WHERE startTime >= :now")
+    fun findUpcomingEvents(now: LocalDateTime): List<Event>
 
     //@Query("SELECT * FROM event WHERE idEvent IN (SELECT event FROM events_log WHERE volunteer = :idVolunteer)")
     @Query("SELECT * FROM event WHERE idEvent IN (SELECT DISTINCT event FROM events_log WHERE volunteer = :idVolunteer) AND dateTime(endTime) >= dateTime(:now) ORDER BY startTime")

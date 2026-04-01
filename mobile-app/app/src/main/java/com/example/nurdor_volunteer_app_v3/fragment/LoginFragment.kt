@@ -84,10 +84,12 @@ class LoginFragment: Fragment() {
                 if(success) {
                     val intent = Intent(requireContext(), HomeActivity::class.java)
                     val token = NurdorVolunteerApplication.encryptedPrefs.getString("jwt_token", null)
-                    val isAdmin = JwtUtils.getRoleFromToken(token).equals("ROLE_ADMIN")
-                    PreferenceHelper.setIsAdmin(requireContext(), isAdmin)
-                    startActivity(intent)
-                    requireActivity().finish()
+                    val role = JwtUtils.getRoleFromToken(token)
+                    role?.let {
+                        PreferenceHelper.setIsAdmin(requireContext(), role.roleName == "ROLE_ADMIN")
+                        startActivity(intent)
+                        requireActivity().finish()
+                    }
                 } else {
                     Log.e("loginListener", "Login failure! No details available!")
                 }

@@ -29,7 +29,7 @@ import java.time.format.DateTimeFormatter
 
 class EventsAdapter(private var events: MutableList<Event>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var selectedPosition: Int? = null
+    private var selectedPosition: Int = -1
 
     companion object {
         private const val NORMAL_LAYOUT = 0

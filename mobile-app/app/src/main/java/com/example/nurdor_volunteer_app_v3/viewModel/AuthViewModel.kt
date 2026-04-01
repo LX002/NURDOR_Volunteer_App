@@ -9,12 +9,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.application
 import com.example.nurdor_volunteer_app_v3.NurdorVolunteerApplication
 import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.model.VolunteerRole
 import com.example.nurdor_volunteer_app_v3.repository.CityRepository
 import com.example.nurdor_volunteer_app_v3.repository.DatabaseClient
+import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 
 class AuthViewModel(application: Application): AndroidViewModel(application) {
 
@@ -38,9 +40,10 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
             var success = false
             authRepository.login(username, password)?.let { loginData ->
                 // [NOTE TO MYSELF] change this to DataStore in later version of project
-                val encryptedPrefs = NurdorVolunteerApplication.encryptedPrefs
                 Log.i("loginViewModel", "token: ${loginData.accessToken}")
+                val encryptedPrefs = NurdorVolunteerApplication.encryptedPrefs
                 encryptedPrefs.edit { putString("jwt_token", loginData.accessToken) }
+                PreferenceHelper.setIdVolunteer(application, loginData.volunteerId)
                 success = true
             }
 

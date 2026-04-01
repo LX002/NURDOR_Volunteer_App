@@ -16,7 +16,7 @@ object PreferenceHelper {
 
     fun setLoggedIn(context: Context, isLoggedIn: Boolean) {
         val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        preferences.edit().putBoolean(KEY_IS_LOGGED_IN, isLoggedIn).apply()
+        preferences.edit { putBoolean(KEY_IS_LOGGED_IN, isLoggedIn) }
     }
 
     fun isLoggedIn(context: Context): Boolean {
@@ -26,7 +26,7 @@ object PreferenceHelper {
 
     fun setIdVolunteer(context: Context, idVolunteer: Int) {
         val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        preferences.edit().putInt(KEY_ID_VOLUNTEER, idVolunteer).apply()
+        preferences.edit { putInt(KEY_ID_VOLUNTEER, idVolunteer) }
     }
 
     fun getIdVolunteer(context: Context): Int {
@@ -36,7 +36,7 @@ object PreferenceHelper {
 
     fun setFirstLaunch(context: Context, isFirstLaunch: Boolean) {
         val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        preferences.edit().putBoolean(KEY_IS_FIRST_LAUNCH, isFirstLaunch).apply()
+        preferences.edit { putBoolean(KEY_IS_FIRST_LAUNCH, isFirstLaunch) }
     }
 
     fun isFirstLaunch(context: Context): Boolean {
@@ -72,12 +72,12 @@ object PreferenceHelper {
 
     fun setDarkMode(context: Context, isDarkMode: Boolean) {
         val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        preferences.edit().putBoolean(KEY_DARK_MODE, isDarkMode).apply()
+        preferences.edit { putBoolean(KEY_DARK_MODE, isDarkMode) }
     }
 
     fun setVolunteerNearestCity(context: Context, nearestCity: String) {
         val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        preferences.edit().putString(KEY_NEAREST_CITY, nearestCity).apply()
+        preferences.edit { putString(KEY_NEAREST_CITY, nearestCity) }
     }
 
     fun getVolunteerNearestCity(context: Context): String? {

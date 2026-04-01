@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoginResponse {
 
+    private Integer volunteerId;
     private String accessToken;
     private String tokenType = "Bearer";
 }

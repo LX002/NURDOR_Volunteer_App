@@ -1,7 +1,6 @@
 package com.example.nurdor_volunteer_app_v3.repository
 
 import android.util.Log
-import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.model.Event
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +18,7 @@ class EventRepository(db: AppDatabase) {
 
     suspend fun fetchEvents() {
         try {
-            val response = api.fetchEvents().awaitResponse()
+            val response = api.fetchAllEvents().awaitResponse()
             if(response.isSuccessful) {
                 Log.i("retrofitApi1", "City dto list fetched!")
                 val events = response.body()?.let { eventDtos ->
@@ -37,9 +36,7 @@ class EventRepository(db: AppDatabase) {
                         e.city
                     )}
                 }
-                withContext(Dispatchers.IO) {
-                    events?.let { mEventDao.insertEvents(events) }
-                }
+                events?.let { mEventDao.insertEvents(events) }
             } else {
                 // create dialog that displays this
                 Log.e("retrofitApi1", "Error during event fetching: ${response.raw().message}")
@@ -50,5 +47,12 @@ class EventRepository(db: AppDatabase) {
         }
     }
 
-    suspend fun findAll(): List<Event>
+    suspend fun findAll(): List<Event> =
+        withContext(Dispatchers.IO) { mEventDao.findAll() }
+
+    suspend fun findUpcomingEventsByVolunteerId(volunteerId: Int) =
+        withContext(Dispatchers.IO) { mEventDao.findUpcomingEventsByVolunteerId(volunteerId, LocalDateTime.now()) }
+
+    suspend fun findUpcomingEvents() =
+        withContext(Dispatchers.IO) { mEventDao.findUpcomingEvents(LocalDateTime.now()) }
 }

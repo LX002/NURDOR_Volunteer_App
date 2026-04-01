@@ -50,17 +50,19 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
-            //remove authenticate?
+            String username = loginDTO.getUsername();
             Authentication authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
-            UserDetails userDetails = volunteerDetailsService.loadUserByUsername(loginDTO.getUsername());
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, loginDTO.getPassword()));
+            UserDetails userDetails = volunteerDetailsService.loadUserByUsername(username);
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .toList();
             String jwt = jwtUtil.generateToken(userDetails.getUsername(), roles);
             LoginResponse loginResponse = LoginResponse
                     .builder()
+                    .volunteerId(volunteerDetailsService.findByUsername(username).getId())
                     .accessToken(jwt)
+                    .tokenType("Bearer")
                     .build();
             return ResponseHandler.generateResponse("Volunteer logged in successfully!", HttpStatus.OK, loginResponse);
         } catch(Exception ex) {

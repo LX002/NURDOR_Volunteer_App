@@ -14,7 +14,7 @@ class CityRepository(db: AppDatabase) {
 
     suspend fun fetchAll() {
         try {
-            val response = api.fetchCities().awaitResponse()
+            val response = api.fetchAllCities().awaitResponse()
             if(response.isSuccessful) {
                 Log.i("retrofitApi1", "City dto list fetched!")
                 val cities =  response.body()?.let { cityDtos ->

@@ -12,7 +12,7 @@ import com.example.nurdor_volunteer_app_v3.model.EventsLog
 interface EventsLogDao {
 
     @Query("SELECT * FROM events_log")
-    fun getEventsLogs(): List<EventsLog>
+    fun findAll(): List<EventsLog>
 
     //@Query("SELECT * FROM events_log WHERE idEventsLog IN (SELECT MIN(idEventsLog) FROM events_log WHERE volunteer = :idVolunteer GROUP BY volunteer, event)")
     @Query("SELECT * FROM events_log WHERE volunteer = :idVolunteer")
