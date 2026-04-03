@@ -3,10 +3,12 @@ package com.example.nurdor_volunteer_app_v3.viewModel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.application
 import com.example.nurdor_volunteer_app_v3.model.Event
 import com.example.nurdor_volunteer_app_v3.model.VolunteerRole
 import com.example.nurdor_volunteer_app_v3.repository.DatabaseClient
 import com.example.nurdor_volunteer_app_v3.repository.EventRepository
+import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -16,28 +18,20 @@ class EventViewModel(application: Application): AndroidViewModel(application) {
     private val eventRepository =
         EventRepository(DatabaseClient.getInstance(application).appDatabase)
 
-    val allEvents = MutableLiveData<List<Event>>()
-    val upcomingEvents = MutableLiveData<List<Event>>()
+    val allEvents = eventRepository.findAll()
+    val upcomingEvents = if(PreferenceHelper.isAdmin(application)) {
+        eventRepository.findUpcomingEvents()
+    } else {
+        eventRepository.findUpcomingEventsByVolunteerId(PreferenceHelper.getIdVolunteer(application))
+    }
 
     suspend fun fetchAll() {
-        val eventsFetch = CoroutineScope(Dispatchers.IO).async {
-            eventRepository.fetchEvents()
-            eventRepository.findAll()
-        }
-        allEvents.value = eventsFetch.await()
+        eventRepository.fetchEvents()
     }
 
-    suspend fun findUpcomingEventsForAdmin() {
-        val eventsFetch = CoroutineScope(Dispatchers.IO).async {
-            eventRepository.findUpcomingEvents()
-        }
-        upcomingEvents.value = eventsFetch.await()
+    fun findUpcomingEvents(isAdmin: Boolean): List<Event>? = if(isAdmin) {
+        eventRepository.findUpcomingEvents().value
+    } else {
+        eventRepository.findUpcomingEventsByVolunteerId(PreferenceHelper.getIdVolunteer(application)).value
     }
-    suspend fun findUpcomingEventsByVolunteerId(volunteerId: Int) {
-        val eventsFetch = CoroutineScope(Dispatchers.IO).async {
-            eventRepository.findUpcomingEventsByVolunteerId(volunteerId)
-        }
-        upcomingEvents.value = eventsFetch.await()
-    }
-
 }

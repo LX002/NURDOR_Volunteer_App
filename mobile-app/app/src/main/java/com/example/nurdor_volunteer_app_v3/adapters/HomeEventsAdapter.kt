@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,14 +28,14 @@ import java.util.Base64
 import androidx.core.net.toUri
 import com.example.nurdor_volunteer_app_v3.utils.PdfDownloadWorker
 
-class HomeEventsAdapter(private val events: MutableList<Event>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var selectedPosition: Int = -1
     companion object {
         private const val NORMAL_LAYOUT = 0
         private const val EXPANDED_LAYOUT = 1
 
-        private fun isThirdActionButonEnabled(event: Event, itemView: View): Boolean {
+        private fun isFirstActionButonEnabled(event: Event, itemView: View): Boolean {
             return if(PreferenceHelper.isAdmin(itemView.context)) {
                 LocalDateTime.now().isAfter(event.startTime)
                         && LocalDateTime.now().isBefore(event.endTime)
@@ -45,14 +46,13 @@ class HomeEventsAdapter(private val events: MutableList<Event>): RecyclerView.Ad
             }
         }
 
-        private fun loadImageIntoIntoImageView(img: ByteArray?, imageView: ImageView, itemViewContext: Context) {
+        private fun loadImageIntoIntoImageView(img: String?, imageView: ImageView, itemViewContext: Context) {
             img?.let {
-                val encodedImg = Base64.getEncoder().encodeToString(img)
-                val mimeType = ImageUtils.getMimeType(encodedImg)
+                val mimeType = ImageUtils.getMimeType(img)
                 mimeType?.let {
                     Glide.with(itemViewContext)
                         .asBitmap()
-                        .load("data:$mimeType;base64,$encodedImg")
+                        .load("data:$mimeType;base64,$img")
                         .override(250, 250)
                         .centerCrop()
                         .into(imageView)
@@ -91,7 +91,7 @@ class HomeEventsAdapter(private val events: MutableList<Event>): RecyclerView.Ad
             val txtTime: TextView = itemView.findViewById(R.id.txtTime)
             val txtDescription: TextView = itemView.findViewById(R.id.txtDescription)
             val imageView: ImageView = itemView.findViewById(R.id.imageView)
-            val thirdActionButton: Button = itemView.findViewById(R.id.btnJoin)
+            val firstActionButton: Button = itemView.findViewById(R.id.btnJoin)
             val btnLocation: Button = itemView.findViewById(R.id.btnLocation)
             val btnShare: Button = itemView.findViewById(R.id.btnShare)
             val txtDuration: TextView = itemView.findViewById(R.id.txtDuration)
@@ -105,11 +105,11 @@ class HomeEventsAdapter(private val events: MutableList<Event>): RecyclerView.Ad
             txtDescription.text = event.description
             txtLocation.text = if(!event.locationDesc.isNullOrBlank()) event.locationDesc else "Unknown"
 
-            thirdActionButton.isEnabled = isThirdActionButonEnabled(event, itemView)
+            firstActionButton.isEnabled = isFirstActionButonEnabled(event, itemView)
 
             loadImageIntoIntoImageView(event.eventImg, imageView, itemView.context)
 
-            thirdActionButton.setOnClickListener {
+            firstActionButton.setOnClickListener {
                 if(isAdmin) {
                     // TODO(): start event block
                     // prvo npr dijalog koji daje ponudu za broj standova
@@ -188,23 +188,33 @@ class HomeEventsAdapter(private val events: MutableList<Event>): RecyclerView.Ad
         notifyItemChanged(events.size - 1)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun addEvents(eventsToAdd: List<Event>?) {
         eventsToAdd?.let {
-            val startPosition = events.size
+            val startPosition = if(events.isEmpty()) 0 else events.size
             events.addAll(eventsToAdd)
-            notifyItemRangeInserted(startPosition, eventsToAdd.size)
+            notifyDataSetChanged()
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun removeEvent(event: Event) {
-        val removePos = events.indexOf(event)
-        val success = events.remove(event)
-        if(success) notifyItemRemoved(removePos)
+        events.isNotEmpty().let {
+            val removePos = events.indexOf(event)
+            val success = events.remove(event)
+            if(success) notifyDataSetChanged()
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     fun clear() {
         events.clear()
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateEvents(events: MutableList<Event>) {
+        this.events = events
         notifyDataSetChanged()
     }
 }

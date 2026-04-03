@@ -3,7 +3,9 @@ package com.example.nurdor_volunteer_app_v3.repository
 import android.util.Log
 import com.example.nurdor_volunteer_app_v3.model.Event
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import retrofit2.awaitResponse
 import java.time.LocalDateTime
@@ -31,12 +33,15 @@ class EventRepository(db: AppDatabase) {
                         LocalDateTime.parse(e.endTime, inputFormatter),
                         e.latitude,
                         e.longitude,
-                        if(!e.eventImg.isNullOrBlank()) Base64.getDecoder().decode(e.eventImg) else null,
+                        e.eventImg,
                         e.locationDesc,
                         e.city
                     )}
                 }
-                events?.let { mEventDao.insertEvents(events) }
+                val insertAsync = CoroutineScope(Dispatchers.IO).async {
+                    events?.let { mEventDao.insertEvents(events) }
+                }
+                insertAsync.await()
             } else {
                 // create dialog that displays this
                 Log.e("retrofitApi1", "Error during event fetching: ${response.raw().message}")
@@ -47,12 +52,12 @@ class EventRepository(db: AppDatabase) {
         }
     }
 
-    suspend fun findAll(): List<Event> =
-        withContext(Dispatchers.IO) { mEventDao.findAll() }
+    fun findAll() =
+        mEventDao.findAll()
 
-    suspend fun findUpcomingEventsByVolunteerId(volunteerId: Int) =
-        withContext(Dispatchers.IO) { mEventDao.findUpcomingEventsByVolunteerId(volunteerId, LocalDateTime.now()) }
+    fun findUpcomingEventsByVolunteerId(volunteerId: Int) =
+        mEventDao.findUpcomingEventsByVolunteerId(volunteerId, LocalDateTime.now())
 
-    suspend fun findUpcomingEvents() =
-        withContext(Dispatchers.IO) { mEventDao.findUpcomingEvents(LocalDateTime.now()) }
+    fun findUpcomingEvents() =
+        mEventDao.findUpcomingEvents(LocalDateTime.now())
 }

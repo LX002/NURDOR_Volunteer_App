@@ -53,7 +53,7 @@ public class ApiGatewayConfig {
                         .filters(f -> f.rewritePath("/volunteer/updatePresence", "/api/volunteer/eventLogs/updatePresence"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
                 .route("find-all-logs", r -> r.path("/volunteer/allEventsLogs")
-                        .filters(f -> f.rewritePath("/volunteer/allEventsLogs", "/api/volunteer/eventLogs/findAll"))
+                        .filters(f -> f.rewritePath("/volunteer/allEventsLogs", "/api/volunteer/eventsLogs/findAll"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
 
                 // donations-service routes

@@ -4,7 +4,9 @@ import android.util.Log
 import com.example.nurdor_volunteer_app_v3.dto.EventsLogDto
 import com.example.nurdor_volunteer_app_v3.model.EventsLog
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import retrofit2.awaitResponse
 
@@ -27,7 +29,10 @@ class EventsLogRepository(db: AppDatabase) {
                             e.note
                         )
                     }
-                    mEventsLogDao.insertEventsLogs(eventsLogs)
+                    val insertAsync = CoroutineScope(Dispatchers.IO).async {
+                        mEventsLogDao.insertEventsLogs(eventsLogs)
+                    }
+                    insertAsync.await()
                 }
             } else {
                 // create dialog that displays this
@@ -38,5 +43,5 @@ class EventsLogRepository(db: AppDatabase) {
         }
     }
 
-    suspend fun findAll() = withContext(Dispatchers.IO) { mEventsLogDao.findAll() }
+    fun findAll() = mEventsLogDao.findAll()
 }

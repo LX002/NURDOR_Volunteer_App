@@ -16,16 +16,9 @@ class CityViewModel(application: Application): AndroidViewModel(application) {
     private val cityRepository: CityRepository =
         CityRepository(DatabaseClient.getInstance(application).appDatabase)
 
-    val allCities = MutableLiveData<List<City>>()
-
-    suspend fun findAll() = withContext(Dispatchers.IO) { cityRepository.findAll() }
+    val allCities = cityRepository.findAll()
 
     suspend fun fetchAll() {
-        val awaitCitiesFetch = CoroutineScope(Dispatchers.IO).async {
-            cityRepository.fetchAll()
-            cityRepository.findAll()
-        }
-
-        allCities.value = awaitCitiesFetch.await()
+        cityRepository.fetchAll()
     }
 }

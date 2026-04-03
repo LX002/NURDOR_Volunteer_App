@@ -1,5 +1,6 @@
 package com.example.nurdor_volunteer_app_v3.repository.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -14,13 +15,13 @@ import java.time.LocalDateTime
 interface EventDao {
 
     @Query("SELECT * FROM event")
-    fun findAll(): List<Event>
+    fun findAll(): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE idEvent IN (SELECT idEvent FROM events_log WHERE volunteer = :volunteerId) AND startTime >= :now")
-    fun findUpcomingEventsByVolunteerId(volunteerId: Int, now: LocalDateTime): List<Event>
+    fun findUpcomingEventsByVolunteerId(volunteerId: Int, now: LocalDateTime): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE startTime >= :now")
-    fun findUpcomingEvents(now: LocalDateTime): List<Event>
+    fun findUpcomingEvents(now: LocalDateTime): LiveData<List<Event>>
 
     //@Query("SELECT * FROM event WHERE idEvent IN (SELECT event FROM events_log WHERE volunteer = :idVolunteer)")
     @Query("SELECT * FROM event WHERE idEvent IN (SELECT DISTINCT event FROM events_log WHERE volunteer = :idVolunteer) AND dateTime(endTime) >= dateTime(:now) ORDER BY startTime")

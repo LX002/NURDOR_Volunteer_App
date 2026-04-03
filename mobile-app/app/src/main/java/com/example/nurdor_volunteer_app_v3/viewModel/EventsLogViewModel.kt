@@ -15,13 +15,9 @@ class EventsLogViewModel(application: Application): AndroidViewModel(application
     private val eventsLogRepository =
         EventsLogRepository(DatabaseClient.getInstance(application).appDatabase)
 
-    val allEventsLogs = MutableLiveData<List<EventsLog>>()
+    val allEventsLogs = eventsLogRepository.findAll()
 
     suspend fun fetchAll() {
-        val eventsLogsAsync = CoroutineScope(Dispatchers.IO).async {
-            eventsLogRepository.fetchAll()
-            eventsLogRepository.findAll()
-        }
-        allEventsLogs.value = eventsLogsAsync.await()
+        eventsLogRepository.fetchAll()
     }
 }

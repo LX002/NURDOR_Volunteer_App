@@ -23,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.activity.AuthActivity
 import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
@@ -30,6 +31,7 @@ import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.model.VolunteerRole
 import com.example.nurdor_volunteer_app_v3.utils.PasswordUtils
 import com.example.nurdor_volunteer_app_v3.viewModel.AuthViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -59,6 +61,7 @@ class SignInFragment: Fragment() {
     private var profileImgName: String? = null
 
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var cityViewModel: CityViewModel
     private lateinit var oldImgPicker: ActivityResultLauncher<Intent>
     private lateinit var newImgPicker: ActivityResultLauncher<PickVisualMediaRequest>
 
@@ -100,19 +103,15 @@ class SignInFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         authViewModel = ViewModelProvider(requireActivity())[AuthViewModel::class]
+        cityViewModel = ViewModelProvider(requireActivity())[CityViewModel::class]
         return inflater.inflate(R.layout.fragment_sign_in , container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-//            if (isAdded && isVisible) {
-//                parentFragmentManager.beginTransaction()
-//                    .replace(R.id.mainFrame, LoginFragment())
-//                    .commit().also { (requireActivity() as AuthActivity).fragmentIndicator = 1 }
-//            }
-//        }
+        lifecycleScope.launch {
+            cityViewModel.fetchAll()
+        }
 
         btnSignIn = view.findViewById(R.id.btnSignIn)
         authViewModel.isSignInEnabled.observe(requireActivity()) {
@@ -145,7 +144,6 @@ class SignInFragment: Fragment() {
 
         val txtFields = listOf(txtName, txtSurname, txtAddress, txtPhone, txtEmail, txtUsername, txtPassword, txtRepeatPassword, txtProfileImg)
 
-        // [NOTE TO SELF] this refills the form with data already in view model
         for((i, txtField) in txtFields.withIndex()) {
             if(authViewModel.signInTextFieldsValues[i]?.isNotBlank() == true) {
                 txtField?.setText(authViewModel.signInTextFieldsValues[i])
@@ -155,45 +153,40 @@ class SignInFragment: Fragment() {
         spinnerNearestCity = view.findViewById(R.id.spinnerNearestCity)
         spinnerRole = view.findViewById(R.id.spinnerRole)
 
-        val adapterPair = CoroutineScope(Dispatchers.IO).async {
-            val c = ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                authViewModel.findCities())
+        val roleAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            listOf(VolunteerRole(1, "Admin"), VolunteerRole(2, "Volunteer"))
+        )
 
-            val r = ArrayAdapter(
+        cityViewModel.allCities.observe(viewLifecycleOwner) { cities ->
+            val cityAdapter = ArrayAdapter(
                 requireContext(),
                 android.R.layout.simple_spinner_item,
-                listOf(VolunteerRole(1, "Admin"), VolunteerRole(2, "Volunteer")))
-            Pair(c, r)
+                cities)
+            spinnerNearestCity?.adapter = cityAdapter
+            cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            val (cityAdapter, roleAdapter) = adapterPair.await()
-
-            cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinnerNearestCity?.adapter = cityAdapter
-            spinnerNearestCity?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                    authViewModel.selectedCity = cityAdapter.getItem(p2) as City
-                    Log.i("authViewModelFields", "sel city value: ${authViewModel.selectedCity}")
-                }
-                override fun onNothingSelected(p0: AdapterView<*>?) {
-                    Log.e("SignInFragment", "Nothing selected in spinnerNearestCity!")
-                }
+        spinnerNearestCity?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                authViewModel.selectedCity = spinnerNearestCity?.adapter?.getItem(p2) as City
+                Log.i("authViewModelFields", "sel city value: ${authViewModel.selectedCity}")
             }
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                Log.e("SignInFragment", "Nothing selected in spinnerNearestCity!")
+            }
+        }
 
-            roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinnerRole?.adapter = roleAdapter
-            spinnerRole?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                    authViewModel.selectedRole = roleAdapter.getItem(p2) as VolunteerRole
-                    Log.i("authViewModelFields", "sel role value: ${authViewModel.selectedRole}")
-                }
-
-                override fun onNothingSelected(p0: AdapterView<*>?) {
-                    Log.e("SignInFragment", "Nothing selected in spinnerRole!")
-                }
+        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerRole?.adapter = roleAdapter
+        spinnerRole?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                authViewModel.selectedRole = roleAdapter.getItem(p2) as VolunteerRole
+                Log.i("authViewModelFields", "sel role value: ${authViewModel.selectedRole}")
+            }
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                Log.e("SignInFragment", "Nothing selected in spinnerRole!")
             }
         }
 

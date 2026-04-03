@@ -11,11 +11,13 @@ import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.application
 import com.example.nurdor_volunteer_app_v3.NurdorVolunteerApplication
+import com.example.nurdor_volunteer_app_v3.dto.LoginResponseDto
 import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.model.VolunteerRole
 import com.example.nurdor_volunteer_app_v3.repository.CityRepository
 import com.example.nurdor_volunteer_app_v3.repository.DatabaseClient
+import com.example.nurdor_volunteer_app_v3.utils.JwtUtils
 import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 
 class AuthViewModel(application: Application): AndroidViewModel(application) {
@@ -27,7 +29,7 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
     var loginUsername = ""
     var loginPassword = ""
 
-    val isSignInEnabled = MutableLiveData<Boolean>(false)
+    val isSignInEnabled = MutableLiveData(false)
 
     var selectedCity = City("", "")
     var selectedRole = VolunteerRole(0, "")
@@ -35,34 +37,15 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
     val signInTextFieldsValues = mutableListOf<String?>("", "", "", "", "", "", "", "", "")
     val validationMsgs = mutableListOf<String?>("", "", "", "", "", "", "", "", "")
 
-    suspend fun login(username: String, password: String): Boolean {
+    suspend fun login(username: String, password: String): LoginResponseDto? {
         return withContext(Dispatchers.IO) {
-            var success = false
-            authRepository.login(username, password)?.let { loginData ->
-                // [NOTE TO MYSELF] change this to DataStore in later version of project
-                Log.i("loginViewModel", "token: ${loginData.accessToken}")
-                val encryptedPrefs = NurdorVolunteerApplication.encryptedPrefs
-                encryptedPrefs.edit { putString("jwt_token", loginData.accessToken) }
-                PreferenceHelper.setIdVolunteer(application, loginData.volunteerId)
-                success = true
-            }
-
-            if(!success) {
-                Log.e("retrofitApi1", "Login data is null!")
-            }
-            return@withContext success
+            authRepository.login(username, password)
         }
     }
 
     suspend fun register(registerDto: RegisterDto): Int {
         return withContext(Dispatchers.IO) {
             return@withContext authRepository.register(registerDto);
-        }
-    }
-
-    suspend fun findCities(): List<City> {
-        return withContext(Dispatchers.IO) {
-            return@withContext cityRepository.findAll()
         }
     }
 

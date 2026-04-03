@@ -3,7 +3,9 @@ package com.example.nurdor_volunteer_app_v3.repository
 import android.util.Log
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import retrofit2.awaitResponse
 
@@ -20,9 +22,11 @@ class CityRepository(db: AppDatabase) {
                 val cities =  response.body()?.let { cityDtos ->
                     cityDtos.map { c -> City(c.zipCode, c.cityName) }
                 }
-                withContext(Dispatchers.IO) {
+
+                val insertAsync = CoroutineScope(Dispatchers.IO).async {
                     cities?.let { mCityDao.insertCities(cities) }
                 }
+                insertAsync.await()
             } else {
                 // create dialog that displays this
                 Log.e("retrofitApi1", "Error during city fetching: ${response.raw().message}")
@@ -33,5 +37,5 @@ class CityRepository(db: AppDatabase) {
         }
     }
 
-    suspend fun findAll(): List<City> = withContext(Dispatchers.IO) { mCityDao.findAll() }
+    fun findAll() = mCityDao.findAll()
 }

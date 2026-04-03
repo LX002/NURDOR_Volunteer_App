@@ -9,6 +9,9 @@ import com.example.rma_project_demo_v1.dto.LoginDto
 import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
 import com.google.gson.Gson
 import com.google.gson.internal.LinkedTreeMap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import retrofit2.awaitResponse
 
 class AuthRepository(db: AppDatabase) {
@@ -60,7 +63,10 @@ class AuthRepository(db: AppDatabase) {
                     registerDto.volunteerRole
                 )
                 Log.i("signInButtonListener", "register response successful!")
-                mVolunteerDao.insert(volunteer).toInt()
+                val insertAsync = CoroutineScope(Dispatchers.IO).async {
+                    mVolunteerDao.insert(volunteer).toInt()
+                }
+                insertAsync.await()
             } else {
                 Log.i("signInButtonListener", "Register unsuccessful: ${response.raw().message}!")
                 0

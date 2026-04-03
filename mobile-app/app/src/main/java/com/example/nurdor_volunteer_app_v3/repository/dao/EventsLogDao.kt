@@ -1,5 +1,6 @@
 package com.example.nurdor_volunteer_app_v3.repository.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -12,7 +13,7 @@ import com.example.nurdor_volunteer_app_v3.model.EventsLog
 interface EventsLogDao {
 
     @Query("SELECT * FROM events_log")
-    fun findAll(): List<EventsLog>
+    fun findAll(): LiveData<List<EventsLog>>
 
     //@Query("SELECT * FROM events_log WHERE idEventsLog IN (SELECT MIN(idEventsLog) FROM events_log WHERE volunteer = :idVolunteer GROUP BY volunteer, event)")
     @Query("SELECT * FROM events_log WHERE volunteer = :idVolunteer")

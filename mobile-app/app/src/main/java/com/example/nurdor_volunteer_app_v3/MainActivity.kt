@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -47,37 +48,20 @@ class MainActivity : AppCompatActivity() {
         eventViewModel = ViewModelProvider(this)[EventViewModel::class]
         eventsLogsViewModel = ViewModelProvider(this)[EventsLogViewModel::class]
 
-        var eventsAreFetched = false
-        var eventsLogsAreFetched = false
         val networkState = checkNetworkConnection()
-        if(networkState.first || networkState.second) {
-            if(!NurdorVolunteerApplication.encryptedPrefs.getString("jwt_token", null).isNullOrBlank()) {
-                lifecycleScope.launch {
-                    eventViewModel.fetchAll()
-                    eventsLogsViewModel.fetchAll()
-                }
-
-                eventViewModel.allEvents.observe(this) {
-                    eventsAreFetched = true
-                    if(eventsLogsAreFetched) launchActivity(HomeActivity::class.java)
-                }
-
-                eventsLogsViewModel.allEventsLogs.observe(this) {
-                    eventsLogsAreFetched = true
-                    if(eventsAreFetched) launchActivity(HomeActivity::class.java)
+        lifecycleScope.launch {
+            if(networkState.first || networkState.second) {
+                eventViewModel.fetchAll()
+                eventsLogsViewModel.fetchAll()
+                cityViewModel.fetchAll()
+                if(!NurdorVolunteerApplication.encryptedPrefs.getString("jwt_token", null).isNullOrBlank()) {
+                    launchActivity(HomeActivity::class.java)
+                } else {
+                    launchActivity(AuthActivity::class.java)
                 }
             } else {
-                lifecycleScope.launch {
-                    cityViewModel.fetchAll()
-                }
-                cityViewModel.allCities.observe(this) { cities ->
-                    if(cities.isNotEmpty()) {
-                        launchActivity(AuthActivity::class.java)
-                    }
-                }
+                launchActivity(NoInternetConnectionActivity::class.java)
             }
-        } else {
-            launchActivity(NoInternetConnectionActivity::class.java)
         }
     }
 
@@ -102,7 +86,11 @@ class MainActivity : AppCompatActivity() {
         return Pair(isWifi, isCellular)
     }
 
-    private fun launchActivity(cls: Class<*>) {
+    private suspend fun launchActivity(cls: Class<*>) {
+        Log.i(
+            "observersLog",
+            "launch activity upevents state: ${eventViewModel.upcomingEvents.value}"
+        )
         val intent = Intent(this, cls).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }

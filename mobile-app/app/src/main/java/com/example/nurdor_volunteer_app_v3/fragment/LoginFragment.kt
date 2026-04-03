@@ -10,23 +10,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import androidx.core.content.edit
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.application
+import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.NurdorVolunteerApplication
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.activity.HomeActivity
+import com.example.nurdor_volunteer_app_v3.dto.LoginResponseDto
 import com.example.nurdor_volunteer_app_v3.utils.JwtUtils
 import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 import com.example.nurdor_volunteer_app_v3.viewModel.AuthViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.EventViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class LoginFragment: Fragment() {
 
     private lateinit var callback : OnSignInFragmentListener
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var eventViewModel: EventViewModel
+    private lateinit var eventsLogViewModel: EventsLogViewModel
 
     private var txtUsername : EditText? = null
     private var txtPassword : EditText? = null
@@ -45,6 +54,8 @@ class LoginFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         authViewModel = ViewModelProvider(this)[AuthViewModel::class]
+        eventViewModel = ViewModelProvider(this)[EventViewModel::class]
+        eventsLogViewModel = ViewModelProvider(this)[EventsLogViewModel::class]
         val view: View? = if(isLandscape()) {
            inflater.inflate(R.layout.fragment_login_land, container, false)
         } else {
@@ -75,26 +86,12 @@ class LoginFragment: Fragment() {
         }
 
         btnLogin?.setOnClickListener {
-            val username = txtUsername?.text.toString()
-            val password = txtPassword?.text.toString()
-
-            CoroutineScope(Dispatchers.IO).launch {
-                // [NOTE TO SELF] use https because of this
-                val success = authViewModel.login(username, password)
-                if(success) {
-                    val intent = Intent(requireContext(), HomeActivity::class.java)
-                    val token = NurdorVolunteerApplication.encryptedPrefs.getString("jwt_token", null)
-                    val role = JwtUtils.getRoleFromToken(token)
-                    role?.let {
-                        PreferenceHelper.setIsAdmin(requireContext(), role.roleName == "ROLE_ADMIN")
-                        startActivity(intent)
-                        requireActivity().finish()
-                    }
-                } else {
-                    Log.e("loginListener", "Login failure! No details available!")
-                }
+            CoroutineScope(Dispatchers.Main).launch {
+                loginAndRedirectToHome(
+                    txtUsername?.text.toString(),
+                    txtPassword?.text.toString()
+                )
             }
-
         }
 
         btnShowSignIn?.setOnClickListener {
@@ -102,14 +99,26 @@ class LoginFragment: Fragment() {
         }
     }
 
-    // [NOTE TO SELF] not needed if I'm using view model fields?
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        outState.putString("usernameValue", txtUsername?.text.toString())
-//        outState.putString("passwordValue", txtPassword?.text.toString())
-//    }
-
     private fun isLandscape(): Boolean {
         return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
+
+    private suspend fun loginAndRedirectToHome(username: String, password: String) {
+        val loginResponseDto = authViewModel.login(username, password)
+        loginResponseDto?.let {
+            val intent = Intent(requireContext(), HomeActivity::class.java)
+            editPreferences(loginResponseDto)
+            startActivity(intent)
+            requireActivity().finish()
+        }
+    }
+
+    private fun editPreferences(loginResponseDto: LoginResponseDto) {
+        val encryptedPrefs = NurdorVolunteerApplication.encryptedPrefs
+        encryptedPrefs.edit { putString("jwt_token", loginResponseDto.accessToken) }
+        PreferenceHelper.setIdVolunteer(requireContext(), loginResponseDto.volunteerId)
+        val role = JwtUtils.getRoleFromToken(loginResponseDto.accessToken)
+        role?.let { PreferenceHelper.setIsAdmin(requireContext(), role.roleName == "ROLE_ADMIN") }
+        Log.i("observersLog", "preferences: ID: ${loginResponseDto.volunteerId} role: $role")
     }
 }
