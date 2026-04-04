@@ -1,5 +1,6 @@
 package com.example.nurdor_volunteer_app_v3.repository.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -20,21 +21,17 @@ interface VolunteerDao {
     fun findVolunteerByUsername(username: String): Volunteer?
 
     @Query("SELECT * FROM volunteer")
-    fun getVolunteers(): List<Volunteer>
+    fun findAll(): LiveData<List<Volunteer>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOrReplaceVolunteers(volunteersList: List<Volunteer>)
 
-    @Delete
-    fun deleteVolunteers(volunteers: List<Volunteer>)
+    @Query("SELECT * FROM volunteer WHERE id IN (SELECT volunteer FROM events_log WHERE event = :idEvent AND note = 'initLog' )")
+    fun findEnrolledVolunteersByIdEvent(idEvent: Int): LiveData<List<Volunteer>>
 
     @Query("SELECT * FROM volunteer WHERE id IN (SELECT DISTINCT volunteer FROM events_log WHERE event = :idEvent AND isPresent = 1) ORDER BY surname")
     fun getPresentVolunteers(idEvent: Int): List<Volunteer>
 
     @Query("SELECT * FROM volunteer WHERE id = :idVolunteer")
     fun getVolunteerById(idVolunteer: Int): Volunteer?
-
-    @Query("SELECT * FROM volunteer WHERE id IN (SELECT DISTINCT volunteer FROM events_log WHERE event = :idEvent)")
-    fun getVolunteersAtEvent(idEvent: Int): List<Volunteer>
-
 }

@@ -5,6 +5,7 @@ import com.example.nurdor_volunteer_app_v3.dto.EventDto
 import com.example.nurdor_volunteer_app_v3.dto.EventsLogDto
 import com.example.rma_project_demo_v1.dto.LoginDto
 import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
+import com.example.nurdor_volunteer_app_v3.dto.VolunteerDto
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -22,6 +23,8 @@ interface ApiInterface {
     fun register(@Body volunteer: RegisterDto): Call<Map<String, Object>>
 
     // volunteer-service calls
+    @GET("/admin/volunteers")
+    fun fetchAllVolunteers(): Call<List<VolunteerDto>>
     @GET("/cities")
     fun fetchAllCities(): Call<List<CityDto>>
 

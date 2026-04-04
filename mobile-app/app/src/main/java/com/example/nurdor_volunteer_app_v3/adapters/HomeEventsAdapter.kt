@@ -26,6 +26,7 @@ import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 import java.time.LocalDateTime
 import java.util.Base64
 import androidx.core.net.toUri
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.EnrolledVolunteersDialog
 import com.example.nurdor_volunteer_app_v3.utils.PdfDownloadWorker
 
 class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -178,6 +179,15 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             selectedPosition = if(selectedPosition == position) -1 else position
             notifyItemChanged(previousPosition)
             notifyItemChanged(selectedPosition)
+        }
+
+        holder.itemView.setOnLongClickListener { view ->
+            val context = view.context
+            val idEvent = events[position].idEvent
+            if(context is AppCompatActivity && idEvent != null) {
+                EnrolledVolunteersDialog(idEvent).show(context.supportFragmentManager, "ProfileDetailsDialog")
+            }
+            true
         }
     }
 
