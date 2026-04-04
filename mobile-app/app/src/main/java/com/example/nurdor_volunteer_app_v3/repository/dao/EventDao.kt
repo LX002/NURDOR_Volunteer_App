@@ -17,7 +17,7 @@ interface EventDao {
     @Query("SELECT * FROM event")
     fun findAll(): LiveData<List<Event>>
 
-    @Query("SELECT * FROM event WHERE idEvent IN (SELECT idEvent FROM events_log WHERE volunteer = :volunteerId) AND startTime >= :now")
+    @Query("SELECT * FROM event WHERE idEvent IN (SELECT event FROM events_log WHERE volunteer = :volunteerId) AND startTime >= :now")
     fun findUpcomingEventsByVolunteerId(volunteerId: Int, now: LocalDateTime): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE startTime >= :now")

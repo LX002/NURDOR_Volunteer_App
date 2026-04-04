@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 
     private suspend fun launchActivity(cls: Class<*>) {
         Log.i(
-            "observersLog",
+            "lifecycleScopeLaunch",
             "launch activity upevents state: ${eventViewModel.upcomingEvents.value}"
         )
         val intent = Intent(this, cls).apply {

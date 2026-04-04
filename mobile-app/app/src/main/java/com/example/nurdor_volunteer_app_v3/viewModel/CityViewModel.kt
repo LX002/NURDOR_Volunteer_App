@@ -1,6 +1,7 @@
 package com.example.nurdor_volunteer_app_v3.viewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.nurdor_volunteer_app_v3.model.City

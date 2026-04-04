@@ -1,7 +1,9 @@
 package com.example.nurdor_volunteer_app_v3.viewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.application
 import com.example.nurdor_volunteer_app_v3.model.Event
@@ -18,20 +20,16 @@ class EventViewModel(application: Application): AndroidViewModel(application) {
     private val eventRepository =
         EventRepository(DatabaseClient.getInstance(application).appDatabase)
 
-    val allEvents = eventRepository.findAll()
-    val upcomingEvents = if(PreferenceHelper.isAdmin(application)) {
+    val allEvents =
+        eventRepository.findAll()
+    val upcomingEvents =
         eventRepository.findUpcomingEvents()
-    } else {
+
+    val upcomingEventsByVolunteerId =
         eventRepository.findUpcomingEventsByVolunteerId(PreferenceHelper.getIdVolunteer(application))
-    }
 
     suspend fun fetchAll() {
         eventRepository.fetchEvents()
     }
 
-    fun findUpcomingEvents(isAdmin: Boolean): List<Event>? = if(isAdmin) {
-        eventRepository.findUpcomingEvents().value
-    } else {
-        eventRepository.findUpcomingEventsByVolunteerId(PreferenceHelper.getIdVolunteer(application)).value
-    }
 }

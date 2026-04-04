@@ -109,8 +109,13 @@ class SignInFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launch {
-            cityViewModel.fetchAll()
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (isAdded && isVisible) {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.mainFrame, LoginFragment())
+                    .commit().also { (requireActivity() as AuthActivity).fragmentIndicator = 1 }
+            }
         }
 
         btnSignIn = view.findViewById(R.id.btnSignIn)

@@ -86,7 +86,7 @@ class LoginFragment: Fragment() {
         }
 
         btnLogin?.setOnClickListener {
-            CoroutineScope(Dispatchers.Main).launch {
+            lifecycleScope.launch {
                 loginAndRedirectToHome(
                     txtUsername?.text.toString(),
                     txtPassword?.text.toString()

@@ -71,10 +71,7 @@ class HomeActivity : AppCompatActivity() {
         eventsRcView.layoutManager = LinearLayoutManager(this)
         eventsRcView.adapter = homeEventsAdapter
 
-        eventViewModel.upcomingEvents.observe(this) { events ->
-            Log.i("observersLog", "upcoming events: $events")
-            homeEventsAdapter.updateEvents(events as MutableList<Event>)
-        }
+        setUpEventsObserver(homeEventsAdapter)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -90,6 +87,10 @@ class HomeActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when {
             item.itemId == R.id.itemSettings -> {
+                true
+            }
+            item.itemId == R.id.itemRefresh -> {
+                fetchHomeEvents()
                 true
             }
             item.itemId == R.id.itemLogout -> {
@@ -112,5 +113,26 @@ class HomeActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+    }
+
+    private fun fetchHomeEvents() {
+        lifecycleScope.launch {
+            eventViewModel.fetchAll()
+            eventsLogViewModel.fetchAll()
+        }
+    }
+
+    private fun setUpEventsObserver(homeEventsAdapter: HomeEventsAdapter) {
+        if(!PreferenceHelper.isAdmin(this)) {
+            eventViewModel.upcomingEventsByVolunteerId.observe(this) { events ->
+                Log.i("upcomingEvents", "upcoming events role volunteer: ${events.size}")
+                homeEventsAdapter.updateEvents(events as MutableList<Event>)
+            }
+        } else {
+            eventViewModel.upcomingEvents.observe(this) { events ->
+                Log.i("upcomingEvents", "upcoming events role admin: ${events.size}")
+                homeEventsAdapter.updateEvents(events as MutableList<Event>)
+            }
+        }
     }
 }
