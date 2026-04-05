@@ -23,7 +23,7 @@ interface ApiInterface {
     fun register(@Body volunteer: RegisterDto): Call<Map<String, Object>>
 
     // volunteer-service calls
-    @GET("/admin/volunteers")
+    @GET("/volunteer/volunteers")
     fun fetchAllVolunteers(): Call<List<VolunteerDto>>
     @GET("/cities")
     fun fetchAllCities(): Call<List<CityDto>>

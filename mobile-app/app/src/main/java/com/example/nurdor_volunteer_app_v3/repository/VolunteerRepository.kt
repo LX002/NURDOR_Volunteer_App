@@ -13,10 +13,11 @@ class VolunteerRepository(db: AppDatabase) {
     private val api = RetrofitInstance.instance
     private val mVolunteerDao = db.volunteerDao()
 
-    suspend fun fetchVolunteers() {
+    suspend fun fetchAll() {
         try {
             val response = api.fetchAllVolunteers().awaitResponse()
             if(response.isSuccessful) {
+                Log.i("enrolled", "response body success")
                 val volunteers = response.body()?.let { volunteersDtos ->
                     volunteersDtos.map { v -> Volunteer(
                         v.id,
@@ -33,6 +34,7 @@ class VolunteerRepository(db: AppDatabase) {
                 }
 
                 val insertAsync = CoroutineScope(Dispatchers.IO).async {
+                    Log.i("enrolled", "inserting enrolled vols")
                     volunteers?.let { mVolunteerDao.insertOrReplaceVolunteers(volunteers) }
                 }
 

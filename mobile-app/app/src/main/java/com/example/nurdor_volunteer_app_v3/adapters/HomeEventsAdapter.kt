@@ -46,22 +46,6 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
                         && event.isStarted == 1.toByte()
             }
         }
-
-        private fun loadImageIntoIntoImageView(img: String?, imageView: ImageView, itemViewContext: Context) {
-            img?.let {
-                val mimeType = ImageUtils.getMimeType(img)
-                mimeType?.let {
-                    Glide.with(itemViewContext)
-                        .asBitmap()
-                        .load("data:$mimeType;base64,$img")
-                        .override(250, 250)
-                        .centerCrop()
-                        .into(imageView)
-                }
-            } ?: {
-                imageView.setImageResource(R.drawable.ic_launcher_background)
-            }
-        }
     }
 
     val elements: List<Event>
@@ -79,7 +63,7 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             txtDate.text = formattedStartTime.split(" ")[0]
             txtTime.text = formattedStartTime.split(" ")[1]
 
-            loadImageIntoIntoImageView(event.eventImg, imageView, itemView.context)
+            ImageUtils.loadImageIntoIntoImageView(event.eventImg, R.drawable.unknown_event ,imageView, itemView.context)
         }
     }
 
@@ -108,7 +92,7 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
 
             firstActionButton.isEnabled = isFirstActionButonEnabled(event, itemView)
 
-            loadImageIntoIntoImageView(event.eventImg, imageView, itemView.context)
+            ImageUtils.loadImageIntoIntoImageView(event.eventImg, R.drawable.unknown_event, imageView, itemView.context)
 
             firstActionButton.setOnClickListener {
                 if(isAdmin) {

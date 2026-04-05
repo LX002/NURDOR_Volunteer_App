@@ -11,6 +11,10 @@ class VolunteerViewModel(application: Application): AndroidViewModel(application
         VolunteerRepository(DatabaseClient.getInstance(application).appDatabase)
 
 
+    suspend fun fetchAll() {
+        volunteerRepository.fetchAll()
+    }
+
     fun findEnrolledVolunteersByIdEvent(idEvent: Int) =
         volunteerRepository.findEnrolledVolunteersByIdEvent(idEvent)
 }

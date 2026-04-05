@@ -96,6 +96,12 @@
     <string name="refresh">Refresh</string>
     <string name="about_nurdor">About NURDOR</string>
     <string name="about_text">s</string>
+    <string name="send_email">Send email</string>
+    <string name="view_profile">View profile</string>
+    <string name="remove_from_event">Remove from event</string>
+    <string name="enrolled_volunteers">Enrolled volunteers</string>
+    <string name="phone_number">Phone number</string>
+    <string name="address">Address</string>
     <string-array name="sort_add_events_types">
         <item></item>
         <item>Name</item>
