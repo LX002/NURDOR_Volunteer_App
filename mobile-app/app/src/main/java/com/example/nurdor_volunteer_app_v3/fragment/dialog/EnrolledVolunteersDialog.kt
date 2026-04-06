@@ -18,16 +18,25 @@ import com.example.nurdor_volunteer_app_v3.viewModel.VolunteerViewModel
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 
-class EnrolledVolunteersDialog(
-    private val idEvent: Int
-): DialogFragment() {
+class EnrolledVolunteersDialog: DialogFragment() {
 
     private lateinit var volunteerViewModel: VolunteerViewModel
+
+    companion object {
+        fun newInstance(idEvent: Int): EnrolledVolunteersDialog {
+            return EnrolledVolunteersDialog().apply {
+                arguments = Bundle().apply {
+                    putInt("idEvent", idEvent)
+                }
+            }
+        }
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         super.onCreateDialog(savedInstanceState)
 
-        volunteerViewModel = ViewModelProvider(requireActivity())[VolunteerViewModel::class]
+        val idEvent = requireArguments().getInt("idEvent")
+        volunteerViewModel = ViewModelProvider(this)[VolunteerViewModel::class]
         lifecycleScope.launch {
             Log.i("enrolled", "fetching all vols")
             volunteerViewModel.fetchAll()
@@ -41,7 +50,7 @@ class EnrolledVolunteersDialog(
         rcEnrolledVolunteers.layoutManager = LinearLayoutManager(requireContext())
         rcEnrolledVolunteers.adapter = enrolledVolunteersAdapter
 
-        volunteerViewModel.findEnrolledVolunteersByIdEvent(idEvent).observe(requireActivity()) { volunteers ->
+        volunteerViewModel.findEnrolledVolunteersByIdEvent(idEvent).observe(this) { volunteers ->
             Log.i("enrolled", "enrolled vols: $volunteers")
             enrolledVolunteersAdapter.updateEnrolledVolunteers(volunteers)
         }

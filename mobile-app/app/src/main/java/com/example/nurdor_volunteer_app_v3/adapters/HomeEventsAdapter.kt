@@ -169,7 +169,7 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             val context = view.context
             val idEvent = events[position].idEvent
             if(context is AppCompatActivity && idEvent != null) {
-                EnrolledVolunteersDialog(idEvent).show(context.supportFragmentManager, "ProfileDetailsDialog")
+                EnrolledVolunteersDialog.newInstance(idEvent).show(context.supportFragmentManager, "ProfileDetailsDialog")
             }
             true
         }
