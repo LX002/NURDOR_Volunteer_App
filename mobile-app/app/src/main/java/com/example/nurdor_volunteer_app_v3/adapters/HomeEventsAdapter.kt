@@ -27,6 +27,7 @@ import java.time.LocalDateTime
 import java.util.Base64
 import androidx.core.net.toUri
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.EnrolledVolunteersDialog
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.SetUpStandsForEventDialog
 import com.example.nurdor_volunteer_app_v3.utils.PdfDownloadWorker
 
 class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -98,6 +99,7 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
                 if(isAdmin) {
                     // TODO(): start event block
                     // prvo npr dijalog koji daje ponudu za broj standova
+                    event.idEvent?.let { SetUpStandsForEventDialog.newInstance(it).show((itemView.context as AppCompatActivity).supportFragmentManager, "setUpStandsForEventDialog") }
                     // nakon toga start eventa sa dva tab fragmenta - prisutni volonteri i standovi i njihov status
                     // refresh opcija za oba, zavrsavanjem se vraca na home screen
                     // admin ima i opciju u home meniju started events kojima moze opet pristupiti i pratiti stanje
@@ -169,7 +171,7 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             val context = view.context
             val idEvent = events[position].idEvent
             if(context is AppCompatActivity && idEvent != null) {
-                EnrolledVolunteersDialog.newInstance(idEvent).show(context.supportFragmentManager, "ProfileDetailsDialog")
+                EnrolledVolunteersDialog.newInstance(idEvent).show(context.supportFragmentManager, "enrolledVolunteersDialog")
             }
             true
         }

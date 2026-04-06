@@ -103,6 +103,10 @@
     <string name="enrolled_volunteers">Enrolled volunteers</string>
     <string name="phone_number">Phone number</string>
     <string name="address">Address</string>
+    <string name="set_up_event">Set up event</string>
+    <string name="number_of_stands">Number of stands</string>
+    <string name="start">Start</string>
+    <string name="cancel">Cancel</string>
     <string-array name="sort_add_events_types">
         <item></item>
         <item>Naziv</item>
