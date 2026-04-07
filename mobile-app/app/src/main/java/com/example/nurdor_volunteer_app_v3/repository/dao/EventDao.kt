@@ -17,11 +17,20 @@ interface EventDao {
     @Query("SELECT * FROM event")
     fun findAll(): LiveData<List<Event>>
 
-    @Query("SELECT * FROM event WHERE idEvent IN (SELECT event FROM events_log WHERE volunteer = :volunteerId) AND startTime >= :now")
+    @Query("SELECT * FROM event WHERE idEvent IN (SELECT event FROM events_log WHERE volunteer = :volunteerId) AND endTime >= :now")
     fun findUpcomingEventsByVolunteerId(volunteerId: Int, now: LocalDateTime): LiveData<List<Event>>
 
-    @Query("SELECT * FROM event WHERE startTime >= :now")
+    @Query("SELECT * FROM event WHERE endTime >= :now")
     fun findUpcomingEvents(now: LocalDateTime): LiveData<List<Event>>
+
+    @Query("SELECT * FROM event WHERE isStarted = 1")
+    fun findRunningEvents(): LiveData<List<Event>>
+
+    @Query("UPDATE event SET isStarted = 1 WHERE idEvent = :idEvent")
+    fun startEventByIdEvent(idEvent: Int): Int
+
+    @Query("UPDATE event SET isStarted = 0 WHERE idEvent = :idEvent")
+    fun endEventByIdEvent(idEvent: Int): Int
 
     //@Query("SELECT * FROM event WHERE idEvent IN (SELECT event FROM events_log WHERE volunteer = :idVolunteer)")
     @Query("SELECT * FROM event WHERE idEvent IN (SELECT DISTINCT event FROM events_log WHERE volunteer = :idVolunteer) AND dateTime(endTime) >= dateTime(:now) ORDER BY startTime")
@@ -56,4 +65,5 @@ interface EventDao {
 
     @Query("SELECT cityName FROM city WHERE zipCode = (SELECT city FROM event WHERE idEvent = :idEvent)")
     fun getCityNameForEvent(idEvent: Int): String
+
 }

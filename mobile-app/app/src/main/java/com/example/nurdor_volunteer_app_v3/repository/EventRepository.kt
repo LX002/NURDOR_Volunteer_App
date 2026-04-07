@@ -1,6 +1,8 @@
 package com.example.nurdor_volunteer_app_v3.repository
 
 import android.util.Log
+import com.example.nurdor_volunteer_app_v3.dto.StartEventDto
+import com.example.nurdor_volunteer_app_v3.dto.StartEventResultDto
 import com.example.nurdor_volunteer_app_v3.model.Event
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +24,7 @@ class EventRepository(db: AppDatabase) {
         try {
             val response = api.fetchAllEvents().awaitResponse()
             if(response.isSuccessful) {
-                Log.i("retrofitApi1", "City dto list fetched!")
+                Log.i("retrofitApi1", "Event dto list fetched!")
                 val events = response.body()?.let { eventDtos ->
                     eventDtos.map { e -> Event(
                         e.id,
@@ -60,4 +62,33 @@ class EventRepository(db: AppDatabase) {
 
     fun findUpcomingEvents() =
         mEventDao.findUpcomingEvents(LocalDateTime.now())
+
+    fun findRunningEvents() =
+        mEventDao.findRunningEvents()
+
+    suspend fun fetchStartEventResult(startEventDto: StartEventDto): StartEventResultDto {
+        try {
+            val response = api.startEvent(startEventDto).awaitResponse()
+            return if(response.isSuccessful) {
+                response.body() ?: StartEventResultDto("Remote start of event - response body is null!", listOf())
+            } else {
+                StartEventResultDto(response.raw().message, listOf())
+            }
+        } catch(e: Exception) {
+            return StartEventResultDto("Exception during remote starting of event: " + e.message, listOf())
+        }
+    }
+
+    suspend fun startEventByIdEvent(idEvent: Int): Int {
+        return withContext(Dispatchers.IO) {
+            mEventDao.startEventByIdEvent(idEvent)
+        }
+    }
+
+    suspend fun endEventByIdEvent(idEvent: Int): Int {
+
+        return withContext(Dispatchers.IO) {
+            mEventDao.endEventByIdEvent(idEvent)
+        }
+    }
 }

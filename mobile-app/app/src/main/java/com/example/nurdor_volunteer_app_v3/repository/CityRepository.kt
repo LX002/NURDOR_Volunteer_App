@@ -38,4 +38,6 @@ class CityRepository(db: AppDatabase) {
     }
 
     fun findAll() = mCityDao.findAll()
+
+    fun findByZipCode(zipCode: String) = mCityDao.findByZipCode(zipCode)
 }

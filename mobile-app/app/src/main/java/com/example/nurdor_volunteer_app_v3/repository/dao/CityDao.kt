@@ -14,7 +14,7 @@ interface CityDao {
     fun findAll(): LiveData<List<City>>
 
     @Query("SELECT * FROM city WHERE zipCode = :zipCode")
-    fun getCityByZipCode(zipCode: String): City?
+    fun findByZipCode(zipCode: String): LiveData<City?>
 
     @Insert
     fun insertCity(city: City)

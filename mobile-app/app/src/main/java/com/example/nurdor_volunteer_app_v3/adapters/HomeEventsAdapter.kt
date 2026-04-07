@@ -1,10 +1,8 @@
 package com.example.nurdor_volunteer_app_v3.adapters
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,14 +15,12 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.workDataOf
-import com.bumptech.glide.Glide
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.model.Event
 import com.example.nurdor_volunteer_app_v3.utils.DateTimeUtils
 import com.example.nurdor_volunteer_app_v3.utils.ImageUtils
 import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 import java.time.LocalDateTime
-import java.util.Base64
 import androidx.core.net.toUri
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.EnrolledVolunteersDialog
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.SetUpStandsForEventDialog
@@ -57,7 +53,7 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             val txtEventName: TextView = itemView.findViewById(R.id.txtEventName)
             val txtDate: TextView = itemView.findViewById(R.id.txtDate)
             val txtTime: TextView = itemView.findViewById(R.id.txtTime)
-            val imageView: ImageView = itemView.findViewById(R.id.imageView)
+            val imageView: ImageView = itemView.findViewById(R.id.eventImageView)
 
             val formattedStartTime = DateTimeUtils.changeDateFormat(event.startTime)
             txtEventName.text = event.eventName
@@ -76,10 +72,10 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             val txtDate: TextView = itemView.findViewById(R.id.txtDate)
             val txtTime: TextView = itemView.findViewById(R.id.txtTime)
             val txtDescription: TextView = itemView.findViewById(R.id.txtDescription)
-            val imageView: ImageView = itemView.findViewById(R.id.imageView)
-            val firstActionButton: Button = itemView.findViewById(R.id.btnJoin)
+            val imageView: ImageView = itemView.findViewById(R.id.eventImageView)
+            val firstActionButton: Button = itemView.findViewById(R.id.btnEndEvent)
             val btnLocation: Button = itemView.findViewById(R.id.btnLocation)
-            val btnShare: Button = itemView.findViewById(R.id.btnShare)
+            val btnDetails: Button = itemView.findViewById(R.id.btnDetails)
             val txtDuration: TextView = itemView.findViewById(R.id.txtDuration)
             val txtLocation: TextView = itemView.findViewById(R.id.txtLocation)
 
@@ -90,6 +86,11 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             txtDuration.text = "${DateTimeUtils.calculateDuration(event.startTime, event.endTime)} min"
             txtDescription.text = event.description
             txtLocation.text = if(!event.locationDesc.isNullOrBlank()) event.locationDesc else "Unknown"
+            firstActionButton.text = if(isAdmin) {
+                itemView.context.resources.getString(R.string.start)
+            } else {
+                itemView.context.resources.getString(R.string.join)
+            }
 
             firstActionButton.isEnabled = isFirstActionButonEnabled(event, itemView)
 
@@ -98,8 +99,15 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             firstActionButton.setOnClickListener {
                 if(isAdmin) {
                     // TODO(): start event block
-                    // prvo npr dijalog koji daje ponudu za broj standova
-                    event.idEvent?.let { SetUpStandsForEventDialog.newInstance(it).show((itemView.context as AppCompatActivity).supportFragmentManager, "setUpStandsForEventDialog") }
+                    val context = itemView.context as AppCompatActivity
+                    event.idEvent?.let {
+                        SetUpStandsForEventDialog
+                            .newInstance(it)
+                            .show(
+                                context.supportFragmentManager,
+                                "setUpStandsForEventDialog"
+                            )
+                    }
                     // nakon toga start eventa sa dva tab fragmenta - prisutni volonteri i standovi i njihov status
                     // refresh opcija za oba, zavrsavanjem se vraca na home screen
                     // admin ima i opciju u home meniju started events kojima moze opet pristupiti i pratiti stanje
@@ -120,13 +128,22 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
                 itemView.context.startActivity(mapIntent)
             }
 
-            btnShare.setOnClickListener {
+            btnDetails.setOnClickListener {
                 val workData = workDataOf("eventId" to event.idEvent, "eventName" to event.eventName)
                 val downloadWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<PdfDownloadWorker>().setInputData(workData).build()
                 if(itemView.context is AppCompatActivity) {
                     val appContext = itemView.context.applicationContext
                     WorkManager.getInstance(appContext).enqueue(downloadWorkRequest)
                 }
+            }
+
+            btnDetails.setOnLongClickListener {
+                val context = itemView.context
+                val idEvent = event.idEvent
+                if(context is AppCompatActivity && idEvent != null) {
+                    EnrolledVolunteersDialog.newInstance(idEvent).show(context.supportFragmentManager, "enrolledVolunteersDialog")
+                }
+                true
             }
         }
     }
@@ -165,15 +182,6 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             selectedPosition = if(selectedPosition == position) -1 else position
             notifyItemChanged(previousPosition)
             notifyItemChanged(selectedPosition)
-        }
-
-        holder.itemView.setOnLongClickListener { view ->
-            val context = view.context
-            val idEvent = events[position].idEvent
-            if(context is AppCompatActivity && idEvent != null) {
-                EnrolledVolunteersDialog.newInstance(idEvent).show(context.supportFragmentManager, "enrolledVolunteersDialog")
-            }
-            true
         }
     }
 

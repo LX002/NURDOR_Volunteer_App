@@ -19,6 +19,8 @@ class CityViewModel(application: Application): AndroidViewModel(application) {
 
     val allCities = cityRepository.findAll()
 
+    fun findByZipCode(zipCode: String) = cityRepository.findByZipCode(zipCode)
+
     suspend fun fetchAll() {
         cityRepository.fetchAll()
     }

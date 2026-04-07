@@ -10,8 +10,8 @@ import com.nurdor_project.donations_service.repository.StandRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,34 +25,21 @@ public class StandService {
         return standRepository.findById(id).orElseThrow(() -> new StandNotFoundException("Stand not found for id: " + id));
     }
 
+    @Transactional
     public List<Stand> tieStandsToEvent(Integer numberOfStands, Integer idEvent) {
-        List<Stand> standsToSave = new ArrayList<>();
-
         if(numberOfStands != 0) {
-            List<Stand> freeStands = standRepository.findFreeStands(PageRequest.of(0, numberOfStands)).toList();
-            int freeStandsCount = freeStands.size();
+            List<Integer> freeStandsIds = standRepository.findFreeStandsIds(PageRequest.of(0, numberOfStands)).toList();
+            int freeStandsCount = freeStandsIds.size();
 
             if(numberOfStands > freeStandsCount)
                 throw new NotEnoughStandsException("Not enough free stands! There are " + freeStandsCount + " stands left!");
 
-            for(Stand s: freeStands) {
-                s.setIdEvent(idEvent);
-                s.setDonations(0);
-                standsToSave.add(s);
-            }
-            return standRepository.saveAll(standsToSave);
+            Integer affectedRows = standRepository.updateIdEventByStandIds(idEvent, freeStandsIds);
+            return findTakenStands(idEvent);
         } else {
-            standsToSave = findTakenStands(idEvent);
-            System.out.println("stands to save: " + standsToSave);
-            List<Stand> takenStands = standsToSave.stream()
-                    .map(s -> new Stand(s.getId(), s.getStandName(), s.getDonations(), s.getIdEvent()))
-                    .toList();
-            for(Stand s: standsToSave) {
-                s.setIdEvent(null);
-                s.setDonations(0);
-            }
-            standRepository.saveAll(standsToSave);
-            return takenStands;
+            List<Integer> takenStandsIds = standRepository.findTakenStandsIdsByIdEvent(idEvent);
+            Integer affectedRows = standRepository.updateIdEventByStandIds(null, takenStandsIds);
+            return standRepository.findByStandIds(takenStandsIds);
         }
     }
 

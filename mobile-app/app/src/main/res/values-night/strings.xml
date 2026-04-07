@@ -106,6 +106,10 @@
     <string name="number_of_stands">Number of stands</string>
     <string name="start">Start</string>
     <string name="cancel">Cancel</string>
+    <string name="running_events">Running events</string>
+    <string name="finish">Finish</string>
+    <string name="end_this_event">End this event</string>
+    <string name="statistics">Statistics</string>
     <string-array name="sort_add_events_types">
         <item></item>
         <item>Name</item>

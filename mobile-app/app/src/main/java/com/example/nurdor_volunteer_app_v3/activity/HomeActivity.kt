@@ -24,9 +24,6 @@ import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 import com.example.nurdor_volunteer_app_v3.viewModel.EventViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
@@ -61,6 +58,7 @@ class HomeActivity : AppCompatActivity() {
 
         val fabAddEvents: FloatingActionButton = findViewById(R.id.fabAddEvent)
         fabAddEvents.setOnClickListener {
+            // TODO(): addEventsActivity - different for admin and volunteer
             //val intent = Intent(this, AddEventActivity::class.java)
             //startActivity(intent)
         }
@@ -97,9 +95,12 @@ class HomeActivity : AppCompatActivity() {
                 logout()
                 true
             }
-            PreferenceHelper.isAdmin(this) && item.itemId == R.id.itemAdminWindow -> {
-//                val intent = Intent(this, AdminWindowActivity::class.java)
-//                startActivity(intent)
+            PreferenceHelper.isAdmin(this) && item.itemId == R.id.itemRunningEvents -> {
+                // TODO() launch running events activity
+                true
+            }
+            PreferenceHelper.isAdmin(this) && item.itemId == R.id.itemArchivedEvents -> {
+                // TODO() launch event archive
                 true
             }
             else -> super.onOptionsItemSelected(item)

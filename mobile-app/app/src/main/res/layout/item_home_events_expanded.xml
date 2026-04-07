@@ -42,7 +42,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/eventImageView"
                 android:layout_width="108dp"
                 android:layout_height="108dp"
                 android:layout_marginStart="16dp"
@@ -61,7 +61,7 @@
                 android:text="TextView"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintStart_toEndOf="@+id/eventImageView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -72,7 +72,7 @@
                 android:layout_marginTop="12dp"
                 android:text="@string/date_with_colon"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintStart_toEndOf="@+id/eventImageView"
                 app:layout_constraintTop_toBottomOf="@+id/txtEventName" />
 
             <TextView
@@ -93,7 +93,7 @@
                 android:layout_marginTop="12dp"
                 android:text="@string/time_with_colon"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintStart_toEndOf="@+id/eventImageView"
                 app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
             <TextView
@@ -137,12 +137,12 @@
                 android:layout_marginBottom="6dp"
                 android:text="@string/location"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btnShare"
-                app:layout_constraintStart_toEndOf="@+id/btnJoin"
+                app:layout_constraintEnd_toStartOf="@+id/btnDetails"
+                app:layout_constraintStart_toEndOf="@+id/btnEndEvent"
                 app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
             <Button
-                android:id="@+id/btnShare"
+                android:id="@+id/btnDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -154,7 +154,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
             <Button
-                android:id="@+id/btnJoin"
+                android:id="@+id/btnEndEvent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -174,7 +174,7 @@
                 android:text="@string/duration_with_colon"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                app:layout_constraintTop_toBottomOf="@+id/eventImageView" />
 
             <TextView
                 android:id="@+id/txtDuration"
@@ -184,7 +184,7 @@
                 android:layout_marginTop="16dp"
                 android:text="TextView"
                 app:layout_constraintStart_toEndOf="@+id/textView4"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                app:layout_constraintTop_toBottomOf="@+id/eventImageView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

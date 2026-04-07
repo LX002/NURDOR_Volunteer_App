@@ -34,6 +34,9 @@
         android:supportsRtl="true"
         android:theme="@style/NurdorApp_DayNight">
         <activity
+            android:name=".activity.RunningEventsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.VolunteerProfileActivity"
             android:exported="false" />
         <activity

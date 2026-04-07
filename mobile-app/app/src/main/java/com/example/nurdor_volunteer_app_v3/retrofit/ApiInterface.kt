@@ -5,7 +5,10 @@ import com.example.nurdor_volunteer_app_v3.dto.EventDto
 import com.example.nurdor_volunteer_app_v3.dto.EventsLogDto
 import com.example.rma_project_demo_v1.dto.LoginDto
 import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
+import com.example.nurdor_volunteer_app_v3.dto.StartEventDto
+import com.example.nurdor_volunteer_app_v3.dto.StartEventResultDto
 import com.example.nurdor_volunteer_app_v3.dto.VolunteerDto
+import com.example.nurdor_volunteer_app_v3.model.Event
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -38,5 +41,8 @@ interface ApiInterface {
 
     @GET("/volunteer/getEvents")
     fun fetchAllEvents(): Call<List<EventDto>>
+
+    @POST("/admin/start")
+    fun startEvent(@Body startEventDto: StartEventDto): Call<StartEventResultDto>
 
 }
