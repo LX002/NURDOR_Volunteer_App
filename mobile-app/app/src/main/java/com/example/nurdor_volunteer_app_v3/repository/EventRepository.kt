@@ -1,6 +1,7 @@
 package com.example.nurdor_volunteer_app_v3.repository
 
 import android.util.Log
+import com.example.nurdor_volunteer_app_v3.dto.EndEventResultDto
 import com.example.nurdor_volunteer_app_v3.dto.StartEventDto
 import com.example.nurdor_volunteer_app_v3.dto.StartEventResultDto
 import com.example.nurdor_volunteer_app_v3.model.Event
@@ -79,6 +80,19 @@ class EventRepository(db: AppDatabase) {
         }
     }
 
+    suspend fun fetchEndEventResult(idEvent: Int): EndEventResultDto {
+        try {
+            val response = api.endEvent(idEvent).awaitResponse()
+            return if(response.isSuccessful) {
+                response.body() ?: EndEventResultDto("Remote start of event - response body is null!", 0, listOf())
+            } else {
+                EndEventResultDto(response.raw().message, 0, listOf())
+            }
+        } catch(e: Exception) {
+            return EndEventResultDto("Exception during remote starting of event: " + e.message, 0, listOf())
+        }
+    }
+
     suspend fun startEventByIdEvent(idEvent: Int): Int {
         return withContext(Dispatchers.IO) {
             mEventDao.startEventByIdEvent(idEvent)
@@ -86,7 +100,6 @@ class EventRepository(db: AppDatabase) {
     }
 
     suspend fun endEventByIdEvent(idEvent: Int): Int {
-
         return withContext(Dispatchers.IO) {
             mEventDao.endEventByIdEvent(idEvent)
         }

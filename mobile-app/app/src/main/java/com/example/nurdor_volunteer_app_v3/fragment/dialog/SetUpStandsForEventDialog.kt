@@ -3,6 +3,7 @@ package com.example.nurdor_volunteer_app_v3.fragment.dialog
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
@@ -13,15 +14,13 @@ import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.dto.StartEventDto
 import com.example.nurdor_volunteer_app_v3.viewModel.EventViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import com.example.nurdor_volunteer_app_v3.viewModel.StandViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SetUpStandsForEventDialog: DialogFragment() {
 
     private lateinit var eventViewModel: EventViewModel
+    private lateinit var standViewModel: StandViewModel
     companion object {
         fun newInstance(idEvent: Int): SetUpStandsForEventDialog {
             return SetUpStandsForEventDialog().apply {
@@ -37,6 +36,7 @@ class SetUpStandsForEventDialog: DialogFragment() {
 
         val idEvent = requireArguments().getInt("idEvent")
         eventViewModel = ViewModelProvider(this)[EventViewModel::class]
+        standViewModel = ViewModelProvider(this)[StandViewModel::class]
         val dialogBuilder = AlertDialog.Builder(requireContext())
         val dialogView = layoutInflater.inflate(R.layout.set_up_stands_for_event_dialog, null)
 
@@ -67,9 +67,12 @@ class SetUpStandsForEventDialog: DialogFragment() {
             val startEventResult = eventViewModel.fetchStartEventResult(
                 StartEventDto(idEvent, numberOfStands)
             )
-            if (startEventResult.stands.isNotEmpty()) {
-                val numOfUpdatedRows = eventViewModel.updateIsStarted(idEvent, true)
-                if (numOfUpdatedRows == 1) {
+            val standsIds = startEventResult.stands.map { s -> s.id }
+            if (standsIds.isNotEmpty()) {
+                val numOfUpdatedEventRows = eventViewModel.updateIsStarted(idEvent, true)
+                val numOfUpdatedStandRows = standViewModel.updateIdEventByStandIds(standsIds, idEvent)
+                Log.i("eventOnOff", "$numOfUpdatedEventRows $numOfUpdatedStandRows")
+                if (numOfUpdatedEventRows == 1 && numOfUpdatedStandRows == standsIds.size) {
                     Toast.makeText(
                         requireContext(),
                         "Event with id: $idEvent is successfully started!",

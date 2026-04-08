@@ -96,7 +96,8 @@ class HomeActivity : AppCompatActivity() {
                 true
             }
             PreferenceHelper.isAdmin(this) && item.itemId == R.id.itemRunningEvents -> {
-                // TODO() launch running events activity
+                val intent = Intent(this, RunningEventsActivity::class.java)
+                startActivity(intent)
                 true
             }
             PreferenceHelper.isAdmin(this) && item.itemId == R.id.itemArchivedEvents -> {

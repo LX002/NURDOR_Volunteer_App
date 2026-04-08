@@ -8,5 +8,5 @@ data class Stand(
     @PrimaryKey val idStand: Int,
     val standName: String,
     val totalDonations: Int,
-    val event: Int
+    val event: Int?
 )

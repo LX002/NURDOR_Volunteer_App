@@ -19,7 +19,8 @@ import com.example.nurdor_volunteer_app_v3.utils.ImageUtils
 
 class RunningEventsAdapter(
     private var events: MutableList<Event>,
-    private val findCityByZipCode: (String) -> City?
+    private val findCityByZipCode: (String) -> City?,
+    private val endEventByIdEvent: (Int) -> Unit
 ): RecyclerView.Adapter<RunningEventsAdapter.RunningEventViewHolder>() {
 
     inner class RunningEventViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -48,6 +49,7 @@ class RunningEventsAdapter(
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.itemEndEvent -> {
+                        event.idEvent?.let { endEventByIdEvent(it) }
                         true
                     }
                     R.id.itemStatistics -> {

@@ -1,10 +1,12 @@
 package com.example.nurdor_volunteer_app_v3.retrofit
 
 import com.example.nurdor_volunteer_app_v3.dto.CityDto
+import com.example.nurdor_volunteer_app_v3.dto.EndEventResultDto
 import com.example.nurdor_volunteer_app_v3.dto.EventDto
 import com.example.nurdor_volunteer_app_v3.dto.EventsLogDto
 import com.example.rma_project_demo_v1.dto.LoginDto
 import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
+import com.example.nurdor_volunteer_app_v3.dto.StandDto
 import com.example.nurdor_volunteer_app_v3.dto.StartEventDto
 import com.example.nurdor_volunteer_app_v3.dto.StartEventResultDto
 import com.example.nurdor_volunteer_app_v3.dto.VolunteerDto
@@ -44,5 +46,12 @@ interface ApiInterface {
 
     @POST("/admin/start")
     fun startEvent(@Body startEventDto: StartEventDto): Call<StartEventResultDto>
+
+    @POST("/admin/end/{idEvent}")
+    fun endEvent(@Path("idEvent") idEvent: Int): Call<EndEventResultDto>
+
+    // donation-service calls
+    @GET("/volunteer/stands")
+    fun fetchAllStands(): Call<List<StandDto>>
 
 }

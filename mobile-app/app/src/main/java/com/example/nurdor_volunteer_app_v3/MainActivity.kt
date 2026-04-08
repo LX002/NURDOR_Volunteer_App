@@ -20,14 +20,15 @@ import com.example.nurdor_volunteer_app_v3.utils.NotificationConstants
 import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.EventViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.StandViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var cityViewModel: CityViewModel
     private lateinit var eventViewModel: EventViewModel
-
     private lateinit var eventsLogsViewModel: EventsLogViewModel
+    private lateinit var standViewModel: StandViewModel
 
     override fun onStart() {
         super.onStart()
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         cityViewModel = ViewModelProvider(this)[CityViewModel::class]
         eventViewModel = ViewModelProvider(this)[EventViewModel::class]
         eventsLogsViewModel = ViewModelProvider(this)[EventsLogViewModel::class]
+        standViewModel = ViewModelProvider(this)[StandViewModel::class]
 
         val networkState = checkNetworkConnection()
         lifecycleScope.launch {
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                 eventViewModel.fetchAll()
                 eventsLogsViewModel.fetchAll()
                 cityViewModel.fetchAll()
+                standViewModel.fetchAll()
                 if(!NurdorVolunteerApplication.encryptedPrefs.getString("jwt_token", null).isNullOrBlank()) {
                     launchActivity(HomeActivity::class.java)
                 } else {

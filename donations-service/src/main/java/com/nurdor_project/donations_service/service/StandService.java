@@ -66,4 +66,8 @@ public class StandService {
 
         return "Donated " + amount + "RSD on STAND_" + idStand + ". Total stand donations: " + savedStand.getDonations() + "RSD";
     }
+
+    public List<Stand> findAll() {
+        return standRepository.findAll();
+    }
 }

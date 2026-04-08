@@ -60,6 +60,9 @@ public class ApiGatewayConfig {
                 .route("donate", r -> r.path("/volunteer/addDonation")
                         .filters(f -> f.rewritePath("/volunteer/addDonation", "/api/volunteer/stands/addDonation"))
                         .uri("lb://DONATIONS-SERVICE"))
+                .route("all-stands", r -> r.path("/volunteer/stands")
+                        .filters(f -> f.rewritePath("/volunteer/stands", "/api/volunteer/stands"))
+                        .uri("lb://DONATIONS-SERVICE"))
 
                 // statistics-service routes
                 .route("total-donations", r -> r.path("/admin/donations/{groupType}")
