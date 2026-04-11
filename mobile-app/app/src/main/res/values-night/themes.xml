@@ -24,7 +24,7 @@
 
     <style name="ImageButton_Dark" parent="Widget.AppCompat.ImageButton">
         <item name="android:tint">@color/white</item>
-        <item name="android:background">@color/transparent</item>
+        <item name="android:backgroundTint">@color/transparent</item>
     </style>
 
     <style name="Menu_Dark_1" parent="Theme.Material3.Dark.NoActionBar">

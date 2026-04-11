@@ -18,6 +18,7 @@ import com.example.nurdor_volunteer_app_v3.adapters.RunningEventsAdapter
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.EventViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.StandViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ class RunningEventsActivity : AppCompatActivity() {
     private lateinit var eventViewModel: EventViewModel
     private lateinit var cityViewModel: CityViewModel
     private lateinit var standViewModel: StandViewModel
+    private lateinit var eventsLogViewModel: EventsLogViewModel // add setting isPresent to 0?
 
     private val findCityByZipCode: (String) -> City? =  { zipCode -> cityViewModel.findByZipCode(zipCode).value }
     private val endEventByIdEvent: (Int) -> Unit = { idEvent ->
@@ -36,9 +38,14 @@ class RunningEventsActivity : AppCompatActivity() {
             if(standsIds.isNotEmpty()) {
                 val numOfUpdatedEventRows = eventViewModel.updateIsStarted(idEvent, false)
                 val numOfUpdatedStandRows = standViewModel.updateIdEventByStandIds(standsIds, null)
-                Log.i("eventOnOff", "$numOfUpdatedEventRows $numOfUpdatedStandRows")
+                val numOfUpdatedLogRows = eventsLogViewModel.updateIsPresentByVolunteerIds(false, idEvent)
+                Log.i("eventOnOff", "$numOfUpdatedEventRows $numOfUpdatedStandRows $numOfUpdatedLogRows")
                 if (numOfUpdatedEventRows == 1 && numOfUpdatedStandRows == standsIds.size) {
-                    Toast.makeText(this@RunningEventsActivity, "Event with id: $idEvent is successfully ended!", Toast.LENGTH_SHORT).show()
+                    if(numOfUpdatedLogRows != 0) {
+                        Toast.makeText(this@RunningEventsActivity, "Event with id: $idEvent is successfully ended!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@RunningEventsActivity, "Event with id: $idEvent is successfully ended, no volunteers to \"kick out\"", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     Toast.makeText(this@RunningEventsActivity, "Whoops, event with id: $idEvent didn't end!", Toast.LENGTH_SHORT).show()
                 }
@@ -61,6 +68,7 @@ class RunningEventsActivity : AppCompatActivity() {
         eventViewModel = ViewModelProvider(this)[EventViewModel::class]
         cityViewModel = ViewModelProvider(this)[CityViewModel::class]
         standViewModel = ViewModelProvider(this)[StandViewModel::class]
+        eventsLogViewModel = ViewModelProvider(this)[EventsLogViewModel::class]
 
         fetchData()
 

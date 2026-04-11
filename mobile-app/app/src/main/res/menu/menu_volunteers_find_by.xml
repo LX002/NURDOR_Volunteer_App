@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/itemDefault"
+        android:title="@string/str_default" />
+    <item
+        android:id="@+id/itemByName"
+        android:title="@string/by_name" />
+    <item
+        android:id="@+id/itemBySurname"
+        android:title="@string/by_surname" />
+    <item
+        android:id="@+id/itemByPhone"
+        android:title="@string/by_phone_number" />
+    <item
+        android:id="@+id/itemByUsername"
+        android:title="@string/by_username" />
+</menu>

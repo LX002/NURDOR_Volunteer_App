@@ -11,8 +11,10 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nurdor_volunteer_app_v3.R
+import com.example.nurdor_volunteer_app_v3.activity.StatisticsActivity
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.model.Event
 import com.example.nurdor_volunteer_app_v3.utils.ImageUtils
@@ -53,6 +55,9 @@ class RunningEventsAdapter(
                         true
                     }
                     R.id.itemStatistics -> {
+                        val intent = Intent(context, StatisticsActivity::class.java)
+                        intent.putExtra("idEvent", event.idEvent)
+                        context.startActivity(intent)
                         true
                     }
                     else -> false

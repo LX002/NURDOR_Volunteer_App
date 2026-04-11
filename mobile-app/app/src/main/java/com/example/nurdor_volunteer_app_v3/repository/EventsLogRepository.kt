@@ -1,7 +1,6 @@
 package com.example.nurdor_volunteer_app_v3.repository
 
 import android.util.Log
-import com.example.nurdor_volunteer_app_v3.dto.EventsLogDto
 import com.example.nurdor_volunteer_app_v3.model.EventsLog
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
@@ -44,4 +43,16 @@ class EventsLogRepository(db: AppDatabase) {
     }
 
     fun findAll() = mEventsLogDao.findAll()
+
+    suspend fun updateIsPresentByEventId(isPresent: Boolean, idEvent: Int): Int {
+        return withContext(Dispatchers.IO) {
+            mEventsLogDao.updateIsPresentByIdEvent(isPresent, idEvent)
+        }
+    }
+
+    suspend fun updateIsPresentByVolunteerId(isPresent: Boolean, idVolunteer: Int): Int {
+        return withContext(Dispatchers.IO) {
+            mEventsLogDao.updateIsPresentByVolunteerId(isPresent, idVolunteer)
+        }
+    }
 }

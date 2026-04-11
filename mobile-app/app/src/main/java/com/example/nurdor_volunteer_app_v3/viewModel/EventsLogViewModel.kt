@@ -21,4 +21,8 @@ class EventsLogViewModel(application: Application): AndroidViewModel(application
     suspend fun fetchAll() {
         eventsLogRepository.fetchAll()
     }
+
+    suspend fun updateIsPresentByVolunteerIds(isPresent: Boolean, idEvent: Int): Int {
+        return eventsLogRepository.updateIsPresentByVolunteerId(isPresent, idEvent)
+    }
 }

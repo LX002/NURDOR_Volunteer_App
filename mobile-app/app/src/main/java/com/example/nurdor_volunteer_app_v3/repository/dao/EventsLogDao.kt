@@ -15,9 +15,12 @@ interface EventsLogDao {
     @Query("SELECT * FROM events_log")
     fun findAll(): LiveData<List<EventsLog>>
 
-    //@Query("SELECT * FROM events_log WHERE idEventsLog IN (SELECT MIN(idEventsLog) FROM events_log WHERE volunteer = :idVolunteer GROUP BY volunteer, event)")
-    @Query("SELECT * FROM events_log WHERE volunteer = :idVolunteer")
-    fun getEventsLogsByVolunteerId(idVolunteer: Int) : List<EventsLog>
+
+    @Query("UPDATE events_log SET isPresent = :isPresent WHERE volunteer = :idVolunteer")
+    fun updateIsPresentByVolunteerId(isPresent: Boolean, idVolunteer: Int): Int
+
+    @Query("UPDATE events_log SET isPresent = :isPresent WHERE event = :idEvent")
+    fun updateIsPresentByIdEvent(isPresent: Boolean, idEvent: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEventsLogs(eventsLogs: List<EventsLog>)

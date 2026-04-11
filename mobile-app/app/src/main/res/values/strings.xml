@@ -110,6 +110,16 @@
     <string name="finish">Finish</string>
     <string name="end_this_event">End this event</string>
     <string name="statistics">Statistics</string>
+    <string name="stands">Stands</string>
+    <string name="total_donations">Total donations</string>
+    <string name="search_button">Search button</string>
+    <string name="search">Search</string>
+    <string name="by_name">By name</string>
+    <string name="by_surname">By surname</string>
+    <string name="by_phone_number">By phone number</string>
+    <string name="by_username">By username</string>
+    <string name="str_default">Default</string>
+    <string name="current_donations">Current donations:</string>
     <string-array name="sort_add_events_types">
         <item></item>
         <item>Name</item>
