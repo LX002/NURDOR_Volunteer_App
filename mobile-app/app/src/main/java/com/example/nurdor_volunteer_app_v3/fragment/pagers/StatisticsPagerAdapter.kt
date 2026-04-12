@@ -14,12 +14,11 @@ class StatisticsPagerAdapter(private val idEvent: Int, activity: FragmentActivit
         return when(position) {
             0 -> PresentVolunteersFragment.newInstance(idEvent)
             1 -> StandsFragment.newInstance(idEvent)
-            2 -> TotalDonationsFragment.newInstance(idEvent)
             else -> throw IllegalStateException("Non existing position for admin tab layout!")
         }
     }
 
-    override fun getItemCount(): Int = 3
+    override fun getItemCount(): Int = 2
 
 
 }

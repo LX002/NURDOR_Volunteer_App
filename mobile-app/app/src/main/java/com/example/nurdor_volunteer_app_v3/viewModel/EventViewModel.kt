@@ -37,11 +37,11 @@ class EventViewModel(application: Application): AndroidViewModel(application) {
         return eventRepository.fetchEndEventResult(idEvent)
     }
 
-    suspend fun updateIsStarted(idEvent: Int, isStarted: Boolean): Int {
+    suspend fun startOrEndEventByIdEvent(idEvent: Int, isStarted: Boolean, totalDonations: Long): Int {
         return if(isStarted) {
-            eventRepository.startEventByIdEvent(idEvent)
+            eventRepository.startEventByIdEvent(idEvent, totalDonations)
         } else {
-            eventRepository.endEventByIdEvent(idEvent)
+            eventRepository.endEventByIdEvent(idEvent, totalDonations)
         }
     }
 

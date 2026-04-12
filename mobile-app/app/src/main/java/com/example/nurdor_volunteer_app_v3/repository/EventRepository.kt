@@ -38,6 +38,7 @@ class EventRepository(db: AppDatabase) {
                         e.longitude,
                         e.eventImg,
                         e.locationDesc,
+                        e.totalDonations,
                         e.city
                     )}
                 }
@@ -93,15 +94,21 @@ class EventRepository(db: AppDatabase) {
         }
     }
 
-    suspend fun startEventByIdEvent(idEvent: Int): Int {
+    suspend fun findById(idEvent: Int) {
         return withContext(Dispatchers.IO) {
-            mEventDao.startEventByIdEvent(idEvent)
+            mEventDao.findById(idEvent)
         }
     }
 
-    suspend fun endEventByIdEvent(idEvent: Int): Int {
+    suspend fun startEventByIdEvent(idEvent: Int, totalDonations: Long): Int {
         return withContext(Dispatchers.IO) {
-            mEventDao.endEventByIdEvent(idEvent)
+            mEventDao.startOrEndEventByIdEvent(idEvent, 1.toByte(), totalDonations)
+        }
+    }
+
+    suspend fun endEventByIdEvent(idEvent: Int, totalDonations: Long): Int {
+        return withContext(Dispatchers.IO) {
+            mEventDao.startOrEndEventByIdEvent(idEvent, 0.toByte(), totalDonations)
         }
     }
 }

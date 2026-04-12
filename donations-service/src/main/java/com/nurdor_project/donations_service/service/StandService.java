@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,8 +39,9 @@ public class StandService {
             return findTakenStands(idEvent);
         } else {
             List<Integer> takenStandsIds = standRepository.findTakenStandsIdsByIdEvent(idEvent);
+            List<Stand> takenStands = new ArrayList<>(standRepository.findByIdEvent(idEvent));
             Integer affectedRows = standRepository.updateIdEventByStandIds(null, takenStandsIds);
-            return standRepository.findByStandIds(takenStandsIds);
+            return takenStands;
         }
     }
 

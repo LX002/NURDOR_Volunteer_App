@@ -73,24 +73,6 @@
                     android:textSize="16sp" />
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/tabItemTotalDonations"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="98dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/textView35"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="@string/total_donations"
-                    android:textSize="16sp" />
-            </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout

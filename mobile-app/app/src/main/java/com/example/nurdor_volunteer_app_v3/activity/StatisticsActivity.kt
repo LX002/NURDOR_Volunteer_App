@@ -69,7 +69,6 @@ class StatisticsActivity : AppCompatActivity() {
             val fragmentToShow = when (pos) {
                 0 -> PresentVolunteersFragment.newInstance(idEvent)
                 1 -> StandsFragment.newInstance(idEvent)
-                2 -> TotalDonationsFragment.newInstance(idEvent)
                 else -> IllegalArgumentException("Exception in StatisticsActivity: Invalid tab position!")
             } as Fragment
             replaceFrameContent(fragmentToShow)
@@ -81,7 +80,6 @@ class StatisticsActivity : AppCompatActivity() {
             tab.text = when (position) {
                 0 -> getString(R.string.present_volunteers)
                 1 -> getString(R.string.stands)
-                2 -> getString(R.string.total_donations)
                 else -> ""
             }
         }.attach()

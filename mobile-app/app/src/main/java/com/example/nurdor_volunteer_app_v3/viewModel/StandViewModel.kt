@@ -14,6 +14,9 @@ class StandViewModel(application: Application): AndroidViewModel(application) {
 
     val allStands = standRepository.findAll()
 
+    fun findByIdEvent(idEvent: Int) =
+        standRepository.findByIdEvent(idEvent)
+
     suspend fun fetchAll() {
         standRepository.fetchAllStands()
     }

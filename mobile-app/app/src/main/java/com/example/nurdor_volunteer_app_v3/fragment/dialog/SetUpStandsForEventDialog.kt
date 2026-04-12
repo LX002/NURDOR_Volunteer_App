@@ -69,28 +69,16 @@ class SetUpStandsForEventDialog: DialogFragment() {
             )
             val standsIds = startEventResult.stands.map { s -> s.id }
             if (standsIds.isNotEmpty()) {
-                val numOfUpdatedEventRows = eventViewModel.updateIsStarted(idEvent, true)
+                val numOfUpdatedEventRows = eventViewModel.startOrEndEventByIdEvent(idEvent, true, 0)
                 val numOfUpdatedStandRows = standViewModel.updateIdEventByStandIds(standsIds, idEvent)
                 Log.i("eventOnOff", "$numOfUpdatedEventRows $numOfUpdatedStandRows")
                 if (numOfUpdatedEventRows == 1 && numOfUpdatedStandRows == standsIds.size) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Event with id: $idEvent is successfully started!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(), "Event with id: $idEvent is successfully started!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Whoops, event with id: $idEvent didn't start!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(), "Whoops, event with id: $idEvent didn't start!", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Error: ${startEventResult.message}",
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(requireContext(), "Error: ${startEventResult.message}", Toast.LENGTH_LONG).show()
             }
             dismiss()
         }

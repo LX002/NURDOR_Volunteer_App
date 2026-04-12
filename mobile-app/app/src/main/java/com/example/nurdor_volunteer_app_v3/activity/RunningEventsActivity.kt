@@ -1,5 +1,6 @@
 package com.example.nurdor_volunteer_app_v3.activity
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -22,6 +23,7 @@ import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.StandViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.launch
+import androidx.core.view.get
 
 class RunningEventsActivity : AppCompatActivity() {
 
@@ -35,16 +37,17 @@ class RunningEventsActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val endEventResultDto = eventViewModel.fetchEndEventResult(idEvent)
             val standsIds = endEventResultDto.stands.map { s -> s.id }
+            val totalDonations = endEventResultDto.totalDonations
             if(standsIds.isNotEmpty()) {
-                val numOfUpdatedEventRows = eventViewModel.updateIsStarted(idEvent, false)
+                val numOfUpdatedEventRows = eventViewModel.startOrEndEventByIdEvent(idEvent, false, totalDonations)
                 val numOfUpdatedStandRows = standViewModel.updateIdEventByStandIds(standsIds, null)
                 val numOfUpdatedLogRows = eventsLogViewModel.updateIsPresentByVolunteerIds(false, idEvent)
                 Log.i("eventOnOff", "$numOfUpdatedEventRows $numOfUpdatedStandRows $numOfUpdatedLogRows")
                 if (numOfUpdatedEventRows == 1 && numOfUpdatedStandRows == standsIds.size) {
                     if(numOfUpdatedLogRows != 0) {
-                        Toast.makeText(this@RunningEventsActivity, "Event with id: $idEvent is successfully ended!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@RunningEventsActivity, "Event with id: $idEvent is successfully ended!\nTotal donations: $totalDonations RSD", Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(this@RunningEventsActivity, "Event with id: $idEvent is successfully ended, no volunteers to \"kick out\"", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@RunningEventsActivity, "Event with id: $idEvent is successfully ended, no volunteers to \"kick out\".\nTotal donations: $totalDonations RSD", Toast.LENGTH_LONG).show()
                     }
                 } else {
                     Toast.makeText(this@RunningEventsActivity, "Whoops, event with id: $idEvent didn't end!", Toast.LENGTH_SHORT).show()
@@ -74,6 +77,7 @@ class RunningEventsActivity : AppCompatActivity() {
 
         val toolbar = findViewById<MaterialToolbar>(R.id.runningEventsToolbar)
         setSupportActionBar(toolbar)
+
         val rcvRunningEvents = findViewById<RecyclerView>(R.id.rcvRunningEvents)
         val runningEventsAdapter = RunningEventsAdapter(mutableListOf(), findCityByZipCode, endEventByIdEvent)
         rcvRunningEvents.layoutManager = LinearLayoutManager(this)

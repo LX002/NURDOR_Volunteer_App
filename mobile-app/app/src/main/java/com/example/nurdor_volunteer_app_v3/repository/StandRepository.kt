@@ -33,6 +33,8 @@ class StandRepository(db: AppDatabase) {
     }
 
     fun findAll() = mStandDao.findAll()
+
+    fun findByIdEvent(idEvent: Int) = mStandDao.findByIdEvent(idEvent)
     suspend fun updateIdEventByStandIds(ids: List<Int>, idEvent: Int?): Int {
         return mStandDao.updateIdEventByStandIds(idEvent, ids)
     }

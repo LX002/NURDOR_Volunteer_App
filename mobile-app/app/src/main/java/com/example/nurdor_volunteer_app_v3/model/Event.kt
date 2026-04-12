@@ -16,5 +16,6 @@ data class Event(
     val longitude: Double,
     val eventImg: String?,
     val locationDesc: String?,
+    val totalDonations: Long,
     val city: String
 )

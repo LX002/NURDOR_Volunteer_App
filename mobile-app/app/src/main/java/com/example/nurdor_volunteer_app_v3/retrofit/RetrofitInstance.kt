@@ -10,7 +10,7 @@ import com.google.gson.JsonDeserializer
 import java.time.LocalDateTime
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://192.168.12.141:8765"
+    private const val BASE_URL = "http://192.168.0.103:8765"
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(AuthInterceptor(NurdorVolunteerApplication.encryptedPrefs))
