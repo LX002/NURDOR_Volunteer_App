@@ -45,9 +45,10 @@ class StandsFragment: Fragment() {
 
         fetchData()
         val idEvent = requireArguments().getInt("idEvent")
+        val isAdmin = PreferenceHelper.isAdmin(requireContext())
 
         val rcvStands = view.findViewById<RecyclerView>(R.id.rcvStands)
-        val standAdapter = StandAdapter(mutableListOf(), PreferenceHelper.isAdmin(requireContext()))
+        val standAdapter = StandAdapter(mutableListOf(), idEvent, isAdmin)
         rcvStands.layoutManager = LinearLayoutManager(requireContext())
         rcvStands.adapter = standAdapter
 

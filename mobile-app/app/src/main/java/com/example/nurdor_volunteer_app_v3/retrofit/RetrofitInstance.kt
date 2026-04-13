@@ -7,10 +7,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.time.LocalDateTime
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://192.168.0.103:8765"
+    private const val BASE_URL = "http://192.168.0.101:8765"
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(AuthInterceptor(NurdorVolunteerApplication.encryptedPrefs))
@@ -24,6 +25,7 @@ object RetrofitInstance {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
+            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 

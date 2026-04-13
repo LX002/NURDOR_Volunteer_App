@@ -53,6 +53,9 @@ dependencies {
     // GSON converter for Retrofit
     implementation(libs.converter.gson)
 
+    // Scalars converter for retrofit
+    implementation(libs.converter.scalars)
+
     // Kotlin Coroutines for asynchronous programming
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)

@@ -2,11 +2,13 @@ package com.example.nurdor_volunteer_app_v3.repository
 
 import android.util.Log
 import android.widget.Toast
+import com.example.nurdor_volunteer_app_v3.dto.DonationDto
 import com.example.nurdor_volunteer_app_v3.model.Stand
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import retrofit2.awaitResponse
 
 class StandRepository(db: AppDatabase) {
@@ -32,10 +34,39 @@ class StandRepository(db: AppDatabase) {
         }
     }
 
+    suspend fun fetchDonationResponse(donationDto: DonationDto): String {
+        try {
+            val response = api.fetchDonationResponse(donationDto).awaitResponse()
+            return if(response.isSuccessful) {
+                Log.i("currentDonations", "response success: $response")
+                response.body() ?: "ERROR:Donation response is null!"
+            } else {
+                Log.i("currentDonations", "response failure else branch: $response")
+                "ERROR:${response.raw().message}"
+            }
+        } catch (e: Exception) {
+            Log.i("currentDonations", "response failure ex catch")
+            return "ERROR:Exception during sending donation:\nmessage: ${e.message}\ncause: ${e.cause?.message}\nstackTrace:${e.stackTrace.toString()}"
+        }
+    }
+
     fun findAll() = mStandDao.findAll()
 
     fun findByIdEvent(idEvent: Int) = mStandDao.findByIdEvent(idEvent)
     suspend fun updateIdEventByStandIds(ids: List<Int>, idEvent: Int?): Int {
-        return mStandDao.updateIdEventByStandIds(idEvent, ids)
+        return withContext(Dispatchers.IO) {
+            mStandDao.updateIdEventByStandIds(idEvent, ids)
+        }
+    }
+
+    suspend fun updateTotalDonations(donationDto: DonationDto): Int {
+        return withContext(Dispatchers.IO) {
+            var currentDonations = mStandDao.findById(donationDto.idStand).totalDonations
+            Log.i("currentDonations", "current $: $currentDonations")
+            val num = mStandDao.updateTotalDonations(currentDonations + donationDto.amount, donationDto.idStand)
+            currentDonations = mStandDao.findById(donationDto.idStand).totalDonations
+            Log.i("currentDonations", "current $: $currentDonations")
+            num
+        }
     }
 }

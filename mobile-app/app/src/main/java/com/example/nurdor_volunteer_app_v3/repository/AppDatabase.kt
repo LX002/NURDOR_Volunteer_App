@@ -21,7 +21,7 @@ import com.example.nurdor_volunteer_app_v3.utils.DateTimeConverter
 
 @TypeConverters(DateTimeConverter::class)
 @Database(entities = [City::class, Event::class, EventRole::class, EventsLog::class,
-    Stand::class, Volunteer::class, VolunteerRole::class], version = 2)
+    Stand::class, Volunteer::class, VolunteerRole::class], version = 3)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun cityDao() : CityDao
     abstract fun eventDao() : EventDao

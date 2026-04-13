@@ -120,6 +120,10 @@
     <string name="by_username">By username</string>
     <string name="str_default">Default</string>
     <string name="current_donations">Current donations:</string>
+    <string name="add_donation">Add donation</string>
+    <string name="amount">Amount</string>
+    <string name="add_amount">Add amount</string>
+    <string name="leave">Leave</string>
     <string-array name="sort_add_events_types">
         <item></item>
         <item>Name</item>

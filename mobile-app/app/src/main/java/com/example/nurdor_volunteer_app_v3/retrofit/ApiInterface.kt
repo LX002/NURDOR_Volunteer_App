@@ -1,6 +1,7 @@
 package com.example.nurdor_volunteer_app_v3.retrofit
 
 import com.example.nurdor_volunteer_app_v3.dto.CityDto
+import com.example.nurdor_volunteer_app_v3.dto.DonationDto
 import com.example.nurdor_volunteer_app_v3.dto.EndEventResultDto
 import com.example.nurdor_volunteer_app_v3.dto.EventDto
 import com.example.nurdor_volunteer_app_v3.dto.EventsLogDto
@@ -9,12 +10,14 @@ import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
 import com.example.nurdor_volunteer_app_v3.dto.StandDto
 import com.example.nurdor_volunteer_app_v3.dto.StartEventDto
 import com.example.nurdor_volunteer_app_v3.dto.StartEventResultDto
+import com.example.nurdor_volunteer_app_v3.dto.UpdatePresenceDto
 import com.example.nurdor_volunteer_app_v3.dto.VolunteerDto
 import com.example.nurdor_volunteer_app_v3.model.Event
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -53,5 +56,11 @@ interface ApiInterface {
     // donation-service calls
     @GET("/volunteer/stands")
     fun fetchAllStands(): Call<List<StandDto>>
+
+    @PATCH("/volunteer/addDonation")
+    fun fetchDonationResponse(@Body donationDto: DonationDto): Call<String>
+
+    @PATCH("/volunteer/updatePresence")
+    fun updatePresence(@Body updatePresenceDto: UpdatePresenceDto): Call<EventsLogDto>
 
 }

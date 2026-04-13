@@ -50,7 +50,7 @@ class SetUpStandsForEventDialog: DialogFragment() {
         val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
         btnCancel.setOnClickListener { dismiss() }
 
-        val btnStartEvent = dialogView.findViewById<Button>(R.id.btnStartEvent)
+        val btnStartEvent = dialogView.findViewById<Button>(R.id.btnAddAmount)
         btnStartEvent.setOnClickListener {
             startEvent(idEvent, spinnerNumberOfStands.selectedItem as Int)
         }

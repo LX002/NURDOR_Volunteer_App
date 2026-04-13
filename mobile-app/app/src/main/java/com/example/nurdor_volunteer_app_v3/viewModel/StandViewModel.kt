@@ -2,6 +2,7 @@ package com.example.nurdor_volunteer_app_v3.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.example.nurdor_volunteer_app_v3.dto.DonationDto
 import com.example.nurdor_volunteer_app_v3.repository.DatabaseClient
 import com.example.nurdor_volunteer_app_v3.repository.StandRepository
 import kotlinx.coroutines.Dispatchers
@@ -21,9 +22,15 @@ class StandViewModel(application: Application): AndroidViewModel(application) {
         standRepository.fetchAllStands()
     }
 
+    suspend fun fetchDonationResponse(donationDto: DonationDto): String {
+        return standRepository.fetchDonationResponse(donationDto)
+    }
+
     suspend fun updateIdEventByStandIds(ids: List<Int>, idEvent: Int?): Int {
-        return withContext(Dispatchers.IO) {
-            standRepository.updateIdEventByStandIds(ids, idEvent)
-        }
+        return standRepository.updateIdEventByStandIds(ids, idEvent)
+    }
+
+    suspend fun addDonation(donationDto: DonationDto): Int {
+        return standRepository.updateTotalDonations(donationDto)
     }
 }

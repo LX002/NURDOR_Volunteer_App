@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.VolunteerViewModel
 
 class HomeActivity : AppCompatActivity() {
 
@@ -65,11 +67,29 @@ class HomeActivity : AppCompatActivity() {
 
         val eventsRcView: RecyclerView = findViewById(R.id.eventsRcView)
         val homeEventsAdapter = HomeEventsAdapter(mutableListOf())
+        if(!PreferenceHelper.isAdmin(this)) {
+            homeEventsAdapter.joinEvent = { idVolunteer, idEvent -> joinEvent(idEvent, idVolunteer) }
+        }
         eventsRcView.itemAnimator = DefaultItemAnimator()
         eventsRcView.layoutManager = LinearLayoutManager(this)
         eventsRcView.adapter = homeEventsAdapter
 
         setUpEventsObserver(homeEventsAdapter)
+    }
+
+    fun joinEvent(idEvent: Int, idVolunteer: Int) {
+        lifecycleScope.launch {
+            val context = this@HomeActivity
+            val message = eventsLogViewModel.updatePresence(1, idEvent, idVolunteer)
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            if (!message.contains("ERROR")) {
+                val intent = Intent(context, RunningEventStatisticsActivity::class.java).apply {
+                    putExtra("idEvent", idEvent)
+                    putExtra("idVolunteer", idVolunteer)
+                }
+                context.startActivity(intent)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

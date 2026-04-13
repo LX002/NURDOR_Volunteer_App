@@ -34,7 +34,7 @@
         android:supportsRtl="true"
         android:theme="@style/NurdorApp_DayNight">
         <activity
-            android:name=".activity.StatisticsActivity"
+            android:name=".activity.RunningEventStatisticsActivity"
             android:exported="false" />
         <activity
             android:name=".activity.RunningEventsActivity"

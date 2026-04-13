@@ -22,6 +22,7 @@ import com.example.nurdor_volunteer_app_v3.utils.ImageUtils
 import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 import java.time.LocalDateTime
 import androidx.core.net.toUri
+import com.example.nurdor_volunteer_app_v3.activity.RunningEventStatisticsActivity
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.EnrolledVolunteersDialog
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.SetUpStandsForEventDialog
 import com.example.nurdor_volunteer_app_v3.utils.PdfDownloadWorker
@@ -44,9 +45,10 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             }
         }
     }
-
     val elements: List<Event>
         get() = events
+
+    var joinEvent: ((Int, Int) -> Unit)? = null
 
     class EventViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(event: Event) {
@@ -64,7 +66,7 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
         }
     }
 
-    class ExpandedEventViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    inner class ExpandedEventViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(event: Event) {
             val isAdmin = PreferenceHelper.isAdmin(itemView.context)
 
@@ -98,7 +100,6 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
 
             firstActionButton.setOnClickListener {
                 if(isAdmin) {
-                    // TODO(): start event block
                     val context = itemView.context as AppCompatActivity
                     event.idEvent?.let {
                         SetUpStandsForEventDialog
@@ -108,15 +109,8 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
                                 "setUpStandsForEventDialog"
                             )
                     }
-                    // nakon toga start eventa sa dva tab fragmenta - prisutni volonteri i standovi i njihov status
-                    // refresh opcija za oba, zavrsavanjem se vraca na home screen
-                    // admin ima i opciju u home meniju started events kojima moze opet pristupiti i pratiti stanje
                 } else {
-                    // TODO(): join event block
-                //val eventIntent = Intent(itemView.context, EventActivity::class.java)
-//                eventIntent.putExtra("idEvent", event.idEvent)
-//                eventIntent.putExtra("eventName", event.eventName)
-//                itemView.context.startActivity(eventIntent)
+                    event.idEvent?.let { joinEvent?.invoke(PreferenceHelper.getIdVolunteer(itemView.context), event.idEvent) }
                 }
             }
 

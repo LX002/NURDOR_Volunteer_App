@@ -1,15 +1,9 @@
 package com.example.nurdor_volunteer_app_v3.viewModel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import com.example.nurdor_volunteer_app_v3.model.EventsLog
 import com.example.nurdor_volunteer_app_v3.repository.DatabaseClient
 import com.example.nurdor_volunteer_app_v3.repository.EventsLogRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 
 class EventsLogViewModel(application: Application): AndroidViewModel(application) {
 
@@ -22,7 +16,10 @@ class EventsLogViewModel(application: Application): AndroidViewModel(application
         eventsLogRepository.fetchAll()
     }
 
-    suspend fun updateIsPresentByVolunteerIds(isPresent: Boolean, idEvent: Int): Int {
-        return eventsLogRepository.updateIsPresentByVolunteerId(isPresent, idEvent)
+    suspend fun updatePresence(isPresent: Byte, idEvent: Int, idVolunteer: Int): String =
+        eventsLogRepository.updatePresence(isPresent, idVolunteer, idEvent)
+
+    suspend fun updateIsPresentByEventId(isPresent: Byte, idEvent: Int): Int {
+        return eventsLogRepository.updateIsPresentByEventId(isPresent, idEvent)
     }
 }

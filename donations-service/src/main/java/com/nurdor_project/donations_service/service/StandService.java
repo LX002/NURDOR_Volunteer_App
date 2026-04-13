@@ -52,21 +52,21 @@ public class StandService {
     public String donateToStand(Integer amount, Integer idStand, Integer idEvent) {
         EventDto eventDto = eventProxy.findById(idEvent);
         if(eventDto == null)
-            return "Event not found!";
+            return "ERROR:Event not found!";
 
         if(eventDto.getIsStarted() != (byte) 1)
-            throw new NotValidStandIdException("Cannot donate - event " + idEvent + " not started yet!");
+            throw new NotValidStandIdException("ERROR:Cannot donate - event " + idEvent + " not started yet!");
 
         Stand stand = findById(idStand);
         List<Stand> takenStands = findTakenStands(idEvent);
         if(!takenStands.contains(stand))
-            throw new NotValidStandIdException("STAND_" + idStand + " is not being used in " + eventDto.getEventName());
+            throw new NotValidStandIdException("ERROR:STAND_" + idStand + " is not being used in " + eventDto.getEventName());
 
         Integer currentAmount = stand.getDonations();
         stand.setDonations(currentAmount + amount);
         Stand savedStand = standRepository.save(stand);
 
-        return "Donated " + amount + "RSD on STAND_" + idStand + ". Total stand donations: " + savedStand.getDonations() + "RSD";
+        return "SUCCESS:Donated " + amount + "RSD on STAND_" + idStand + ". Total stand donations: " + savedStand.getDonations() + "RSD";
     }
 
     public List<Stand> findAll() {

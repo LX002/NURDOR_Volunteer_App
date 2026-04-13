@@ -1,6 +1,8 @@
 package com.example.nurdor_volunteer_app_v3.repository
 
 import android.util.Log
+import com.example.nurdor_volunteer_app_v3.dto.EventsLogDto
+import com.example.nurdor_volunteer_app_v3.dto.UpdatePresenceDto
 import com.example.nurdor_volunteer_app_v3.model.EventsLog
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
@@ -42,17 +44,42 @@ class EventsLogRepository(db: AppDatabase) {
         }
     }
 
-    fun findAll() = mEventsLogDao.findAll()
-
-    suspend fun updateIsPresentByEventId(isPresent: Boolean, idEvent: Int): Int {
-        return withContext(Dispatchers.IO) {
-            mEventsLogDao.updateIsPresentByIdEvent(isPresent, idEvent)
+    suspend fun updatePresence(isPresent: Byte, idVolunteer: Int, idEvent: Int): String {
+        try {
+            val eventsLogDtoAsync = CoroutineScope(Dispatchers.IO).async {
+                mEventsLogDao.findByIdVolunteerAndIdEvent(idVolunteer, idEvent)?.idEventsLog?.let {
+                    return@async UpdatePresenceDto(idVolunteer, idEvent, isPresent, null)
+                }
+            }
+            val dto = eventsLogDtoAsync.await()
+            return dto?.let {
+                val response = api.updatePresence(dto).awaitResponse()
+                if(response.isSuccessful) {
+                    val res = updateIsPresentByEventIdAndVolunteerId(isPresent, idEvent, idVolunteer)
+                    if(res == 1)
+                        "Successfully ${if(isPresent == 1.toByte()) " joined to the " else " left the "} event!"
+                    else
+                        "ERROR: during updating the presence - returned != 1 updated rows!!!"
+                } else {
+                    "ERROR: during updating the presence: ${response.raw().message}: ${response.errorBody()?.string()}"
+                }
+            } ?: "ERROR: during updating the presence: response body is null"
+        } catch (e: Exception) {
+            return "ERROR: Exception during updating the presence: ${e.message}"
         }
     }
 
-    suspend fun updateIsPresentByVolunteerId(isPresent: Boolean, idVolunteer: Int): Int {
+    fun findAll() = mEventsLogDao.findAll()
+
+    suspend fun updateIsPresentByEventIdAndVolunteerId(isPresent: Byte, idEvent: Int, idVolunteer: Int): Int {
         return withContext(Dispatchers.IO) {
-            mEventsLogDao.updateIsPresentByVolunteerId(isPresent, idVolunteer)
+            mEventsLogDao.updateIsPresentByEventIdAndVolunteerId(isPresent, idEvent, idVolunteer)
+        }
+    }
+
+    suspend fun updateIsPresentByEventId(isPresent: Byte, idEvent: Int): Int {
+        return withContext(Dispatchers.IO) {
+            mEventsLogDao.updateIsPresentByIdEvent(isPresent, idEvent)
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.nurdor_volunteer_app_v3.activity
 
-import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -23,7 +22,6 @@ import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.StandViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.launch
-import androidx.core.view.get
 
 class RunningEventsActivity : AppCompatActivity() {
 
@@ -41,7 +39,7 @@ class RunningEventsActivity : AppCompatActivity() {
             if(standsIds.isNotEmpty()) {
                 val numOfUpdatedEventRows = eventViewModel.startOrEndEventByIdEvent(idEvent, false, totalDonations)
                 val numOfUpdatedStandRows = standViewModel.updateIdEventByStandIds(standsIds, null)
-                val numOfUpdatedLogRows = eventsLogViewModel.updateIsPresentByVolunteerIds(false, idEvent)
+                val numOfUpdatedLogRows = eventsLogViewModel.updateIsPresentByEventId(0, idEvent)
                 Log.i("eventOnOff", "$numOfUpdatedEventRows $numOfUpdatedStandRows $numOfUpdatedLogRows")
                 if (numOfUpdatedEventRows == 1 && numOfUpdatedStandRows == standsIds.size) {
                     if(numOfUpdatedLogRows != 0) {
