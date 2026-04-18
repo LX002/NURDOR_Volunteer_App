@@ -11,7 +11,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.time.LocalDateTime
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://192.168.0.101:8765"
+    private const val BASE_URL = "http://127.0.0.1:8765"
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(AuthInterceptor(NurdorVolunteerApplication.encryptedPrefs))

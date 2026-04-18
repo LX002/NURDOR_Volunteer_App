@@ -92,6 +92,11 @@ public class EventController {
         return ResponseEntity.ok(new EndEventResultDto("Ended event: " + idEvent, totalDonations, stands));
     }
 
+    @PostMapping("/admin/events/create")
+    public ResponseEntity<Event> createEvent(@RequestBody @Valid CreateEventDto eventDto) {
+        return ResponseEntity.ok(eventService.save(EventMapper.mapToEventWithoutId(eventDto)));
+    }
+
     private void updateEvent(int idEvent, byte isStarted, Long totalDonations) {
         Event event = eventService.findById(idEvent);
         event.setIsStarted(isStarted);

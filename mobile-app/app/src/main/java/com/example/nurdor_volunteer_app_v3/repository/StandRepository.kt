@@ -1,8 +1,7 @@
 package com.example.nurdor_volunteer_app_v3.repository
 
 import android.util.Log
-import android.widget.Toast
-import com.example.nurdor_volunteer_app_v3.dto.DonationDto
+import com.example.nurdor_volunteer_app_v3.dto.standDto.DonationDto
 import com.example.nurdor_volunteer_app_v3.model.Stand
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +25,7 @@ class StandRepository(db: AppDatabase) {
                 val insertAsync = CoroutineScope(Dispatchers.IO).async {
                     stands?.let { mStandDao.insertOrReplaceStands(stands) }
                 }
+                insertAsync.await()
             } else {
                 Log.i("retrofitApi1", "Error during fetching of stands: ${response.raw().message}")
             }

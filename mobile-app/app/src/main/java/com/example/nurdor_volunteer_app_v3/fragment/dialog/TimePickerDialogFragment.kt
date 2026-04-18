@@ -1,4 +1,4 @@
-package com.example.nurdor_volunteer_app_v3.fragment
+package com.example.nurdor_volunteer_app_v3.fragment.dialog
 
 import android.app.Dialog
 import android.app.TimePickerDialog
@@ -6,28 +6,36 @@ import android.os.Bundle
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
 import android.widget.EditText
-import android.widget.TextView
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
-class TimePickerFragment(val txtTime: EditText?, private val txtViewTime: TextView?) : DialogFragment(), TimePickerDialog.OnTimeSetListener {
+class TimePickerDialogFragment() : DialogFragment(), TimePickerDialog.OnTimeSetListener {
+
+    companion object {
+        fun newInstance(requestKey: String): TimePickerDialogFragment {
+            return TimePickerDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putString("request_key", requestKey)
+                }
+            }
+        }
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        // Use the current time as the default values for the picker.
         val c = Calendar.getInstance()
         val hour = c.get(Calendar.HOUR_OF_DAY)
         val minute = c.get(Calendar.MINUTE)
-
-        // Create a new instance of TimePickerDialog and return it.
-        //return TimePickerDialog(activity, this, hour, minute, DateFormat.is24HourFormat(activity))
         return TimePickerDialog(requireContext(), this, hour, minute, true)
     }
 
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-        // Do something with the time the user picks.
+        val requestKey = requireArguments().getString("request_key") as String
         val time = LocalTime.of(hourOfDay, minute)
         val formatedTime = time.format(DateTimeFormatter.ofPattern("HH:mm"))
-        if(txtTime != null) txtTime.setText(formatedTime.toString()) else txtViewTime?.text = formatedTime
+        val pickerResult = Bundle().apply {
+            putString("picked_time", formatedTime)
+        }
+        parentFragmentManager.setFragmentResult(requestKey, pickerResult)
     }
 }

@@ -1,4 +1,4 @@
-package com.example.nurdor_volunteer_app_v3.dto
+package com.example.nurdor_volunteer_app_v3.dto.cityDto
 
 data class CityDto(val zipCode: String, val cityName: String) {
     override fun toString(): String {

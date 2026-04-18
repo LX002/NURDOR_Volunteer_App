@@ -85,5 +85,5 @@ interface VolunteerDao {
     fun findPresentVolunteersByIdEventAndUsername(idEvent: Int, username: String?): LiveData<List<Volunteer>>
 
     @Query("SELECT * FROM volunteer WHERE id = :idVolunteer")
-    fun getVolunteerById(idVolunteer: Int): Volunteer?
+    fun findVolunteerById(idVolunteer: Int): LiveData<Volunteer>
 }

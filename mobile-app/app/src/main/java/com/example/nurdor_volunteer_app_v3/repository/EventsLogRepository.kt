@@ -1,8 +1,8 @@
 package com.example.nurdor_volunteer_app_v3.repository
 
 import android.util.Log
-import com.example.nurdor_volunteer_app_v3.dto.EventsLogDto
-import com.example.nurdor_volunteer_app_v3.dto.UpdatePresenceDto
+import com.example.nurdor_volunteer_app_v3.dto.eventDto.CreateEventsLogDto
+import com.example.nurdor_volunteer_app_v3.dto.eventsLogDto.UpdatePresenceDto
 import com.example.nurdor_volunteer_app_v3.model.EventsLog
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
@@ -69,6 +69,31 @@ class EventsLogRepository(db: AppDatabase) {
         }
     }
 
+    suspend fun insertLogs(eventsLogs: List<CreateEventsLogDto>): String {
+        return try {
+            val response = api.insertEventLog(eventsLogs).awaitResponse()
+            if(response.isSuccessful) {
+                if(response.body() == null) {
+                    "ERROR: inserting logs response body is null!"
+                } else {
+                    val resultLogs = response.body()?.map { dto -> EventsLog(
+                        dto.id,
+                        dto.volunteer,
+                        dto.event,
+                        dto.isPresent,
+                        dto.note
+                    )}
+                    val insertAsync = CoroutineScope(Dispatchers.IO).async {
+                        if(resultLogs?.isNotEmpty() == true) {
+                            mEventsLogDao.insertEventsLogs(resultLogs)
+                        } else { listOf() }
+                    }
+                    val ids = insertAsync.await()
+                    "SUCCESS: logs (picked events) are inserted - all of them? ${ids.contains(-1L) && ids.isNotEmpty()}"
+                }
+            } else { "ERROR: inserting logs response is not successful! ${response.raw().message}" }
+        } catch (e: Exception) { "EXCEPTION: during inserting picked events (logs): ${e.message}" }
+    }
     fun findAll() = mEventsLogDao.findAll()
 
     suspend fun updateIsPresentByEventIdAndVolunteerId(isPresent: Byte, idEvent: Int, idVolunteer: Int): Int {
@@ -82,4 +107,6 @@ class EventsLogRepository(db: AppDatabase) {
             mEventsLogDao.updateIsPresentByIdEvent(isPresent, idEvent)
         }
     }
+
+
 }

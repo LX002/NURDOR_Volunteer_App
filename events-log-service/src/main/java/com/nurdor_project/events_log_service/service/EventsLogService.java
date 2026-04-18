@@ -43,6 +43,11 @@ public class EventsLogService {
         return eventsLogRepository.save(eventsLog);
     }
 
+    public List<EventsLog> insertLogs(List<EventsLog> eventsLogs) {
+        eventsLogs.forEach(eventsLog -> volunteerAndEventCheck(eventsLog.getVolunteer(), eventsLog.getEvent(), eventsLog.getIsPresent(), false));
+        return eventsLogRepository.saveAll(eventsLogs);
+    }
+
     @Transactional
     public EventsLog updatePresence(EventsLogDto eventsLogDto) {
         volunteerAndEventCheck(eventsLogDto.getVolunteer(), eventsLogDto.getEvent(), eventsLogDto.getIsPresent(), true);

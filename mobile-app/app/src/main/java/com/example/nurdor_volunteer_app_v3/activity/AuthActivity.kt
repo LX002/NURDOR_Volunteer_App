@@ -2,7 +2,6 @@ package com.example.nurdor_volunteer_app_v3.activity
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge

@@ -14,28 +14,22 @@ import androidx.core.content.edit
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.application
 import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.NurdorVolunteerApplication
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.activity.HomeActivity
-import com.example.nurdor_volunteer_app_v3.dto.LoginResponseDto
+import com.example.nurdor_volunteer_app_v3.dto.authDto.LoginResponseDto
 import com.example.nurdor_volunteer_app_v3.utils.JwtUtils
 import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 import com.example.nurdor_volunteer_app_v3.viewModel.AuthViewModel
-import com.example.nurdor_volunteer_app_v3.viewModel.EventViewModel
-import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
 import kotlinx.coroutines.launch
 
 class LoginFragment: Fragment() {
 
     private lateinit var callback : OnSignInFragmentListener
     private lateinit var authViewModel: AuthViewModel
-    private lateinit var eventViewModel: EventViewModel
-    private lateinit var eventsLogViewModel: EventsLogViewModel
+    private lateinit var cityViewModel: CityViewModel
 
     private var txtUsername : EditText? = null
     private var txtPassword : EditText? = null
@@ -54,8 +48,7 @@ class LoginFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         authViewModel = ViewModelProvider(this)[AuthViewModel::class]
-        eventViewModel = ViewModelProvider(this)[EventViewModel::class]
-        eventsLogViewModel = ViewModelProvider(this)[EventsLogViewModel::class]
+        cityViewModel = ViewModelProvider(this)[CityViewModel::class]
         val view: View? = if(isLandscape()) {
            inflater.inflate(R.layout.fragment_login_land, container, false)
         } else {
@@ -114,6 +107,11 @@ class LoginFragment: Fragment() {
     }
 
     private fun editPreferences(loginResponseDto: LoginResponseDto) {
+        authViewModel.findVolunteerById(loginResponseDto.volunteerId).observe(viewLifecycleOwner) { volunteer ->
+            cityViewModel.findByZipCode(volunteer.nearestCity).observe(viewLifecycleOwner) { city ->
+                city?.let { PreferenceHelper.setNearestCity(requireContext(), city.cityName) }
+            }
+        }
         val encryptedPrefs = NurdorVolunteerApplication.encryptedPrefs
         encryptedPrefs.edit { putString("jwt_token", loginResponseDto.accessToken) }
         PreferenceHelper.setIdVolunteer(requireContext(), loginResponseDto.volunteerId)

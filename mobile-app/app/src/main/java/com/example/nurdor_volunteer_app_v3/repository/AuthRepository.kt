@@ -1,12 +1,12 @@
 package com.example.nurdor_volunteer_app_v3.repository
 
 import android.util.Log
-import com.example.nurdor_volunteer_app_v3.dto.LoginResponseDto
-import com.example.nurdor_volunteer_app_v3.dto.RegisterResponseDto
+import com.example.nurdor_volunteer_app_v3.dto.authDto.LoginResponseDto
+import com.example.nurdor_volunteer_app_v3.dto.authDto.RegisterResponseDto
 import com.example.nurdor_volunteer_app_v3.model.Volunteer
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
-import com.example.rma_project_demo_v1.dto.LoginDto
-import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
+import com.example.nurdor_volunteer_app_v3.dto.authDto.LoginDto
+import com.example.nurdor_volunteer_app_v3.dto.authDto.RegisterDto
 import com.google.gson.Gson
 import com.google.gson.internal.LinkedTreeMap
 import kotlinx.coroutines.CoroutineScope
@@ -76,4 +76,7 @@ class AuthRepository(db: AppDatabase) {
             -1
         }
     }
+
+    fun findVolunteerById(idVolunteer: Int) = mVolunteerDao.findVolunteerById(idVolunteer)
+
 }

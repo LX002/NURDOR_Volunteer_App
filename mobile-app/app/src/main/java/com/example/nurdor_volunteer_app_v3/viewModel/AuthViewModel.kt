@@ -7,18 +7,13 @@ import androidx.lifecycle.AndroidViewModel
 import com.example.nurdor_volunteer_app_v3.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.application
-import com.example.nurdor_volunteer_app_v3.NurdorVolunteerApplication
-import com.example.nurdor_volunteer_app_v3.dto.LoginResponseDto
-import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
+import com.example.nurdor_volunteer_app_v3.dto.authDto.LoginResponseDto
+import com.example.nurdor_volunteer_app_v3.dto.authDto.RegisterDto
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.model.VolunteerRole
 import com.example.nurdor_volunteer_app_v3.repository.CityRepository
 import com.example.nurdor_volunteer_app_v3.repository.DatabaseClient
-import com.example.nurdor_volunteer_app_v3.utils.JwtUtils
-import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 
 class AuthViewModel(application: Application): AndroidViewModel(application) {
 
@@ -114,6 +109,8 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
         }
         return 1
     }
+
+    fun findVolunteerById(idVolunteer: Int) = authRepository.findVolunteerById(idVolunteer)
 
     private fun checkSignInValidity() {
         isSignInEnabled.value =

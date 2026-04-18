@@ -1,4 +1,4 @@
-package com.example.nurdor_volunteer_app_v3.dto
+package com.example.nurdor_volunteer_app_v3.dto.authDto
 
 data class RegisterDto(
     val name: String,

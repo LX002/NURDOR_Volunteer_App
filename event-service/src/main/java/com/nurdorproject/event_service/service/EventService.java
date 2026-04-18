@@ -34,8 +34,8 @@ public class EventService {
         return eventRepository.findById(idEvent).orElseThrow(() -> new EventNotFoundException("Event with id: " + idEvent + " is not found!"));
     }
 
-    public void save(Event event) {
-        eventRepository.save(event);
+    public Event save(Event event) {
+        return eventRepository.save(event);
     }
 
     public byte[] createEventPdf(Event event) throws JRException, IOException {

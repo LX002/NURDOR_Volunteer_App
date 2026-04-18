@@ -23,13 +23,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.activity.AuthActivity
-import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
+import com.example.nurdor_volunteer_app_v3.dto.authDto.RegisterDto
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.model.VolunteerRole
-import com.example.nurdor_volunteer_app_v3.utils.PasswordUtils
 import com.example.nurdor_volunteer_app_v3.viewModel.AuthViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
 import kotlinx.coroutines.CoroutineScope

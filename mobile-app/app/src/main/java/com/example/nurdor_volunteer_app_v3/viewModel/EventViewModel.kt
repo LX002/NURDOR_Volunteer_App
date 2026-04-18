@@ -2,9 +2,9 @@ package com.example.nurdor_volunteer_app_v3.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.example.nurdor_volunteer_app_v3.dto.EndEventResultDto
-import com.example.nurdor_volunteer_app_v3.dto.StartEventDto
-import com.example.nurdor_volunteer_app_v3.dto.StartEventResultDto
+import com.example.nurdor_volunteer_app_v3.dto.eventDto.EndEventResultDto
+import com.example.nurdor_volunteer_app_v3.dto.eventDto.StartEventDto
+import com.example.nurdor_volunteer_app_v3.dto.eventDto.StartEventResultDto
 import com.example.nurdor_volunteer_app_v3.repository.DatabaseClient
 import com.example.nurdor_volunteer_app_v3.repository.EventRepository
 import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper

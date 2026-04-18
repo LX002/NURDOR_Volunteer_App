@@ -1,4 +1,4 @@
-package com.example.nurdor_volunteer_app_v3.dto
+package com.example.nurdor_volunteer_app_v3.dto.eventsLogDto
 
 data class UpdatePresenceDto(
     val volunteer: Int,

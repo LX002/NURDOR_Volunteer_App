@@ -44,10 +44,16 @@ public class ApiGatewayConfig {
                 .route("end-event", r -> r.path("/admin/end/{idEvent}")
                         .filters(f -> f.rewritePath("/admin/end/(?<idEvent>.*)", "/api/admin/events/end/${idEvent}"))
                         .uri("lb://EVENT-SERVICE"))
+                .route("create-event", r -> r.path("/admin/newEvent")
+                        .filters(f -> f.rewritePath("/admin/newEvent", "/api/admin/events/create"))
+                        .uri("lb://EVENT-SERVICE"))
 
                 // events-log-service routes
                 .route("insert-log", r -> r.path("/volunteer/insertLog")
                         .filters(f -> f.rewritePath("/volunteer/insertLog", "/api/volunteer/eventsLogs/insert"))
+                        .uri("lb://EVENTS-LOG-SERVICE"))
+                .route("insert-log", r -> r.path("/volunteer/insertLogs")
+                        .filters(f -> f.rewritePath("/volunteer/insertLogs", "/api/volunteer/eventsLogs/insertLogs"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
                 .route("update-presence", r -> r.path("/volunteer/updatePresence")
                         .filters(f -> f.rewritePath("/volunteer/updatePresence", "/api/volunteer/eventLogs/updatePresence"))

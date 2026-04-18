@@ -2,11 +2,9 @@ package com.example.nurdor_volunteer_app_v3.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.example.nurdor_volunteer_app_v3.dto.DonationDto
+import com.example.nurdor_volunteer_app_v3.dto.standDto.DonationDto
 import com.example.nurdor_volunteer_app_v3.repository.DatabaseClient
 import com.example.nurdor_volunteer_app_v3.repository.StandRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class StandViewModel(application: Application): AndroidViewModel(application) {
 

@@ -34,6 +34,16 @@
         android:supportsRtl="true"
         android:theme="@style/NurdorApp_DayNight">
         <activity
+            android:name=".activity.PickEventsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.OpenStreetMapActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CreateEventActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".activity.RunningEventStatisticsActivity"
             android:exported="false" />
         <activity

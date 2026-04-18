@@ -25,7 +25,7 @@ interface EventsLogDao {
     fun updateIsPresentByEventIdAndVolunteerId(isPresent: Byte, idEvent: Int, idVolunteer: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertEventsLogs(eventsLogs: List<EventsLog>)
+    fun insertEventsLogs(eventsLogs: List<EventsLog>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     fun insertEventsLogsWithAbort(eventsLogs: List<EventsLog>): List<Long>

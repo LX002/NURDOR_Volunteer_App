@@ -57,7 +57,7 @@ class OsmActivity : AppCompatActivity() {
         } else {
             savedInstanceState?.let {
                 GeoPoint(savedInstanceState.getDouble("aLatitude"),savedInstanceState.getDouble("aLongitude"))
-            } ?: GeoPoint(45.2384459,19.8855424)
+            } ?: GeoPoint(45.2454010, 19.8524717)
         }
         mapController.setCenter(startPoint)
 

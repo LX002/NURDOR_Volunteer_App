@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
-import com.example.nurdor_volunteer_app_v3.viewModel.VolunteerViewModel
 
 class HomeActivity : AppCompatActivity() {
 
@@ -60,9 +59,13 @@ class HomeActivity : AppCompatActivity() {
 
         val fabAddEvents: FloatingActionButton = findViewById(R.id.fabAddEvent)
         fabAddEvents.setOnClickListener {
-            // TODO(): addEventsActivity - different for admin and volunteer
-            //val intent = Intent(this, AddEventActivity::class.java)
-            //startActivity(intent)
+            lateinit var intent: Intent
+            if(PreferenceHelper.isAdmin(this)) {
+                intent = Intent(this, CreateEventActivity::class.java)
+            } else {
+                intent = Intent(this, PickEventsActivity::class.java)
+            }
+            startActivity(intent)
         }
 
         val eventsRcView: RecyclerView = findViewById(R.id.eventsRcView)
@@ -121,7 +124,7 @@ class HomeActivity : AppCompatActivity() {
                 true
             }
             PreferenceHelper.isAdmin(this) && item.itemId == R.id.itemArchivedEvents -> {
-                // TODO() launch event archive
+                // TODO() launch event archive? if you make it
                 true
             }
             else -> super.onOptionsItemSelected(item)

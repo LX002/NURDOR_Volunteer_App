@@ -1,18 +1,19 @@
 package com.example.nurdor_volunteer_app_v3.retrofit
 
-import com.example.nurdor_volunteer_app_v3.dto.CityDto
-import com.example.nurdor_volunteer_app_v3.dto.DonationDto
-import com.example.nurdor_volunteer_app_v3.dto.EndEventResultDto
-import com.example.nurdor_volunteer_app_v3.dto.EventDto
-import com.example.nurdor_volunteer_app_v3.dto.EventsLogDto
-import com.example.rma_project_demo_v1.dto.LoginDto
-import com.example.nurdor_volunteer_app_v3.dto.RegisterDto
-import com.example.nurdor_volunteer_app_v3.dto.StandDto
-import com.example.nurdor_volunteer_app_v3.dto.StartEventDto
-import com.example.nurdor_volunteer_app_v3.dto.StartEventResultDto
-import com.example.nurdor_volunteer_app_v3.dto.UpdatePresenceDto
-import com.example.nurdor_volunteer_app_v3.dto.VolunteerDto
-import com.example.nurdor_volunteer_app_v3.model.Event
+import com.example.nurdor_volunteer_app_v3.dto.cityDto.CityDto
+import com.example.nurdor_volunteer_app_v3.dto.eventDto.CreateEventDto
+import com.example.nurdor_volunteer_app_v3.dto.standDto.DonationDto
+import com.example.nurdor_volunteer_app_v3.dto.eventDto.EndEventResultDto
+import com.example.nurdor_volunteer_app_v3.dto.eventDto.EventDto
+import com.example.nurdor_volunteer_app_v3.dto.eventsLogDto.EventsLogDto
+import com.example.nurdor_volunteer_app_v3.dto.authDto.LoginDto
+import com.example.nurdor_volunteer_app_v3.dto.authDto.RegisterDto
+import com.example.nurdor_volunteer_app_v3.dto.eventDto.CreateEventsLogDto
+import com.example.nurdor_volunteer_app_v3.dto.standDto.StandDto
+import com.example.nurdor_volunteer_app_v3.dto.eventDto.StartEventDto
+import com.example.nurdor_volunteer_app_v3.dto.eventDto.StartEventResultDto
+import com.example.nurdor_volunteer_app_v3.dto.eventsLogDto.UpdatePresenceDto
+import com.example.nurdor_volunteer_app_v3.dto.volunteerDto.VolunteerDto
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -40,7 +41,13 @@ interface ApiInterface {
     @GET("/volunteer/allEventsLogs")
     fun fetchAllEventsLogs(): Call<List<EventsLogDto>>
 
+    @POST("/volunteer/insertLogs")
+    fun insertEventLog(@Body eventsLogs: List<CreateEventsLogDto>): Call<List<EventsLogDto>>
+
     // event-service calls
+    @POST("/admin/newEvent")
+    fun createEvent(@Body eventDto: CreateEventDto): Call<EventDto>
+
     @GET("/volunteer/eventPdf/{idEvent}")
     fun downloadPdfWithEventById(@Path("idEvent") idEvent: Int): Call<ResponseBody>
 

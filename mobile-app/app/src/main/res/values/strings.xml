@@ -124,6 +124,12 @@
     <string name="amount">Amount</string>
     <string name="add_amount">Add amount</string>
     <string name="leave">Leave</string>
+    <string name="dd_mm_yyyy">dd/mm/yyyy</string>
+    <string name="hh_mm">hh:mm</string>
+    <string name="picked_image_png">event.png</string>
+    <string name="by_event_name">By event name</string>
+    <string name="by_city">By city</string>
+    <string name="starts_at_with_colon">Starts at:</string>
     <string-array name="sort_add_events_types">
         <item></item>
         <item>Name</item>

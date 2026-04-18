@@ -29,6 +29,12 @@ public class EventsLogController {
                 : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping("/volunteer/eventsLogs/insertLogs")
+    public ResponseEntity<List<EventsLog>> insertLogs(@RequestBody @Valid List<EventsLog> eventsLogs) {
+        List<EventsLog> saved = eventsLogService.insertLogs(eventsLogs);
+        return !saved.isEmpty() ? ResponseEntity.ok(saved) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PatchMapping("/volunteer/eventLogs/updatePresence")
     public ResponseEntity<EventsLog> markAsPresent(@RequestBody @Valid EventsLogDto eventsLogDto) {
         return ResponseEntity.ok(eventsLogService.updatePresence(eventsLogDto));

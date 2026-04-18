@@ -10,7 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.R
-import com.example.nurdor_volunteer_app_v3.dto.DonationDto
+import com.example.nurdor_volunteer_app_v3.dto.standDto.DonationDto
 import com.example.nurdor_volunteer_app_v3.viewModel.StandViewModel
 import kotlinx.coroutines.launch
 
