@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="warning">#dede02</color>
     <color name="nurdor_green">#00bf33</color>
     <color name="nurdor_green_2">#02ab2f</color>
     <color name="almost_black">	#2d2d2d</color>

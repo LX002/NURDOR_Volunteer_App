@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.adapters.EnrolledVolunteersAdapter
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.DisplayMessageDialog
 import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.VolunteerViewModel
 import kotlinx.coroutines.launch
@@ -88,7 +89,10 @@ class PresentVolunteersFragment: Fragment() {
         }
 
         btnSearch.setOnClickListener {
-            volunteerViewModel.updateFilter(idEvent)
+            lifecycleScope.launch {
+                fetchData()
+                volunteerViewModel.updateFilter(idEvent)
+            }
         }
         btnSearch.setOnLongClickListener {
             val popupMenu = PopupMenu(requireContext(), it)
@@ -104,9 +108,11 @@ class PresentVolunteersFragment: Fragment() {
 
     private fun fetchData() {
         lifecycleScope.launch {
-            volunteerViewModel.fetchAll()
-            eventsLogViewModel.fetchAll()
+            val message = "${volunteerViewModel.fetchAll()}|${eventsLogViewModel.fetchAll()}"
             volunteerViewModel.updateFilter(requireArguments().getInt("idEvent"))
+            if(isAdded && !message.contains("SUCCESS") && !parentFragmentManager.isStateSaved) {
+                DisplayMessageDialog.newInstance(message, false).show(parentFragmentManager, "displayMessageDialogFragment")
+            }
         }
     }
 

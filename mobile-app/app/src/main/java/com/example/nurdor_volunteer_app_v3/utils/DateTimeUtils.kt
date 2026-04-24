@@ -7,10 +7,15 @@ import java.time.format.DateTimeFormatter
 class DateTimeUtils {
 
     companion object {
-        fun changeDateFormat(inputDate: LocalDateTime): String {
-            val outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+        fun changeDateFormat(inputDate: LocalDateTime, pattern: String): String {
+            val outputFormatter = DateTimeFormatter.ofPattern(pattern)
             val outputDate = inputDate.format(outputFormatter)
             return outputDate.toString()
+        }
+
+        fun covertToLocalDateTime(inputDateString: String, pattern: String): LocalDateTime {
+            val formatter = DateTimeFormatter.ofPattern(pattern)
+            return LocalDateTime.parse(inputDateString, formatter)
         }
 
         fun calculateDuration(startTime: LocalDateTime, endTime: LocalDateTime): Long {

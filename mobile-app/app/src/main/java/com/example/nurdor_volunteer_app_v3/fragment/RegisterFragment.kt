@@ -14,18 +14,21 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ScrollView
 import android.widget.Spinner
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.activity.AuthActivity
 import com.example.nurdor_volunteer_app_v3.dto.authDto.RegisterDto
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.DisplayMessageDialog
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.model.VolunteerRole
 import com.example.nurdor_volunteer_app_v3.viewModel.AuthViewModel
@@ -37,7 +40,7 @@ import kotlinx.coroutines.launch
 import java.util.Base64
 
 
-class SignInFragment: Fragment() {
+class RegisterFragment: Fragment() {
 
     private lateinit var callback : OnLoginFragmentListener
     private var btnSignIn : Button? = null
@@ -56,32 +59,28 @@ class SignInFragment: Fragment() {
     private var spinnerRole : Spinner? = null
 
     private var profileImg: ByteArray? = null
-    private var profileImgName: String? = null
 
     private lateinit var authViewModel: AuthViewModel
     private lateinit var cityViewModel: CityViewModel
     private lateinit var oldImgPicker: ActivityResultLauncher<Intent>
     private lateinit var newImgPicker: ActivityResultLauncher<PickVisualMediaRequest>
 
-//    private var isCityFirstSelection = true
-//    private var isRoleFirstSelection = true
-
     interface OnLoginFragmentListener {
-        fun newSignInHandling()
+        fun newRegisterHandling()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val oldImgPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        oldImgPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             val uri = it.data?.data
             uri?.let{
                 authViewModel.profileImg = readBytes(requireContext(), uri)
                 authViewModel.signInTextFieldsValues[8] = getFileName(requireContext(), uri)
             }
         }
-
-        val newImagePicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        // removed val from both
+        newImgPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let{
                 authViewModel.profileImg = readBytes(requireContext(), uri)
                 authViewModel.signInTextFieldsValues[8] = getFileName(requireContext(), uri)
@@ -91,7 +90,6 @@ class SignInFragment: Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
         callback = context as OnLoginFragmentListener
     }
 
@@ -102,11 +100,19 @@ class SignInFragment: Fragment() {
     ): View? {
         authViewModel = ViewModelProvider(requireActivity())[AuthViewModel::class]
         cityViewModel = ViewModelProvider(requireActivity())[CityViewModel::class]
-        return inflater.inflate(R.layout.fragment_sign_in , container, false)
+        return inflater.inflate(R.layout.fragment_register , container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val scrollView = view.findViewById<ScrollView>(R.id.scrollView)
+            scrollView.setPadding(systemBars.left, systemBars.top, systemBars.right, ime.bottom)
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (isAdded && isVisible) {
@@ -116,7 +122,7 @@ class SignInFragment: Fragment() {
             }
         }
 
-        btnSignIn = view.findViewById(R.id.btnSignIn)
+        btnSignIn = view.findViewById(R.id.btnRegister)
         authViewModel.isSignInEnabled.observe(requireActivity()) {
             btnSignIn?.isEnabled = it
         }
@@ -241,30 +247,13 @@ class SignInFragment: Fragment() {
                     CoroutineScope(Dispatchers.Main).launch {
                         val result = registerAsync.await()
                         Log.i("signInButtonListener", "registerResult: $result")
-                        when {
-                            result > 0 -> {
-                                Toast.makeText(requireContext(), "Successfully signed in!", Toast.LENGTH_SHORT).show()
-                                callback.newSignInHandling()
-                            }
-                            result == 0 -> {
-                                Toast.makeText(requireContext(), "Sign in response unsuccessful", Toast.LENGTH_SHORT).show()
-                            }
-                            else -> {
-                                Toast.makeText(requireContext(), "Successfully signed in!", Toast.LENGTH_LONG).show()
-                            }
-                        }
+                        DisplayMessageDialog.newInstance(result, false).show(parentFragmentManager, "displayMessageDialogFragment")
+                        if(result.contains("SUCCESS")) { callback.newRegisterHandling() }
                     }
                 }
-                0 -> {
-                    // [NOTE TO SELF] change to dialog later
-                    Toast.makeText(requireContext(), "All text fields must be filled!", Toast.LENGTH_SHORT).show()
-                }
-                -1 -> {
-                    Toast.makeText(requireContext(), "City and role must be selected!", Toast.LENGTH_SHORT).show()
-                }
-                -2 -> {
-                    Toast.makeText(requireContext(), "Passwords don't match!", Toast.LENGTH_SHORT).show()
-                }
+                0 -> { DisplayMessageDialog.newInstance("ERROR: All text fields must be filled!", false).show(parentFragmentManager, "displayMessageDialogFragment") }
+                -1 -> { DisplayMessageDialog.newInstance("ERROR: City and role must be selected!", false).show(parentFragmentManager, "displayMessageDialogFragment") }
+                -2 -> { DisplayMessageDialog.newInstance("ERROR: Passwords aren't matching!", false).show(parentFragmentManager, "displayMessageDialogFragment") }
             }
         }
     }

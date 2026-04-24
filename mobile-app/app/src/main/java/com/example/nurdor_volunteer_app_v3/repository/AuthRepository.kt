@@ -19,36 +19,31 @@ class AuthRepository(db: AppDatabase) {
     private val api = RetrofitInstance.instance
     private val mVolunteerDao = db.volunteerDao()
 
-    suspend fun login(username: String, password: String): LoginResponseDto? {
+    suspend fun login(username: String, password: String): Pair<LoginResponseDto?, String> {
         val loginDto = LoginDto(username, password)
         try {
             val response = api.login(loginDto).awaitResponse()
+            val gson = Gson()
             if(response.isSuccessful) {
-                val gson = Gson()
-                val loginData = gson.fromJson(
-                    gson.toJson(response.body()?.get("data") as? LinkedTreeMap<*, *>),
-                    LoginResponseDto::class.java
-                )
-                Log.i("loginListener", "Login response successful")
-                return loginData
+                val loginData = gson.fromJson(gson.toJson(response.body()?.get("data") as? LinkedTreeMap<*, *>), LoginResponseDto::class.java)
+                val message = gson.fromJson(gson.toJson(response.body()?.get("message")), String::class.java)
+                return Pair(loginData, "SUCCESS: $message")
             } else {
-                Log.e("loginListener", "Login response unsuccessful ${response.raw().message} ${response.errorBody()?.string()}")
+                val errorMap = gson.fromJson(response.errorBody()?.string(), Map::class.java)
+                return Pair(null, "ERROR: Login response unsuccessful - ${errorMap["message"]?.toString() ?: response.raw().message}")
             }
         } catch(e: Exception) {
-            // [NOTE TO SELF] change this to dialog / toast popup...
-            Log.e("loginListener", "Exception during login: ${e.message}")
+            return Pair(null, "EXCEPTION: During login - ${e.message}")
         }
-        return null
     }
 
-    suspend fun register(registerDto: RegisterDto): Int {
+    suspend fun register(registerDto: RegisterDto): String {
         return try {
             val response = api.register(registerDto).awaitResponse()
+            val gson = Gson()
             if(response.isSuccessful) {
-                val gson = Gson()
-                val registerData = gson.fromJson(
-                    gson.toJson(response.body()?.get("data") as? LinkedTreeMap<*, *>),
-                    RegisterResponseDto::class.java)
+                val registerData = gson.fromJson(gson.toJson(response.body()?.get("data") as? LinkedTreeMap<*, *>), RegisterResponseDto::class.java)
+                val message = gson.fromJson(gson.toJson(response.body()?.get("message")), String::class.java)
 
                 val volunteer = Volunteer(
                     registerData.id,
@@ -63,20 +58,24 @@ class AuthRepository(db: AppDatabase) {
                     registerDto.volunteerRole
                 )
                 Log.i("signInButtonListener", "register response successful!")
+
                 val insertAsync = CoroutineScope(Dispatchers.IO).async {
                     mVolunteerDao.insert(volunteer).toInt()
                 }
-                insertAsync.await()
+                val id = insertAsync.await()
+                if(id < 1) {
+                    "WARNING: $message BUT volunteer is not saved into Room database!"
+                } else {
+                    "SUCCESS: $message [ID - ${id}]"
+                }
             } else {
-                Log.i("signInButtonListener", "Register unsuccessful: ${response.raw().message}!")
-                0
+                val errorMap = gson.fromJson(response.errorBody()?.string(), Map::class.java)
+                "ERROR: Registration unsuccessful - ${errorMap["message"]?.toString() ?: response.raw().message}"
             }
         } catch (e: Exception) {
-            Log.i("signInButtonListener", "Exception during registration: ${e.message}!")
-            -1
+            "EXCEPTION: During registration - ${e.message}"
         }
     }
 
     fun findVolunteerById(idVolunteer: Int) = mVolunteerDao.findVolunteerById(idVolunteer)
-
 }

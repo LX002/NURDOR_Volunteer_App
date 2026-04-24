@@ -38,7 +38,7 @@ class SetUpStandsForEventDialog: DialogFragment() {
         eventViewModel = ViewModelProvider(this)[EventViewModel::class]
         standViewModel = ViewModelProvider(this)[StandViewModel::class]
         val dialogBuilder = AlertDialog.Builder(requireContext())
-        val dialogView = layoutInflater.inflate(R.layout.set_up_stands_for_event_dialog, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_set_up_stands_for_event, null)
 
         val spinnerNumberOfStands = dialogView.findViewById<Spinner>(R.id.spinnerNumberOfStands)
         spinnerNumberOfStands.adapter = ArrayAdapter(
@@ -64,21 +64,19 @@ class SetUpStandsForEventDialog: DialogFragment() {
         numberOfStands: Int
     ) {
         lifecycleScope.launch {
-            val startEventResult = eventViewModel.fetchStartEventResult(
-                StartEventDto(idEvent, numberOfStands)
-            )
+            val startEventResult = eventViewModel.fetchStartEventResult(StartEventDto(idEvent, numberOfStands))
             val standsIds = startEventResult.stands.map { s -> s.id }
             if (standsIds.isNotEmpty()) {
                 val numOfUpdatedEventRows = eventViewModel.startOrEndEventByIdEvent(idEvent, true, 0)
                 val numOfUpdatedStandRows = standViewModel.updateIdEventByStandIds(standsIds, idEvent)
                 Log.i("eventOnOff", "$numOfUpdatedEventRows $numOfUpdatedStandRows")
                 if (numOfUpdatedEventRows == 1 && numOfUpdatedStandRows == standsIds.size) {
-                    Toast.makeText(requireContext(), "Event with id: $idEvent is successfully started!", Toast.LENGTH_SHORT).show()
+                    DisplayMessageDialog.newInstance(startEventResult.message, false).show(parentFragmentManager, "displayMessageDialogFragment")
                 } else {
-                    Toast.makeText(requireContext(), "Whoops, event with id: $idEvent didn't start!", Toast.LENGTH_SHORT).show()
+                    DisplayMessageDialog.newInstance("${startEventResult.message}. Event with id: $idEvent didn't start properly!", false).show(parentFragmentManager, "displayMessageDialogFragment")
                 }
             } else {
-                Toast.makeText(requireContext(), "Error: ${startEventResult.message}", Toast.LENGTH_LONG).show()
+                DisplayMessageDialog.newInstance(startEventResult.message, false).show(parentFragmentManager, "displayMessageDialogFragment")
             }
             dismiss()
         }

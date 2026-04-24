@@ -1,6 +1,8 @@
 package com.example.nurdor_volunteer_app_v3.activity
 
+import android.content.res.Configuration
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,9 +20,17 @@ class VolunteerProfileActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_volunteer_profile)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val cutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+            val leftPadding = maxOf(bars.left, cutout.left)
+            val rightPadding = maxOf(bars.right, cutout.right)
+            v.setPadding(leftPadding, bars.top, rightPadding, bars.bottom)
             insets
+        }
+
+        if(isLandscape()) {
+            window.attributes.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
         }
 
         val extras = intent.extras
@@ -50,5 +60,9 @@ class VolunteerProfileActivity : AppCompatActivity() {
             finish()
         }
 
+    }
+
+    private fun isLandscape(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 }

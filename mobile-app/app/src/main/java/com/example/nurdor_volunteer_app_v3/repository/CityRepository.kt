@@ -1,8 +1,10 @@
 package com.example.nurdor_volunteer_app_v3.repository
 
 import android.util.Log
+import com.example.nurdor_volunteer_app_v3.dto.errorDto.ErrorEntityDto
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -14,11 +16,10 @@ class CityRepository(db: AppDatabase) {
     private val api = RetrofitInstance.instance
     private val mCityDao = db.cityDao()
 
-    suspend fun fetchAll() {
-        try {
+    suspend fun fetchAll(): String {
+        return try {
             val response = api.fetchAllCities().awaitResponse()
             if(response.isSuccessful) {
-                Log.i("retrofitApi1", "City dto list fetched!")
                 val cities =  response.body()?.let { cityDtos ->
                     cityDtos.map { c -> City(c.zipCode, c.cityName) }
                 }
@@ -27,13 +28,12 @@ class CityRepository(db: AppDatabase) {
                     cities?.let { mCityDao.insertCities(cities) }
                 }
                 insertAsync.await()
+                "SUCCESS: Cities fetched!"
             } else {
-                // create dialog that displays this
-                Log.e("retrofitApi1", "Error during city fetching: ${response.raw().message}")
+                "ERROR: During city fetching: ${response.raw().message}"
             }
         } catch(e: Exception) {
-            // create dialog that displays this
-            Log.e("retrofitApi1", "Fetching exception: ${e.message}")
+            "EXCEPTION: During fetching of cities: ${e.message}"
         }
     }
 

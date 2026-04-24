@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Main themes -->
     <style name="NurdorApp_DayNight" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">never</item>
         <item name="colorPrimary">@color/nurdor_green</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="titleTextColor">@color/white</item>
@@ -65,8 +65,18 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="DialogToolbarTitleTablet" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">32sp</item>
+        <item name="titleTextColor">@color/white</item>
+    </style>
+
     <style name="TransparentTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="MaterialToolbarTablet">
+        <item name="android:textSize">32sp</item>
+        <item name="titleTextColor">@color/white</item>
     </style>
 </resources>

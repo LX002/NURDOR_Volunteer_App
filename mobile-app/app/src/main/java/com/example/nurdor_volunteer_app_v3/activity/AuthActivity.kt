@@ -10,14 +10,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.fragment.LoginFragment
-import com.example.nurdor_volunteer_app_v3.fragment.SignInFragment
+import com.example.nurdor_volunteer_app_v3.fragment.RegisterFragment
 
-class AuthActivity : AppCompatActivity(), LoginFragment.OnSignInFragmentListener, SignInFragment.OnLoginFragmentListener {
+class AuthActivity : AppCompatActivity(), LoginFragment.OnRegisterFragmentListener, RegisterFragment.OnLoginFragmentListener {
 
-    private lateinit var signInFragment : SignInFragment
+    private lateinit var signInFragment : RegisterFragment
     private lateinit var loginFragment : LoginFragment
-    private var oldScreenOrientation: Int? = null
-    private var newScreenOrientation: Int? = null
     var fragmentIndicator = 0
     var previousPortraitFragmentIndicator = 0
 
@@ -41,7 +39,7 @@ class AuthActivity : AppCompatActivity(), LoginFragment.OnSignInFragmentListener
             }
         }
 
-        signInFragment = SignInFragment()
+        signInFragment = RegisterFragment()
         loginFragment = LoginFragment()
 
         if(isTwoPanelView()) {
@@ -68,7 +66,7 @@ class AuthActivity : AppCompatActivity(), LoginFragment.OnSignInFragmentListener
         return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
-    override fun showSignInForm() {
+    override fun showRegisterForm() {
         if(!isTwoPanelView()) {
             val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.mainFrame, signInFragment)
@@ -79,7 +77,7 @@ class AuthActivity : AppCompatActivity(), LoginFragment.OnSignInFragmentListener
         }
     }
 
-    override fun newSignInHandling() {
+    override fun newRegisterHandling() {
         if(!isTwoPanelView()) {
             val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.mainFrame, loginFragment)
@@ -95,7 +93,6 @@ class AuthActivity : AppCompatActivity(), LoginFragment.OnSignInFragmentListener
         val indicatorToSave = if(isTwoPanelView()) previousPortraitFragmentIndicator else fragmentIndicator
         Log.i("fragmentIndicator", "onsaveinstance ind: $indicatorToSave")
         outState.putInt("fragmentIndicator", indicatorToSave)
-
     }
 
 }

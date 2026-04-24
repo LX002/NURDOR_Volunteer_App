@@ -5,11 +5,15 @@ import android.content.SharedPreferences
 import androidx.lifecycle.application
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 class NurdorVolunteerApplication: Application() {
 
     companion object {
         lateinit var encryptedPrefs: SharedPreferences
+        val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     }
 
     override fun onCreate() {

@@ -15,22 +15,25 @@ class StandRepository(db: AppDatabase) {
     private val api = RetrofitInstance.instance
     private val mStandDao = db.standDao()
 
-    suspend fun fetchAllStands() {
-        try {
+    suspend fun fetchAllStands(): String {
+        return try {
             val response = api.fetchAllStands().awaitResponse()
             if(response.isSuccessful) {
                 val stands = response.body()?.let { standDtos ->
                     standDtos.map { s -> Stand(s.id, s.standName, s.donations, s.idEvent) }
                 }
-                val insertAsync = CoroutineScope(Dispatchers.IO).async {
-                    stands?.let { mStandDao.insertOrReplaceStands(stands) }
-                }
-                insertAsync.await()
+                if(stands != null) {
+                    val insertAsync = CoroutineScope(Dispatchers.IO).async {
+                        mStandDao.insertOrReplaceStands(stands)
+                    }
+                    insertAsync.await()
+                    "SUCCESS: Stands fetched!"
+                } else { "ERROR: During stands fetching - response body is NULL!" }
             } else {
-                Log.i("retrofitApi1", "Error during fetching of stands: ${response.raw().message}")
+                "ERROR: During fetching of stands: ${response.raw().message}"
             }
         } catch (e: Exception) {
-            Log.i("retrofitApi1", "Exception during fetching of stands: ${e.message}")
+            "EXCEPTION: During fetching of stands: ${e.message}"
         }
     }
 
@@ -39,14 +42,14 @@ class StandRepository(db: AppDatabase) {
             val response = api.fetchDonationResponse(donationDto).awaitResponse()
             return if(response.isSuccessful) {
                 Log.i("currentDonations", "response success: $response")
-                response.body() ?: "ERROR:Donation response is null!"
+                response.body() ?: "ERROR: Donation response is null!"
             } else {
                 Log.i("currentDonations", "response failure else branch: $response")
-                "ERROR:${response.raw().message}"
+                "ERROR: ${response.raw().message}"
             }
         } catch (e: Exception) {
             Log.i("currentDonations", "response failure ex catch")
-            return "ERROR:Exception during sending donation:\nmessage: ${e.message}\ncause: ${e.cause?.message}\nstackTrace:${e.stackTrace.toString()}"
+            return "EXCEPTION: Exception during sending donation:\nmessage: ${e.message}\ncause: ${e.cause?.message}\nstackTrace:${e.stackTrace.toString()}"
         }
     }
 

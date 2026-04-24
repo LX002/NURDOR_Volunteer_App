@@ -26,10 +26,10 @@ interface EventDao {
     @Query("SELECT * FROM event WHERE idEvent = :idEvent")
     fun findById(idEvent: Int): Event
 
-    @Query("SELECT * FROM event WHERE idEvent IN (SELECT event FROM events_log WHERE volunteer = :volunteerId) AND endTime >= :now")
+    @Query("SELECT * FROM event WHERE idEvent IN (SELECT event FROM events_log WHERE volunteer = :volunteerId) AND endTime >= :now ORDER BY startTime")
     fun findUpcomingEventsByVolunteerId(volunteerId: Int, now: LocalDateTime): LiveData<List<Event>>
 
-    @Query("SELECT * FROM event WHERE endTime >= :now")
+    @Query("SELECT * FROM event WHERE endTime >= :now ORDER BY startTime")
     fun findUpcomingEvents(now: LocalDateTime): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE isStarted = 1")
@@ -48,6 +48,8 @@ interface EventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEvent(event: Event)
 
+    @Delete
+    fun deleteEvent(event: Event): Int
     @Delete
     fun deleteEvents(eventsLogs: List<Event>)
 

@@ -42,6 +42,10 @@ public class VolunteerDetailsService implements UserDetailsService {
         return volunteerRepository.findByUsername(username).orElse(null);
     }
 
+    public Volunteer findByPhoneNumber(String phoneNumber) {
+        return volunteerRepository.findByPhoneNumber(phoneNumber).orElse(null);
+    }
+
     private String mapRoleIdToRole(int roleId) {
         return switch(roleId) {
             case 1 -> "ROLE_ADMIN";

@@ -37,7 +37,7 @@ class AddDonationDialog: DialogFragment() {
         standViewModel = ViewModelProvider(this)[StandViewModel::class]
 
         val dialogBuilder = AlertDialog.Builder(requireContext())
-        val dialogView = layoutInflater.inflate(R.layout.add_donation_dialog, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_donation, null)
 
         val btnAddDonation = dialogView.findViewById<Button>(R.id.btnAddAmount)
         val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
@@ -64,21 +64,18 @@ class AddDonationDialog: DialogFragment() {
     private fun addDonation(donationDto: DonationDto) {
         lifecycleScope.launch {
             val response = standViewModel.fetchDonationResponse(donationDto)
-            when {
-                response.contains("SUCCESS:") -> {
-                    val numOfUpdatedRows = standViewModel.addDonation(donationDto)
-                    val message = response.split(":")[1]
-                    if(numOfUpdatedRows == 1) {
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                        dismiss()
-                    } else {
-                        Toast.makeText(requireContext(), "STAND_${donationDto.idStand} wasn't updated!", Toast.LENGTH_SHORT).show()
-                    }
+            if(response.contains("SUCCESS:")) {
+                val numOfUpdatedRows = standViewModel.addDonation(donationDto)
+                if(numOfUpdatedRows == 1) {
+                    DisplayMessageDialog.newInstance("$response. Donation saved successfully", false).show(parentFragmentManager, "displayMessageDialogFragment")
+                    dismiss()
+                } else {
+                    DisplayMessageDialog.newInstance("WARNING: ${response.split(":")[1].trim()}. Donation isn't saved into Room!", false).show(parentFragmentManager, "displayMessageDialogFragment")
+                    dismiss()
                 }
-                response.contains("ERROR:") -> {
-                    val message = "Error during adding donation: ${response.split(":")[1]}"
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                }
+            } else {
+                DisplayMessageDialog.newInstance(response, false).show(parentFragmentManager, "displayMessageDialogFragment")
+                dismiss()
             }
         }
     }

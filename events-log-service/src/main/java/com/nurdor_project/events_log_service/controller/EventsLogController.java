@@ -1,6 +1,7 @@
 package com.nurdor_project.events_log_service.controller;
 
 import com.nurdor_project.events_log_service.dto.EventsLogDto;
+import com.nurdor_project.events_log_service.dto.UpdatePresenceDto;
 import com.nurdor_project.events_log_service.model.EventsLog;
 import com.nurdor_project.events_log_service.service.EventsLogService;
 import com.nurdor_project.events_log_service.utils.EventsLogMapper;
@@ -64,5 +65,23 @@ public class EventsLogController {
         return !eventsLogs.isEmpty()
                 ? ResponseEntity.ok(eventsLogs)
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/volunteer/eventsLogs/updateLastSeen")
+    public ResponseEntity<String> updateLastSeenTimestamp(@RequestBody UpdatePresenceDto updatePresenceDto) {
+        eventsLogService.updateLastSeenTimestamp(updatePresenceDto);
+        return ResponseEntity.ok("Updated last seen!");
+    }
+
+    @DeleteMapping("/volunteer/eventsLogs/delete")
+    public ResponseEntity<String> deleteLog(@RequestParam("idEvent") Integer idEvent, @RequestParam("idVolunteer") Integer idVolunteer) {
+        eventsLogService.deleteLog(idEvent, idVolunteer);
+        return ResponseEntity.ok("SUCCESS: Deleted log for [idEvent, idVolunteer]: [" + idEvent + ", " + idVolunteer + "]");
+    }
+
+    @DeleteMapping("/volunteer/eventsLogs/deleteLogs")
+    public ResponseEntity<String> deleteLogsByIdEvent(@RequestParam("idEvent") Integer idEvent) {
+        eventsLogService.deleteLogByIdEvent(idEvent);
+        return ResponseEntity.ok("SUCCESS: Deleted logs for idEvent: " + idEvent);
     }
 }

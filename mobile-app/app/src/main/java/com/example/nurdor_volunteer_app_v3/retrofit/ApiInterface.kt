@@ -17,10 +17,12 @@ import com.example.nurdor_volunteer_app_v3.dto.volunteerDto.VolunteerDto
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiInterface {
 
@@ -44,9 +46,21 @@ interface ApiInterface {
     @POST("/volunteer/insertLogs")
     fun insertEventLog(@Body eventsLogs: List<CreateEventsLogDto>): Call<List<EventsLogDto>>
 
+    @DELETE("/volunteer/deleteLog")
+    fun deleteEventsLog(@Query("idEvent") idEvent: Int, @Query("idVolunteer") idVolunteer: Int): Call<String>
+
+    @PATCH("/volunteer/updatePresence")
+    fun updatePresence(@Body updatePresenceDto: UpdatePresenceDto): Call<EventsLogDto>
+
+    @PATCH("/volunteer/updateLastSeen")
+    fun updateLastSeenTimestamp(@Body updatePresenceDto: UpdatePresenceDto): Call<String>
+
     // event-service calls
     @POST("/admin/newEvent")
     fun createEvent(@Body eventDto: CreateEventDto): Call<EventDto>
+
+    @DELETE("/admin/deleteEvent/{idEvent}")
+    fun deleteEvent(@Path("idEvent") idEvent: Int): Call<String>
 
     @GET("/volunteer/eventPdf/{idEvent}")
     fun downloadPdfWithEventById(@Path("idEvent") idEvent: Int): Call<ResponseBody>
@@ -66,8 +80,5 @@ interface ApiInterface {
 
     @PATCH("/volunteer/addDonation")
     fun fetchDonationResponse(@Body donationDto: DonationDto): Call<String>
-
-    @PATCH("/volunteer/updatePresence")
-    fun updatePresence(@Body updatePresenceDto: UpdatePresenceDto): Call<EventsLogDto>
 
 }

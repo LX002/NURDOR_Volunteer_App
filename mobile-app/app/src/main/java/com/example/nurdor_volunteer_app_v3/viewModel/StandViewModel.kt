@@ -16,8 +16,8 @@ class StandViewModel(application: Application): AndroidViewModel(application) {
     fun findByIdEvent(idEvent: Int) =
         standRepository.findByIdEvent(idEvent)
 
-    suspend fun fetchAll() {
-        standRepository.fetchAllStands()
+    suspend fun fetchAll(): String {
+        return standRepository.fetchAllStands()
     }
 
     suspend fun fetchDonationResponse(donationDto: DonationDto): String {

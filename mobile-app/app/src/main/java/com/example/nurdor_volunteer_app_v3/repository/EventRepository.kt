@@ -9,6 +9,7 @@ import com.example.nurdor_volunteer_app_v3.dto.eventDto.StartEventDto
 import com.example.nurdor_volunteer_app_v3.dto.eventDto.StartEventResultDto
 import com.example.nurdor_volunteer_app_v3.model.Event
 import com.example.nurdor_volunteer_app_v3.retrofit.RetrofitInstance
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -19,12 +20,13 @@ import java.time.format.DateTimeFormatter
 
 class EventRepository(db: AppDatabase) {
 
+    val gson = Gson()
     private val api = RetrofitInstance.instance
     private val mEventDao = db.eventDao()
     private val inputFormatters = Pair(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"), DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
-    suspend fun fetchEvents() {
-        try {
+    suspend fun fetchEvents(): String {
+        return try {
             val response = api.fetchAllEvents().awaitResponse()
             if(response.isSuccessful) {
                 Log.i("retrofitApi1", "Event dto list fetched!")
@@ -44,17 +46,20 @@ class EventRepository(db: AppDatabase) {
                         e.city
                     )}
                 }
-                val insertAsync = CoroutineScope(Dispatchers.IO).async {
-                    events?.let { mEventDao.insertEvents(events) }
+                if(events != null) {
+                    val insertAsync = CoroutineScope(Dispatchers.IO).async {
+                        mEventDao.insertEvents(events)
+                    }
+                    insertAsync.await()
+                    "SUCCESS: Events fetched!"
+                } else {
+                    "ERROR: During events fetching - response body is NULL!"
                 }
-                insertAsync.await()
             } else {
-                // create dialog that displays this
-                Log.e("retrofitApi1", "Error during event fetching: ${response.raw().message}")
+                "ERROR: During events fetching: ${response.raw().message}"
             }
         } catch(e: Exception) {
-            // create dialog that displays this
-            Log.e("retrofitApi1", "Fetching events exception: ${e.message}")
+            "EXCEPTION: During events fetching: ${e.message}"
         }
     }
 
@@ -74,13 +79,13 @@ class EventRepository(db: AppDatabase) {
                         mEventDao.insertEvent(event)
                     }
                     insertAsync.await()
-                    "SUCCESS: event created at ID: ${e.id}"
+                    "SUCCESS: Event created at ID: ${e.id}"
                 } else {
-                    "ERROR: create event $eventDto -> response body is null!"
+                    "ERROR: Create event $eventDto -> response body is null!"
                 }
-            } else { "ERROR: create event $eventDto -> response body unsuccessful - ${response.raw().message}" }
+            } else { "ERROR: Create event $eventDto -> response body unsuccessful - ${response.raw().message}" }
         } catch (e: Exception) {
-            return "EXCEPTION: during creation of event $eventDto -> ${e.message}"
+            return "EXCEPTION: During creation of event $eventDto -> ${e.message}"
         }
     }
 
@@ -96,16 +101,31 @@ class EventRepository(db: AppDatabase) {
     fun findRunningEvents() =
         mEventDao.findRunningEvents()
 
+    suspend fun deleteEvent(event: Event): String {
+        val deletedRows = withContext(Dispatchers.IO) {
+            mEventDao.deleteEvent(event)
+        }
+
+        if(deletedRows == 1) {
+            try {
+                val response = api.deleteEvent(event.idEvent as Int).awaitResponse()
+                return if(response.isSuccessful) response.body() as String else "ERROR: Event is not deleted on server! ${response.errorBody()?.string()}"
+            } catch(e: Exception) {
+                return "EXCEPTION: During deleting event on server: ${e.message}"
+            }
+        } else { return "ERROR: event isn't deleted!" }
+    }
+
     suspend fun fetchStartEventResult(startEventDto: StartEventDto): StartEventResultDto {
         try {
             val response = api.startEvent(startEventDto).awaitResponse()
             return if(response.isSuccessful) {
-                response.body() ?: StartEventResultDto("Remote start of event - response body is null!", listOf())
+                response.body() ?: StartEventResultDto("ERROR: Start of event [ID: ${startEventDto.idEvent}] response body is null!", listOf())
             } else {
-                StartEventResultDto(response.raw().message, listOf())
+                StartEventResultDto("ERROR: ${response.raw().message}", listOf())
             }
         } catch(e: Exception) {
-            return StartEventResultDto("Exception during remote starting of event: " + e.message, listOf())
+            return StartEventResultDto("EXCEPTION: During remote starting of event [ID: ${startEventDto.idEvent}]: ${e.message}", listOf())
         }
     }
 
@@ -113,12 +133,12 @@ class EventRepository(db: AppDatabase) {
         try {
             val response = api.endEvent(idEvent).awaitResponse()
             return if(response.isSuccessful) {
-                response.body() ?: EndEventResultDto("Remote start of event - response body is null!", 0, listOf())
+                response.body() ?: EndEventResultDto("ERROR: Ending of event [ID: $idEvent] response body is null!", 0, listOf())
             } else {
-                EndEventResultDto(response.raw().message, 0, listOf())
+                EndEventResultDto("ERROR: ${response.raw().message}", 0, listOf())
             }
         } catch(e: Exception) {
-            return EndEventResultDto("Exception during remote starting of event: " + e.message, 0, listOf())
+            return EndEventResultDto("EXCEPTION: During remote starting of event [ID: $idEvent]: ${e.message}", 0, listOf())
         }
     }
 

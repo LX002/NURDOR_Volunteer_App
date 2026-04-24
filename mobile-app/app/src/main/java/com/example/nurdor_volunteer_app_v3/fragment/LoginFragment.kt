@@ -19,6 +19,7 @@ import com.example.nurdor_volunteer_app_v3.NurdorVolunteerApplication
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.activity.HomeActivity
 import com.example.nurdor_volunteer_app_v3.dto.authDto.LoginResponseDto
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.DisplayMessageDialog
 import com.example.nurdor_volunteer_app_v3.utils.JwtUtils
 import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 import com.example.nurdor_volunteer_app_v3.viewModel.AuthViewModel
@@ -27,19 +28,19 @@ import kotlinx.coroutines.launch
 
 class LoginFragment: Fragment() {
 
-    private lateinit var callback : OnSignInFragmentListener
+    private lateinit var callback : OnRegisterFragmentListener
     private lateinit var authViewModel: AuthViewModel
     private lateinit var cityViewModel: CityViewModel
 
     private var txtUsername : EditText? = null
     private var txtPassword : EditText? = null
-    interface OnSignInFragmentListener {
-        fun showSignInForm()
+    interface OnRegisterFragmentListener {
+        fun showRegisterForm()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = context as OnSignInFragmentListener
+        callback = context as OnRegisterFragmentListener
     }
 
     override fun onCreateView(
@@ -88,7 +89,7 @@ class LoginFragment: Fragment() {
         }
 
         btnShowSignIn?.setOnClickListener {
-            callback.showSignInForm()
+            callback.showRegisterForm()
         }
     }
 
@@ -97,26 +98,26 @@ class LoginFragment: Fragment() {
     }
 
     private suspend fun loginAndRedirectToHome(username: String, password: String) {
-        val loginResponseDto = authViewModel.login(username, password)
-        loginResponseDto?.let {
+        val (loginResponseDto, message) = authViewModel.login(username, password)
+        if(message.contains("SUCCESS") && loginResponseDto != null) {
             val intent = Intent(requireContext(), HomeActivity::class.java)
             editPreferences(loginResponseDto)
             startActivity(intent)
             requireActivity().finish()
+        } else {
+            if(isAdded && !parentFragmentManager.isStateSaved) {
+                DisplayMessageDialog.newInstance(message, false).show(parentFragmentManager, "displayMessageDialogFragment")
+            }
         }
     }
 
     private fun editPreferences(loginResponseDto: LoginResponseDto) {
-        authViewModel.findVolunteerById(loginResponseDto.volunteerId).observe(viewLifecycleOwner) { volunteer ->
-            cityViewModel.findByZipCode(volunteer.nearestCity).observe(viewLifecycleOwner) { city ->
-                city?.let { PreferenceHelper.setNearestCity(requireContext(), city.cityName) }
-            }
-        }
         val encryptedPrefs = NurdorVolunteerApplication.encryptedPrefs
         encryptedPrefs.edit { putString("jwt_token", loginResponseDto.accessToken) }
         PreferenceHelper.setIdVolunteer(requireContext(), loginResponseDto.volunteerId)
         val role = JwtUtils.getRoleFromToken(loginResponseDto.accessToken)
         role?.let { PreferenceHelper.setIsAdmin(requireContext(), role.roleName == "ROLE_ADMIN") }
         Log.i("observersLog", "preferences: ID: ${loginResponseDto.volunteerId} role: $role")
+
     }
 }

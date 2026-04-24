@@ -30,8 +30,8 @@ interface EventsLogDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     fun insertEventsLogsWithAbort(eventsLogs: List<EventsLog>): List<Long>
 
-    @Delete
-    fun deleteEventsLogs(eventsLogs: List<EventsLog>)
+    @Query("DELETE FROM events_log WHERE volunteer = :idVolunteer AND event = :idEvent")
+    fun deleteEventsLog(idEvent: Int, idVolunteer: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     fun insertLog(log: EventsLog): Long

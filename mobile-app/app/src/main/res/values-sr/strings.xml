@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RMA_Project_demo_v2</string>
+    <string name="app_name">NURDOR VOLONTER</string>
     <string name="enter_username">Unesite korisničko ime</string>
     <string name="enter_password">Unesite lozinku</string>
     <string name="login_button">Login</string>
@@ -97,59 +97,43 @@
     <string name="refresh">Osveži</string>
     <string name="about_nurdor">O NURDOR-u</string>
     <string name="about_text">s</string>
-    <string name="send_email">Send email</string>
-    <string name="view_profile">View profile</string>
-    <string name="remove_from_event">Remove from event</string>
-    <string name="enrolled_volunteers">Enrolled volunteers</string>
-    <string name="phone_number">Phone number</string>
-    <string name="address">Address</string>
-    <string name="set_up_event">Set up event</string>
-    <string name="number_of_stands">Number of stands</string>
+    <string name="send_email">Pošalji mejl</string>
+    <string name="view_profile">Profil</string>
+    <string name="remove_from_event">Ukloni iz događaja</string>
+    <string name="enrolled_volunteers">Prijavljeni volonteri</string>
+    <string name="phone_number">Broj telefona</string>
+    <string name="address">Adresa</string>
+    <string name="set_up_event">Podesi događaj</string>
+    <string name="number_of_stands">Broj štandova</string>
     <string name="start">Start</string>
-    <string name="cancel">Cancel</string>
-    <string name="running_events">Running events</string>
-    <string name="finish">Finish</string>
-    <string name="end_this_event">End this event</string>
-    <string name="statistics">Statistics</string>
-    <string name="stands">Stands</string>
-    <string name="total_donations">Total donations</string>
-    <string name="search_button">Search button</string>
-    <string name="search">Search</string>
+    <string name="cancel">Odustani</string>
+    <string name="running_events">Događaji u toku</string>
+    <string name="finish">Završi</string>
+    <string name="end_this_event">Kraj događaja</string>
+    <string name="statistics">Statistika</string>
+    <string name="stands">Štandovi</string>
+    <string name="total_donations">Ukupne donacije</string>
+    <string name="search_button">Dugme \"pretraga\"</string>
+    <string name="search">Pretraga</string>
     <string name="by_name">By name</string>
     <string name="by_surname">By surname</string>
     <string name="by_phone_number">By phone number</string>
     <string name="by_username">By username</string>
     <string name="str_default">Default</string>
-    <string name="current_donations">Current donations:</string>
-    <string name="add_donation">Add donation</string>
-    <string name="amount">Amount</string>
-    <string name="add_amount">Add amount</string>
-    <string name="leave">Leave</string>
+    <string name="current_donations">Trenutne donacije:</string>
+    <string name="add_donation">Dodaj donaciju</string>
+    <string name="amount">Iznos</string>
+    <string name="add_amount">Dodaj iznos</string>
+    <string name="leave">Napusti</string>
     <string name="dd_mm_yyyy">dd/mm/yyyy</string>
     <string name="hh_mm">hh:mm</string>
     <string name="picked_image_png">event.png</string>
     <string name="by_event_name">By event name</string>
     <string name="by_city">By city</string>
-    <string name="starts_at_with_colon">Starts at:</string>
-    <string-array name="sort_add_events_types">
-        <item></item>
-        <item>Naziv</item>
-        <item>Grad (poš. br.)</item>
-        <item>Datum</item>
-    </string-array>
-    <string-array name="months">
-        <item></item>
-        <item>Januar</item>
-        <item>Februar</item>
-        <item>Mart</item>
-        <item>April</item>
-        <item>Mjy</item>
-        <item>Jun</item>
-        <item>Jul</item>
-        <item>Avgust</item>
-        <item>Septembar</item>
-        <item>Oktobar</item>
-        <item>Novembar</item>
-        <item>Decembar</item>
-    </string-array>
+    <string name="starts_at_with_colon">Početak:</string>
+    <string name="info">Info</string>
+    <string name="error">Error</string>
+    <string name="exception">Exception</string>
+    <string name="register">Register</string>
+    <string name="become_a_volunteer">Become a volunteer</string>
 </resources>

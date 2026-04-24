@@ -31,14 +31,13 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
     var profileImg: ByteArray? = null
     val signInTextFieldsValues = mutableListOf<String?>("", "", "", "", "", "", "", "", "")
     val validationMsgs = mutableListOf<String?>("", "", "", "", "", "", "", "", "")
-
-    suspend fun login(username: String, password: String): LoginResponseDto? {
+    suspend fun login(username: String, password: String): Pair<LoginResponseDto?, String> {
         return withContext(Dispatchers.IO) {
             authRepository.login(username, password)
         }
     }
 
-    suspend fun register(registerDto: RegisterDto): Int {
+    suspend fun register(registerDto: RegisterDto): String {
         return withContext(Dispatchers.IO) {
             return@withContext authRepository.register(registerDto);
         }

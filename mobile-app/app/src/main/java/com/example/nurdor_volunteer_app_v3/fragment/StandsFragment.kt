@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.adapters.StandAdapter
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.DisplayMessageDialog
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.SetUpStandsForEventDialog
 import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 import com.example.nurdor_volunteer_app_v3.viewModel.StandViewModel
@@ -73,7 +74,10 @@ class StandsFragment: Fragment() {
 
     private fun fetchData() {
         lifecycleScope.launch {
-            standViewModel.fetchAll()
+            val message = standViewModel.fetchAll()
+            if(isAdded && !message.contains("SUCCESS")  && !parentFragmentManager.isStateSaved) {
+                DisplayMessageDialog.newInstance(message, false).show(parentFragmentManager, "displayMessageDialogFragment")
+            }
         }
     }
 }

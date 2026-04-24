@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="eventPdfEng" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="adacfbce-92d3-4756-9a70-88745e2e3f6a">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="eventName" class="java.lang.String"/>
+	<parameter name="description" class="java.lang.String"/>
+	<parameter name="startDate" class="java.lang.String"/>
+	<parameter name="startTime" class="java.lang.String"/>
+	<parameter name="qrCode" class="java.io.InputStream"/>
+	<parameter name="nurdorLogo" class="java.io.InputStream"/>
+	<parameter name="eventImage" class="java.io.InputStream"/>
+	<parameter name="locationDetails" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<staticText>
+				<reportElement x="80" y="320" width="70" height="30" uuid="729f2265-65d7-4950-88e2-2e5a3f538654"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="320" width="70" height="30" uuid="e745d85f-1ccd-44a5-963a-5ec66cfeb06f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Time:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="360" width="90" height="30" uuid="d133bd94-bcb5-4131-baf9-e5606299b14c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Location:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="190" y="440" width="179" height="30" uuid="4efdd765-2c53-4a17-a13d-58f89b6696fe"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Scan this code to donate]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="150" y="320" width="140" height="30" uuid="6eb9c9b6-6d0c-422a-bd3a-6a9e9d943f5b">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{startDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="320" width="120" height="30" uuid="b1a4ae30-8e08-40a7-97b7-e13bf900f391">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{startTime}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="191" y="500" width="179" height="176" uuid="912e9f82-786a-44cd-abf0-bfdfc4856d32"/>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="80" y="400" width="400" height="29" uuid="759a1e48-9c1f-4a43-8e8e-495a6216ae07"/>
+				<textElement>
+					<font fontName="SansSerif" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{locationDetails}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="185" y="25" width="199" height="71" uuid="bb340fa9-fe6e-4986-b0b3-3af1f9990fd8"/>
+				<imageExpression><![CDATA[$P{nurdorLogo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="80" y="241" width="400" height="59" uuid="7913e2d1-ffe4-46fd-a85c-b58df9443374"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="24" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{eventName}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+				<reportElement x="85" y="130" width="400" height="111" uuid="91531cda-165c-4c52-a8a6-c297bf4c955e"/>
+				<imageExpression><![CDATA[$P{eventImage}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

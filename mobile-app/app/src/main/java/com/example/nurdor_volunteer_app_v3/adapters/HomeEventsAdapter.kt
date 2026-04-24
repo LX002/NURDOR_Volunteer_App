@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -25,7 +26,7 @@ import androidx.core.net.toUri
 import com.example.nurdor_volunteer_app_v3.activity.RunningEventStatisticsActivity
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.EnrolledVolunteersDialog
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.SetUpStandsForEventDialog
-import com.example.nurdor_volunteer_app_v3.utils.PdfDownloadWorker
+import com.example.nurdor_volunteer_app_v3.worker.PdfDownloadWorker
 
 class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -49,6 +50,7 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
         get() = events
 
     var joinEvent: ((Int, Int) -> Unit)? = null
+    var deleteEvent: ((Event) -> Unit)? = null
 
     class EventViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(event: Event) {
@@ -57,7 +59,7 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             val txtTime: TextView = itemView.findViewById(R.id.txtTime)
             val imageView: ImageView = itemView.findViewById(R.id.eventImageView)
 
-            val formattedStartTime = DateTimeUtils.changeDateFormat(event.startTime)
+            val formattedStartTime = DateTimeUtils.changeDateFormat(event.startTime, "dd/MM/yyyy HH:mm")
             txtEventName.text = event.eventName
             txtDate.text = formattedStartTime.split(" ")[0]
             txtTime.text = formattedStartTime.split(" ")[1]
@@ -80,8 +82,9 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
             val btnDetails: Button = itemView.findViewById(R.id.btnDetails)
             val txtDuration: TextView = itemView.findViewById(R.id.txtDuration)
             val txtLocation: TextView = itemView.findViewById(R.id.txtLocation)
+            val btnDelete: ImageButton = itemView.findViewById(R.id.btnDelete)
 
-            val formattedStartTime = DateTimeUtils.changeDateFormat(event.startTime)
+            val formattedStartTime = DateTimeUtils.changeDateFormat(event.startTime, "dd/MM/yyyy HH:mm")
             txtDate.text = formattedStartTime.split(" ")[0]
             txtTime.text = formattedStartTime.split(" ")[1]
             txtEventName.text = event.eventName
@@ -139,6 +142,8 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
                 }
                 true
             }
+
+            btnDelete.setOnClickListener { deleteEvent?.invoke(event) }
         }
     }
 
@@ -198,7 +203,6 @@ class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Ad
     @SuppressLint("NotifyDataSetChanged")
     fun removeEvent(event: Event) {
         events.isNotEmpty().let {
-            val removePos = events.indexOf(event)
             val success = events.remove(event)
             if(success) notifyDataSetChanged()
         }

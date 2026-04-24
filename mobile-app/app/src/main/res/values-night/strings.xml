@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RMA_Project_demo_v2</string>
+    <string name="app_name">NURDOR VOLUNTEER</string>
     <string name="enter_username">Enter username</string>
     <string name="enter_password">Enter password</string>
     <string name="login_button">Login</string>
@@ -130,25 +130,9 @@
     <string name="by_event_name">By event name</string>
     <string name="by_city">By city</string>
     <string name="starts_at_with_colon">Starts at:</string>
-    <string-array name="sort_add_events_types">
-        <item></item>
-        <item>Name</item>
-        <item>City (zip code)</item>
-        <item>Date</item>
-    </string-array>
-    <string-array name="months">
-        <item></item>
-        <item>January</item>
-        <item>February</item>
-        <item>March</item>
-        <item>April</item>
-        <item>May</item>
-        <item>June</item>
-        <item>July</item>
-        <item>August</item>
-        <item>September</item>
-        <item>October</item>
-        <item>November</item>
-        <item>December</item>
-    </string-array>
+    <string name="info">Info</string>
+    <string name="error">Error</string>
+    <string name="exception">Exception</string>
+    <string name="register">Register</string>
+    <string name="become_a_volunteer">Become a volunteer</string>
 </resources>

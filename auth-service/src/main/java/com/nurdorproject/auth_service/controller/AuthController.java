@@ -37,14 +37,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDTO registerDTO) {
-        if(volunteerDetailsService.findByEmail(registerDTO.getEmail()) != null || volunteerDetailsService.findByUsername(registerDTO.getUsername()) != null) {
-            throw new VolunteerAlreadyExistsException("Cannot register volunteer that already exists!");
+        if(isExistingVolunteer(registerDTO)) {
+            return ResponseHandler.generateResponse("Volunteer with same username / email / phone number already exists!", HttpStatus.CONFLICT, null);
         }
 
-        System.out.println("Registering with password: " + registerDTO.getPassword());
+        System.out.println("Registering with password " + registerDTO.getPassword());
 
         // [NOTE TO SELF] you are assuming that everything goes well with saving... fix this?
-        return ResponseHandler.generateResponse("User registered successfully", HttpStatus.OK, authService.register(registerDTO));
+        return ResponseHandler.generateResponse("Registration successful!", HttpStatus.OK, authService.register(registerDTO));
     }
 
     @PostMapping("/login")
@@ -68,5 +68,11 @@ public class AuthController {
         } catch(Exception ex) {
             return ResponseHandler.generateResponse("Invalid credentials!", HttpStatus.BAD_REQUEST, null);
         }
+    }
+
+    private Boolean isExistingVolunteer(RegisterDTO registerDTO) {
+        return volunteerDetailsService.findByEmail(registerDTO.getEmail()) != null
+                || volunteerDetailsService.findByUsername(registerDTO.getUsername()) != null
+                || volunteerDetailsService.findByPhoneNumber(registerDTO.getPhoneNumber()) != null;
     }
 }

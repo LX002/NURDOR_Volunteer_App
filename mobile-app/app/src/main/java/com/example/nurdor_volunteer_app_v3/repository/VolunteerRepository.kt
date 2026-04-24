@@ -13,8 +13,8 @@ class VolunteerRepository(db: AppDatabase) {
     private val api = RetrofitInstance.instance
     private val mVolunteerDao = db.volunteerDao()
 
-    suspend fun fetchAll() {
-        try {
+    suspend fun fetchAll(): String {
+        return try {
             val response = api.fetchAllVolunteers().awaitResponse()
             if(response.isSuccessful) {
                 Log.i("enrolled", "response body success")
@@ -32,18 +32,19 @@ class VolunteerRepository(db: AppDatabase) {
                         v.volunteerRole
                     )}
                 }
-
-                val insertAsync = CoroutineScope(Dispatchers.IO).async {
-                    Log.i("enrolled", "inserting enrolled vols")
-                    volunteers?.let { mVolunteerDao.insertOrReplaceVolunteers(volunteers) }
-                }
-
-                insertAsync.await()
+                if(volunteers != null) {
+                    val insertAsync = CoroutineScope(Dispatchers.IO).async {
+                        Log.i("enrolled", "inserting enrolled vols")
+                        mVolunteerDao.insertOrReplaceVolunteers(volunteers)
+                    }
+                    insertAsync.await()
+                    "SUCCESS: Volunteers fetched!"
+                } else { "ERROR: During volunteers fetching - response body is NULL!" }
             } else {
-                Log.i("retrofitApi1", "Fetching volunteers unsuccessful! Message: ${response.raw().message}")
+                "ERROR: During fetching volunteers - ${response.raw().message}"
             }
         } catch(e: Exception) {
-            Log.i("retrofitApi1", "Exception during volunteers fetch: ${e.message}")
+            "EXCEPTION: During volunteers fetch: ${e.message}"
         }
     }
 

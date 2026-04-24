@@ -1,8 +1,11 @@
 package com.example.nurdor_volunteer_app_v3.activity
 
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -10,6 +13,7 @@ import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -21,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.adapters.PickEventsAdapter
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.DisplayMessageDialog
 import com.example.nurdor_volunteer_app_v3.model.Event
 import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.PickEventsViewModel
@@ -34,20 +39,29 @@ class PickEventsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.rgb(0, 191, 51)))
         setContentView(R.layout.activity_pick_event)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val cutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+            val leftPadding = maxOf(bars.left, cutout.left)
+            val rightPadding = maxOf(bars.right, cutout.right)
+            v.setPadding(leftPadding, bars.top, rightPadding, bars.bottom)
             insets
+        }
+
+        if(isLandscape()) {
+            window.attributes.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
         }
 
         pickEventsViewModel = ViewModelProvider(this)[PickEventsViewModel::class]
         cityViewModel = ViewModelProvider(this)[CityViewModel::class]
 
-        lifecycleScope.launch {
-            pickEventsViewModel.fetchAllEvents()
-            cityViewModel.fetchAll()
+        refresh()
+
+        supportFragmentManager.setFragmentResultListener("display_message_result", this) { _, bundle ->
+            if(bundle.getString("status") == "SUCCESS") { finish() }
         }
 
         val pickOrUnpickEvent = { event: Event, checked: Boolean ->
@@ -73,6 +87,7 @@ class PickEventsActivity : AppCompatActivity() {
 
         val btnSearch = findViewById<ImageButton>(R.id.btnSearch)
         btnSearch.setOnClickListener {
+            refresh()
             pickEventsViewModel.updateFilter()
             Log.i("searchFilterLog", "${pickEventsViewModel.searchFilter.value}")
         }
@@ -117,12 +132,25 @@ class PickEventsActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 if(pickEventsViewModel.pickedEvents.isNotEmpty()) {
                     val message = pickEventsViewModel.insertLogs()
-                    Toast.makeText(this@PickEventsActivity, message, Toast.LENGTH_LONG).show()
-                    finish()
+                    DisplayMessageDialog.newInstance(message, true).show(supportFragmentManager, "displayMessageDialogFragment")
                 } else {
                     Toast.makeText(this@PickEventsActivity, "Pick events first...", Toast.LENGTH_LONG).show()
                 }
             }
         }
+    }
+
+    private fun refresh() {
+        lifecycleScope.launch {
+            val message = "${pickEventsViewModel.fetchAllEvents()}|${cityViewModel.fetchAll()}"
+            if (!message.contains("SUCCESS")) {
+                DisplayMessageDialog.newInstance(message, false)
+                    .show(supportFragmentManager, "displayMessageDialogFragment")
+            }
+        }
+    }
+
+    private fun isLandscape(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 }

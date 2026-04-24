@@ -2,8 +2,6 @@ package com.example.nurdor_volunteer_app_v3.fragment.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -16,7 +14,7 @@ import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.adapters.EnrolledVolunteersAdapter
 import com.example.nurdor_volunteer_app_v3.viewModel.VolunteerViewModel
 import kotlinx.coroutines.launch
-import androidx.core.net.toUri
+import kotlin.text.contains
 
 class EnrolledVolunteersDialog: DialogFragment() {
 
@@ -39,10 +37,13 @@ class EnrolledVolunteersDialog: DialogFragment() {
         volunteerViewModel = ViewModelProvider(this)[VolunteerViewModel::class]
         lifecycleScope.launch {
             Log.i("enrolled", "fetching all vols")
-            volunteerViewModel.fetchAll()
+            val message = volunteerViewModel.fetchAll()
+            if(isAdded && !message.contains("SUCCESS")  && !parentFragmentManager.isStateSaved) {
+                DisplayMessageDialog.newInstance(message, false).show(parentFragmentManager, "displayMessageDialogFragment")
+            }
         }
 
-        val dialogView = layoutInflater.inflate(R.layout.enrolled_volunteers_dialog, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_enrolled_volunteers, null)
         val dialogBuilder = AlertDialog.Builder(requireContext())
 
         val rcEnrolledVolunteers = dialogView.findViewById<RecyclerView>(R.id.rcEnrolledVolunteers)

@@ -33,8 +33,8 @@ class PickEventsViewModel(application: Application): AndroidViewModel(applicatio
         }
     }
 
-    suspend fun fetchAllEvents() {
-        eventRepository.fetchEvents()
+    suspend fun fetchAllEvents(): String {
+        return eventRepository.fetchEvents()
     }
 
     suspend fun insertLogs(): String {

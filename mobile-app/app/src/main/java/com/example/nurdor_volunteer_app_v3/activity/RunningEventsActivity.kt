@@ -1,10 +1,14 @@
 package com.example.nurdor_volunteer_app_v3.activity
 
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.adapters.RunningEventsAdapter
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.DisplayMessageDialog
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.EventViewModel
@@ -43,27 +48,39 @@ class RunningEventsActivity : AppCompatActivity() {
                 Log.i("eventOnOff", "$numOfUpdatedEventRows $numOfUpdatedStandRows $numOfUpdatedLogRows")
                 if (numOfUpdatedEventRows == 1 && numOfUpdatedStandRows == standsIds.size) {
                     if(numOfUpdatedLogRows != 0) {
-                        Toast.makeText(this@RunningEventsActivity, "Event with id: $idEvent is successfully ended!\nTotal donations: $totalDonations RSD", Toast.LENGTH_LONG).show()
+                        DisplayMessageDialog.newInstance("SUCCESS: Event with id $idEvent is successfully ended!\nTotal donations - $totalDonations RSD", false).show(supportFragmentManager, "displayMessageDialogFragment")
                     } else {
-                        Toast.makeText(this@RunningEventsActivity, "Event with id: $idEvent is successfully ended, no volunteers to \"kick out\".\nTotal donations: $totalDonations RSD", Toast.LENGTH_LONG).show()
+                        DisplayMessageDialog.newInstance("SUCCESS: Event with id $idEvent is successfully ended, no volunteers to \"kick out\".\nTotal donations - $totalDonations RSD\"", false).show(supportFragmentManager, "displayMessageDialogFragment")
                     }
                 } else {
-                    Toast.makeText(this@RunningEventsActivity, "Whoops, event with id: $idEvent didn't end!", Toast.LENGTH_SHORT).show()
+                    DisplayMessageDialog.newInstance("WARNING: Event with id $idEvent didn't end properly!", false).show(supportFragmentManager, "displayMessageDialogFragment")
                 }
             } else {
-                Toast.makeText(this@RunningEventsActivity, "Error: ${endEventResultDto.message}", Toast.LENGTH_LONG).show()
+                DisplayMessageDialog.newInstance("ERROR: ${endEventResultDto.message}", false).show(supportFragmentManager, "displayMessageDialogFragment")
             }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.rgb(0, 191, 51)))
         setContentView(R.layout.activity_running_events)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val cutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+            val leftPadding = maxOf(bars.left, cutout.left)
+            val rightPadding = maxOf(bars.right, cutout.right)
+            v.setPadding(leftPadding, bars.top, rightPadding, bars.bottom)
             insets
+        }
+
+        if(isLandscape()) {
+            window.attributes.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
+        }
+
+        supportFragmentManager.setFragmentResultListener("display_message_result", this) { _, bundle ->
+            if(bundle.getString("status") == "SUCCESS") { finish() }
         }
 
         eventViewModel = ViewModelProvider(this)[EventViewModel::class]
@@ -101,9 +118,14 @@ class RunningEventsActivity : AppCompatActivity() {
 
     fun fetchData() {
         lifecycleScope.launch {
-            eventViewModel.fetchAll()
-            cityViewModel.fetchAll()
-            standViewModel.fetchAll()
+            val message = "${eventViewModel.fetchAll()}|${cityViewModel.fetchAll()}|${standViewModel.fetchAll()}"
+            if(!message.contains("SUCCESS") && !supportFragmentManager.isStateSaved) {
+                DisplayMessageDialog.newInstance(message, false).show(supportFragmentManager, "displayMessageDialogFragment")
+            }
         }
+    }
+
+    private fun isLandscape(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 }

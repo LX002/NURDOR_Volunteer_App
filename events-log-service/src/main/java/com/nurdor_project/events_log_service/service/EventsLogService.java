@@ -2,6 +2,7 @@ package com.nurdor_project.events_log_service.service;
 
 import com.nurdor_project.events_log_service.dto.EventDto;
 import com.nurdor_project.events_log_service.dto.EventsLogDto;
+import com.nurdor_project.events_log_service.dto.UpdatePresenceDto;
 import com.nurdor_project.events_log_service.exception.InvalidEventsLogException;
 import com.nurdor_project.events_log_service.model.EventsLog;
 import com.nurdor_project.events_log_service.proxy.EventProxy;
@@ -53,7 +54,7 @@ public class EventsLogService {
         volunteerAndEventCheck(eventsLogDto.getVolunteer(), eventsLogDto.getEvent(), eventsLogDto.getIsPresent(), true);
 
         EventsLog eventsLog = eventsLogRepository
-                .findInitLogByVolunteerAndEvent(eventsLogDto.getVolunteer(), eventsLogDto.getEvent())
+                .findByVolunteerAndEvent(eventsLogDto.getVolunteer(), eventsLogDto.getEvent())
                 .orElseThrow();
         eventsLog.setIsPresent(eventsLogDto.getIsPresent());
 
@@ -61,6 +62,15 @@ public class EventsLogService {
         if(note != null && !note.isBlank()) eventsLog.setNote(note);
 
         return eventsLogRepository.save(eventsLog);
+    }
+
+    public void updateLastSeenTimestamp(UpdatePresenceDto updatePresenceDto) {
+        EventsLog eventsLog = eventsLogRepository.findByVolunteerAndEvent(updatePresenceDto.getVolunteer(), updatePresenceDto.getEvent()).orElse(null);
+        System.out.print("REPEATING updating log: [idV , idE] " + updatePresenceDto.getVolunteer() + " " + updatePresenceDto.getEvent() + " " + eventsLog);
+        if(eventsLog != null) {
+            eventsLog.setNote(updatePresenceDto.getNote());
+            eventsLogRepository.save(eventsLog);
+        }
     }
 
     private void volunteerAndEventCheck(int idVolunteer, int idEvent, byte isPresent, boolean isUpdating) {
@@ -75,7 +85,7 @@ public class EventsLogService {
 
         if(isPresent == (byte) 1) {
             EventsLog logByVolunteer = eventsLogRepository.findByVolunteerAndIsPresent(idVolunteer, isPresent).orElse(null);
-            if(logByVolunteer != null) {
+            if(logByVolunteer != null && logByVolunteer.getEvent() != idEvent) {
                 throw new InvalidEventsLogException("Invalid event's log: the volunteer with id: " + idVolunteer + " is already present on some other event, with id: " + logByVolunteer.getEvent());
             }
             if(eventDto.getIsStarted() == (byte) 0) {
@@ -100,5 +110,15 @@ public class EventsLogService {
 
         eventsLogRepository.dismissVolunteers(volunteerIds);
         return "200:Volunteers are dimissed from event with id: " + idEvent;
+    }
+
+    @Transactional
+    public void deleteLog(Integer idEvent, Integer idVolunteer) {
+        eventsLogRepository.deleteLog(idEvent, idVolunteer);
+    }
+
+    @Transactional
+    public void deleteLogByIdEvent(Integer idEvent) {
+        eventsLogRepository.deleteByIdEvent(idEvent);
     }
 }

@@ -47,6 +47,9 @@ public class ApiGatewayConfig {
                 .route("create-event", r -> r.path("/admin/newEvent")
                         .filters(f -> f.rewritePath("/admin/newEvent", "/api/admin/events/create"))
                         .uri("lb://EVENT-SERVICE"))
+                .route("create-event", r -> r.path("/admin/deleteEvent/{idEvent}")
+                        .filters(f -> f.rewritePath("/admin/deleteEvent/(?<idEvent>.*)", "/api/admin/events/delete/${idEvent}"))
+                        .uri("lb://EVENT-SERVICE"))
 
                 // events-log-service routes
                 .route("insert-log", r -> r.path("/volunteer/insertLog")
@@ -61,6 +64,13 @@ public class ApiGatewayConfig {
                 .route("find-all-logs", r -> r.path("/volunteer/allEventsLogs")
                         .filters(f -> f.rewritePath("/volunteer/allEventsLogs", "/api/volunteer/eventsLogs/findAll"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
+                .route("update-last-seen", r -> r.path("/volunteer/updateLastSeen")
+                        .filters(f -> f.rewritePath("/volunteer/updateLastSeen", "/api/volunteer/eventsLogs/updateLastSeen"))
+                        .uri("lb://EVENTS-LOG-SERVICE"))
+                .route("create-event", r -> r.path("/volunteer/deleteLog")
+                        .filters(f -> f.rewritePath("/volunteer/deleteLog", "/api/volunteer/eventsLogs/delete"))
+                        .uri("lb://EVENT-SERVICE"))
+
 
                 // donations-service routes
                 .route("donate", r -> r.path("/volunteer/addDonation")

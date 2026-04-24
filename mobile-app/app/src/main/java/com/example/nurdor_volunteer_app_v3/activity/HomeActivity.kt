@@ -1,12 +1,16 @@
 package com.example.nurdor_volunteer_app_v3.activity
 
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -28,29 +32,62 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
+import androidx.work.impl.utils.PREFERENCE_FILE_KEY
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.DisplayMessageDialog
+import com.example.nurdor_volunteer_app_v3.viewModel.AuthViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.VolunteerViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var eventViewModel: EventViewModel
+    private lateinit var cityViewModel: CityViewModel
     private lateinit var eventsLogViewModel: EventsLogViewModel
+    private lateinit var authViewModel: AuthViewModel
+
+    private lateinit var volunteerViewModel: VolunteerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.rgb(0, 191, 51)))
         setContentView(R.layout.activity_home)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val cutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+            val leftPadding = maxOf(bars.left, cutout.left)
+            val rightPadding = maxOf(bars.right, cutout.right)
+            v.setPadding(leftPadding, bars.top, rightPadding, bars.bottom)
             insets
+        }
+
+        if(isLandscape()) {
+            window.attributes.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
         }
 
         eventViewModel = ViewModelProvider(this)[EventViewModel::class]
         eventsLogViewModel = ViewModelProvider(this)[EventsLogViewModel::class]
+        cityViewModel = ViewModelProvider(this)[CityViewModel::class]
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class]
+        volunteerViewModel = ViewModelProvider(this)[VolunteerViewModel::class]
 
-        lifecycleScope.launch {
-            eventViewModel.fetchAll()
-            eventsLogViewModel.fetchAll()
+        refresh()
+
+        authViewModel.findVolunteerById(PreferenceHelper.getIdVolunteer(this)).observe(this) { v ->
+            v?.let {
+                Log.i("setCityNearest", "${v.name} -> volonter ulogovan")
+                cityViewModel.findByZipCode(v.nearestCity).observe(this) { city ->
+                    city?.let {
+                        PreferenceHelper.setNearestCity(this@HomeActivity, city.cityName)
+                        Log.i("setCityNearest", "${v.nearestCity} ${city.cityName}")
+                    }
+                }
+            }
         }
 
         val toolbar: MaterialToolbar = findViewById(R.id.toolbarHome)
@@ -70,6 +107,12 @@ class HomeActivity : AppCompatActivity() {
 
         val eventsRcView: RecyclerView = findViewById(R.id.eventsRcView)
         val homeEventsAdapter = HomeEventsAdapter(mutableListOf())
+        homeEventsAdapter.deleteEvent = { event -> lifecycleScope.launch {
+            val message = deleteEvent(event)
+            if(message.contains("SUCCESS")) {
+                homeEventsAdapter.removeEvent(event)
+            }
+        }}
         if(!PreferenceHelper.isAdmin(this)) {
             homeEventsAdapter.joinEvent = { idVolunteer, idEvent -> joinEvent(idEvent, idVolunteer) }
         }
@@ -84,15 +127,31 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val context = this@HomeActivity
             val message = eventsLogViewModel.updatePresence(1, idEvent, idVolunteer)
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            if (!message.contains("ERROR")) {
+            //Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            if (!message.contains("ERROR") && !message.contains("EXCEPTION")) {
                 val intent = Intent(context, RunningEventStatisticsActivity::class.java).apply {
                     putExtra("idEvent", idEvent)
                     putExtra("idVolunteer", idVolunteer)
                 }
                 context.startActivity(intent)
+            } else {
+                DisplayMessageDialog.newInstance(message, false).show(supportFragmentManager, "displayMessageDialogFragment")
             }
         }
+    }
+
+    suspend fun deleteEvent(event: Event): String {
+        return CoroutineScope(Dispatchers.Main).async {
+            val context = this@HomeActivity
+            var message = ""
+            if(PreferenceHelper.isAdmin(context)) {
+                message = eventViewModel.deleteEvent(event)
+            } else {
+                message = eventsLogViewModel.deleteEventsLog(event.idEvent as Int, PreferenceHelper.getIdVolunteer(context))
+            }
+            DisplayMessageDialog.newInstance(message, false).show(supportFragmentManager, "displayMessageDialogFragment")
+            message
+        }.await()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -111,7 +170,7 @@ class HomeActivity : AppCompatActivity() {
                 true
             }
             item.itemId == R.id.itemRefresh -> {
-                fetchHomeEvents()
+                refresh()
                 true
             }
             item.itemId == R.id.itemLogout -> {
@@ -140,10 +199,12 @@ class HomeActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun fetchHomeEvents() {
+    private fun refresh() {
         lifecycleScope.launch {
-            eventViewModel.fetchAll()
-            eventsLogViewModel.fetchAll()
+            val message = "${volunteerViewModel.fetchAll()}|${eventViewModel.fetchAll()}|${eventsLogViewModel.fetchAll()}"
+            if(!message.contains("SUCCESS") && !supportFragmentManager.isStateSaved) {
+                DisplayMessageDialog.newInstance(message, false).show(supportFragmentManager, "displayMessageDialogFragment")
+            }
         }
     }
 
@@ -159,5 +220,9 @@ class HomeActivity : AppCompatActivity() {
                 homeEventsAdapter.updateEvents(events as MutableList<Event>)
             }
         }
+    }
+
+    private fun isLandscape(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 }

@@ -2,12 +2,15 @@ package com.example.nurdor_volunteer_app_v3.activity
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -15,6 +18,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
@@ -24,10 +28,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.application
 import androidx.lifecycle.lifecycleScope
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.DatePickerDialogFragment
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.DisplayMessageDialog
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.TimePickerDialogFragment
 import com.example.nurdor_volunteer_app_v3.model.City
 import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
@@ -45,13 +49,22 @@ class CreateEventActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.rgb(0, 191, 51)))
         setContentView(R.layout.activity_create_event)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val cutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+            val leftPadding = maxOf(bars.left, cutout.left)
+            val rightPadding = maxOf(bars.right, cutout.right)
+            v.setPadding(leftPadding, bars.top, rightPadding, bars.bottom)
             insets
         }
+
+        if(isLandscape()) {
+            window.attributes.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
+        }
+
         createEventViewModel = ViewModelProvider(this)[CreateEventViewModel::class]
         cityViewModel = ViewModelProvider(this)[CityViewModel::class]
 
@@ -91,15 +104,20 @@ class CreateEventActivity : AppCompatActivity() {
 
         }
 
+        supportFragmentManager.setFragmentResultListener("display_message_result", this) { _, bundle ->
+            if(bundle.getString("status") == "SUCCESS") { finish() }
+        }
+
         setUpDateAndTimePickersResultsListeners(editTxtStartDate, editTxtStartTime, editTxtEndDate, editTxtEndTime)
         setImgPicker(editTxtImg)
         setMapLauncher(editTxtLocationDesc)
 
         btnCreateEvent.setOnClickListener {
             lifecycleScope.launch {
-                val message = createEventViewModel.createEvent()
-                Toast.makeText(this@CreateEventActivity, message, Toast.LENGTH_SHORT).show()
-                finish()
+                if(displayDateValidationDialog()) {
+                    val creationMessage = createEventViewModel.createEvent()
+                    DisplayMessageDialog.newInstance(creationMessage, true).show(supportFragmentManager, "displayMessageDialogFragment")
+                }
             }
         }
     }
@@ -147,7 +165,7 @@ class CreateEventActivity : AppCompatActivity() {
                 view.setText(createEventViewModel.editTxtFields[ind])
                 view.doAfterTextChanged { text ->
                     createEventViewModel.editTxtFields[ind] = text.toString()
-                    btnCreateEvent?.isEnabled = createEventViewModel.isFormValid()
+                    btnCreateEvent?.isEnabled = createEventViewModel.isFormFilled()
                 }
             } else if(view is ImageButton) {
                 view.setOnClickListener {
@@ -190,15 +208,19 @@ class CreateEventActivity : AppCompatActivity() {
     private fun setUpDateAndTimePickersResultsListeners(vararg editTexts: EditText) {
         supportFragmentManager.setFragmentResultListener("SET_START_DATE", this) { requestKey, result ->
             editTexts[0].setText(result.getString("picked_date"))
+            displayDateValidationDialog()
         }
         supportFragmentManager.setFragmentResultListener("SET_START_TIME", this) { requestKey, result ->
             editTexts[1].setText(result.getString("picked_time"))
+            displayDateValidationDialog()
         }
         supportFragmentManager.setFragmentResultListener("SET_END_DATE", this) { requestKey, result ->
             editTexts[2].setText(result.getString("picked_date"))
+            displayDateValidationDialog()
         }
         supportFragmentManager.setFragmentResultListener("SET_END_TIME", this) { requestKey, result ->
             editTexts[3].setText(result.getString("picked_time"))
+            displayDateValidationDialog()
         }
     }
 
@@ -218,5 +240,18 @@ class CreateEventActivity : AppCompatActivity() {
         }
 
         return fileName
+    }
+
+    private fun displayDateValidationDialog(): Boolean {
+        val message = createEventViewModel.validateStartAndEndDateTime()
+        val valid = !message.contains("ERROR:") && !message.contains("EXCEPTION:")
+        if(!valid) {
+            DisplayMessageDialog.newInstance(message, false).show(supportFragmentManager, "displayMessageDialogFragment")
+        }
+        return valid
+    }
+
+    private fun isLandscape(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 }

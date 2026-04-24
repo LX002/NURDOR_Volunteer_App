@@ -1,193 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
+<ScrollView
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:fitsSystemWindows="true"
         tools:context=".fragments.SignInFragment">
+
         <TextView
             android:id="@+id/headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
-            android:layout_marginTop="45dp"
-            android:text="@string/create_new_account"
-            android:textSize="30sp"
+            android:layout_marginTop="24dp"
+            android:text="@string/become_a_volunteer"
+            android:textSize="48sp"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editTextName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
+            android:layout_below="@id/headline"
+            android:layout_alignEnd="@+id/headline"
             android:layout_marginStart="25dp"
             android:layout_marginTop="25dp"
-            android:layout_alignEnd="@+id/headline"
             android:hint="@string/name_sign_in"
             android:inputType="text"
-            android:layout_below="@id/headline"/>
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/editTextSurname"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
+            android:layout_below="@id/editTextName"
+            android:layout_alignEnd="@+id/headline"
             android:layout_marginStart="25dp"
             android:layout_marginTop="15dp"
-            android:layout_alignEnd="@+id/headline"
             android:hint="@string/surname_sign_in"
             android:inputType="text"
-            android:layout_below="@id/editTextName"/>
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/editTextAddress"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
+            android:layout_below="@id/editTextSurname"
+            android:layout_alignEnd="@+id/headline"
             android:layout_marginStart="25dp"
             android:layout_marginTop="15dp"
-            android:layout_alignEnd="@+id/headline"
             android:hint="@string/address_format"
             android:inputType="text"
-            android:layout_below="@id/editTextSurname" />
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/editTextPhone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
+            android:layout_below="@+id/textViewRole"
+            android:layout_alignEnd="@+id/headline"
             android:layout_marginStart="25dp"
             android:layout_marginTop="15dp"
-            android:layout_alignEnd="@+id/headline"
             android:hint="@string/phone_sign_in"
             android:inputType="phone"
-            android:layout_below="@+id/textViewRole" />
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/editTextEmail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
+            android:layout_below="@id/editTextPhone"
+            android:layout_alignEnd="@+id/headline"
             android:layout_marginStart="25dp"
             android:layout_marginTop="15dp"
-            android:layout_alignEnd="@+id/headline"
             android:hint="@string/email_sign_in"
             android:inputType="textEmailAddress"
-            android:layout_below="@id/editTextPhone" />
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
+            android:layout_below="@id/editTextEmail"
+            android:layout_alignEnd="@+id/headline"
             android:layout_marginStart="25dp"
             android:layout_marginTop="15dp"
-            android:layout_alignEnd="@+id/headline"
             android:hint="@string/username_sign_in"
             android:inputType="text"
-            android:layout_below="@id/editTextEmail" />
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
+            android:layout_below="@id/editTextUsername"
+            android:layout_alignEnd="@+id/headline"
             android:layout_marginStart="25dp"
             android:layout_marginTop="15dp"
-            android:layout_alignEnd="@+id/headline"
             android:hint="@string/password_sign_in"
             android:inputType="textPassword"
-            android:layout_below="@id/editTextUsername" />
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/editTextRepeatPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
+            android:layout_below="@id/editTextPassword"
+            android:layout_alignEnd="@+id/headline"
             android:layout_marginStart="25dp"
             android:layout_marginTop="15dp"
             android:autofillHints=""
-            android:layout_alignEnd="@+id/headline"
             android:hint="@string/repeat_password_sign_in"
             android:inputType="textPassword"
-            android:layout_below="@id/editTextPassword" />
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/editTextProfilePic"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:gravity="center"
+            android:layout_height="80dp"
+            android:layout_below="@id/editTextRepeatPassword"
+            android:layout_alignEnd="@+id/headline"
             android:layout_marginStart="8dp"
             android:layout_marginTop="15dp"
-            android:autofillHints=""
-            android:layout_alignEnd="@+id/headline"
-            android:inputType="none"
-            android:focusable="false"
-            android:textSize="16sp"
-            android:hint="@string/choose_profile_picture"
             android:layout_toEndOf="@id/btnPickImage"
-            android:layout_below="@id/editTextRepeatPassword"/>
+            android:autofillHints=""
+            android:focusable="false"
+            android:gravity="center_vertical"
+            android:hint="@string/choose_profile_picture"
+            android:inputType="none"
+            android:textSize="24sp" />
 
         <Button
             android:id="@+id/btnPickImage"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="@string/profile_image_picker"
+            android:layout_width="160dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/editTextRepeatPassword"
             android:layout_marginStart="25dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
-            android:layout_below="@id/editTextRepeatPassword"/>
+            android:text="@string/profile_image_picker"
+            android:textSize="24sp" />
 
         <Button
-            android:id="@+id/btnSignIn"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:id="@+id/btnRegister"
+            android:layout_width="160dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/btnPickImage"
             android:layout_marginStart="25dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
-            android:text="@string/sign_in"
-            android:layout_below="@id/btnPickImage" />
+            android:text="@string/register"
+            android:textSize="24sp" />
 
         <Spinner
             android:id="@+id/spinnerRole"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="64dp"
             android:layout_alignBaseline="@id/textViewRole"
+            android:layout_alignStart="@+id/spinnerNearestCity"
             android:layout_marginEnd="25dp"
-            android:autofillHints="Nearest city"
-            android:layout_alignStart="@+id/spinnerNearestCity" />
+            android:autofillHints="Nearest city" />
 
         <Spinner
             android:id="@+id/spinnerNearestCity"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="64dp"
             android:layout_below="@id/editTextAddress"
-            android:layout_toEndOf="@+id/textViewNearestCity"
             android:layout_marginStart="18dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="25dp"
             android:layout_marginBottom="14dp"
-            android:layout_marginTop="15dp"
-            android:textSize="18sp"
-            android:autofillHints="Nearest city" />
+            android:layout_toEndOf="@+id/textViewNearestCity"
+            android:autofillHints="Nearest city"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/textViewNearestCity"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:text="@string/nearest_city"
+            android:layout_width="180dp"
+            android:layout_height="64dp"
+            android:layout_alignBottom="@+id/spinnerNearestCity"
             android:layout_marginStart="25dp"
-            android:layout_alignBottom="@+id/spinnerNearestCity" />
+            android:gravity="center_vertical"
+            android:text="@string/nearest_city"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/textViewRole"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:text="@string/volunteer_role"
+            android:layout_width="180dp"
+            android:layout_height="64dp"
             android:layout_below="@id/textViewNearestCity"
             android:layout_marginStart="25dp"
-            android:layout_marginTop="15dp"/>
+            android:layout_marginTop="15dp"
+            android:gravity="center_vertical"
+            android:text="@string/volunteer_role"
+            android:textSize="24sp" />
     </RelativeLayout>
 </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
