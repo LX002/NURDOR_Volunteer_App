@@ -67,9 +67,9 @@ public class ApiGatewayConfig {
                 .route("update-last-seen", r -> r.path("/volunteer/updateLastSeen")
                         .filters(f -> f.rewritePath("/volunteer/updateLastSeen", "/api/volunteer/eventsLogs/updateLastSeen"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
-                .route("create-event", r -> r.path("/volunteer/deleteLog")
+                .route("delete-log", r -> r.path("/volunteer/deleteLog")
                         .filters(f -> f.rewritePath("/volunteer/deleteLog", "/api/volunteer/eventsLogs/delete"))
-                        .uri("lb://EVENT-SERVICE"))
+                        .uri("lb://EVENTS-LOG-SERVICE"))
 
 
                 // donations-service routes

@@ -24,4 +24,8 @@ class CityViewModel(application: Application): AndroidViewModel(application) {
     suspend fun fetchAll(): String {
         return cityRepository.fetchAll()
     }
+
+    suspend fun findCityByZipCode(zipCode: String): City? {
+        return cityRepository.findCityByZipCode(zipCode)
+    }
 }

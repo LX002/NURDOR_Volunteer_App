@@ -16,12 +16,9 @@ interface CityDao {
     @Query("SELECT * FROM city WHERE zipCode = :zipCode")
     fun findByZipCode(zipCode: String): LiveData<City?>
 
-    @Insert
-    fun insertCity(city: City)
+    @Query("SELECT * FROM city WHERE zipCode = :zipCode")
+    fun findCityByZipCode(zipCode: String): City?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCities(cities: List<City>)
-
-    @Delete
-    fun deleteCities(cities: List<City>)
 }

@@ -161,28 +161,28 @@ class EventRepository(db: AppDatabase) {
     }
     
     fun findUpcomingEventsByCityNameSortedByStartTime(idVolunteer: Int, zipCode: String): LiveData<List<Event>> =
-        mEventDao.findUpcomingEventsByCityNameSortedByStartTime(idVolunteer, zipCode)
+        mEventDao.findUpcomingEventsByCityNameSortedByStartTime(idVolunteer, zipCode, LocalDateTime.now())
     
     fun findUpcomingEventsByCityNameSortedByStartTimeDesc(idVolunteer: Int, zipCode: String): LiveData<List<Event>> =
-        mEventDao.findUpcomingEventsByCityNameSortedByStartTimeDesc(idVolunteer, zipCode)
+        mEventDao.findUpcomingEventsByCityNameSortedByStartTimeDesc(idVolunteer, zipCode, LocalDateTime.now())
     
     fun findUpcomingEventsByCityNameSortedByEventName(idVolunteer: Int, zipCode: String): LiveData<List<Event>> =
-        mEventDao.findUpcomingEventsByCityNameSortedByEventName(idVolunteer, zipCode)
+        mEventDao.findUpcomingEventsByCityNameSortedByEventName(idVolunteer, zipCode, LocalDateTime.now())
     
     fun findUpcomingEventsByCityNameSortedByEventNameDesc(idVolunteer: Int, zipCode: String): LiveData<List<Event>> =
-        mEventDao.findUpcomingEventsByCityNameSortedByEventNameDesc(idVolunteer, zipCode)
+        mEventDao.findUpcomingEventsByCityNameSortedByEventNameDesc(idVolunteer, zipCode, LocalDateTime.now())
 
     //find by event name
     fun findUpcomingEventsByEventNameSortedByStartTime(idVolunteer: Int, eventName: String): LiveData<List<Event>> =
-        mEventDao.findUpcomingEventsByEventNameSortedByStartTime(idVolunteer, eventName)
+        mEventDao.findUpcomingEventsByEventNameSortedByStartTime(idVolunteer, eventName, LocalDateTime.now())
     
     fun findUpcomingEventsByEventNameSortedByStartTimeDesc(idVolunteer: Int, eventName: String): LiveData<List<Event>> =
-        mEventDao.findUpcomingEventsByEventNameSortedByStartTimeDesc(idVolunteer, eventName)
+        mEventDao.findUpcomingEventsByEventNameSortedByStartTimeDesc(idVolunteer, eventName, LocalDateTime.now())
     
     fun findUpcomingEventsByEventNameSortedByCityName(idVolunteer: Int, eventName: String): LiveData<List<Event>> =
-        mEventDao.findUpcomingEventsByEventNameSortedByCityName(idVolunteer, eventName)
+        mEventDao.findUpcomingEventsByEventNameSortedByCityName(idVolunteer, eventName,LocalDateTime.now())
     
     fun findUpcomingEventsByEventNameSortedByCityNameDesc(idVolunteer: Int, eventName: String): LiveData<List<Event>> =
-        mEventDao.findUpcomingEventsByEventNameSortedByCityNameDesc(idVolunteer, eventName)
+        mEventDao.findUpcomingEventsByEventNameSortedByCityNameDesc(idVolunteer, eventName, LocalDateTime.now())
         
 }

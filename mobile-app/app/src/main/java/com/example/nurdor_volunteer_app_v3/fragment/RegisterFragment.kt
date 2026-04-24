@@ -76,14 +76,18 @@ class RegisterFragment: Fragment() {
             val uri = it.data?.data
             uri?.let{
                 authViewModel.profileImg = readBytes(requireContext(), uri)
-                authViewModel.signInTextFieldsValues[8] = getFileName(requireContext(), uri)
+                val fileName = getFileName(requireContext(), uri)
+                authViewModel.signInTextFieldsValues[8] = fileName
+                txtProfileImg?.setText(fileName)
             }
         }
-        // removed val from both
+
         newImgPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let{
                 authViewModel.profileImg = readBytes(requireContext(), uri)
-                authViewModel.signInTextFieldsValues[8] = getFileName(requireContext(), uri)
+                val fileName = getFileName(requireContext(), uri)
+                authViewModel.signInTextFieldsValues[8] = fileName
+                txtProfileImg?.setText(fileName)
             }
         }
     }
@@ -221,8 +225,6 @@ class RegisterFragment: Fragment() {
             authViewModel.validatePhone(text)
         }
 
-
-        // klik na sign in i nista se ne desava, proveri validacije i ostalo (retrofit poziv nije a mozda i jeste)
         btnSignIn?.setOnClickListener {
             val isFormFilled = authViewModel.isFormFilled()
             Log.i("signInButtonListener", "isFormFilled: $isFormFilled")
@@ -237,7 +239,7 @@ class RegisterFragment: Fragment() {
                             txtEmail?.text.toString(),
                             txtUsername?.text.toString(),
                             txtPassword?.text.toString(),
-                            profileImg?.let { Base64.getEncoder().encodeToString(profileImg).replace("\n", "") },
+                            authViewModel.profileImg?.let { Base64.getEncoder().encodeToString(it).replace("\n", "") },
                             authViewModel.selectedCity.zipCode,
                             authViewModel.selectedRole.idVolunteerRole
                         )

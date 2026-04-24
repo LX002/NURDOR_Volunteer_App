@@ -99,7 +99,7 @@ class EventsLogRepository(db: AppDatabase) {
                         } else { listOf() }
                     }
                     val ids = insertAsync.await()
-                    if(ids.contains(-1L) && ids.isNotEmpty()) {
+                    if(ids.isNotEmpty()) {
                         "SUCCESS: picked events (logs) are successfully saved"
                     } else {
                         "WARNING: logs (picked events) are not properly inserted in Room database!"

@@ -33,6 +33,7 @@ import com.example.nurdor_volunteer_app_v3.fragment.StandsFragment
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.DisplayMessageDialog
 import com.example.nurdor_volunteer_app_v3.fragment.pagers.StatisticsPagerAdapter
 import com.example.nurdor_volunteer_app_v3.utils.DateTimeUtils
+import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
 import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.StatisticsViewModel
 import com.google.android.material.appbar.MaterialToolbar
@@ -115,8 +116,12 @@ class RunningEventStatisticsActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == R.id.itemLeave) {
-            val (idEvent, idVolunteer) = getIds()
-            leave(idVolunteer, idEvent)
+            if(!PreferenceHelper.isAdmin(this)) {
+                val (idEvent, idVolunteer) = getIds()
+                leave(idVolunteer, idEvent)
+            } else {
+                finish()
+            }
             return true
         }
         return false

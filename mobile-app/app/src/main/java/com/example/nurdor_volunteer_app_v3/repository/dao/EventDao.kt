@@ -15,10 +15,10 @@ import java.time.LocalDateTime
 interface EventDao {
 
     companion object {
-        const val FIND_UNPICKED_UPCOMING_EVENTS_BY_VOLUNTEER_ID = "SELECT * FROM event WHERE event.idEvent NOT IN(SELECT DISTINCT events_log.event FROM events_log WHERE events_log.volunteer = :idVolunteer)"
+        const val FIND_UNPICKED_UPCOMING_EVENTS_BY_VOLUNTEER_ID = "SELECT * FROM event WHERE event.idEvent NOT IN(SELECT DISTINCT events_log.event FROM events_log WHERE events_log.volunteer = :idVolunteer) AND endTime >= :now"
         const val FIND_UPCOMING_EVENTS_BY_CITY_NAME = "$FIND_UNPICKED_UPCOMING_EVENTS_BY_VOLUNTEER_ID AND event.city = (SELECT city.zipCode FROM city WHERE city.cityName = :cityName)"
         const val FIND_UPCOMING_EVENTS_BY_EVENT_NAME = "$FIND_UNPICKED_UPCOMING_EVENTS_BY_VOLUNTEER_ID AND event.eventName = :eventName"
-        const val FIND_UPCOMING_EVENTS_BY_EVENT_NAME_WITH_JOIN = "SELECT event.* FROM event JOIN city ON event.city = city.zipCode WHERE event.idEvent NOT IN(SELECT DISTINCT events_log.event FROM events_log WHERE events_log.volunteer = :idVolunteer) AND event.eventName = :eventName"
+        const val FIND_UPCOMING_EVENTS_BY_EVENT_NAME_WITH_JOIN = "SELECT event.* FROM event JOIN city ON event.city = city.zipCode WHERE event.idEvent NOT IN(SELECT DISTINCT events_log.event FROM events_log WHERE events_log.volunteer = :idVolunteer) AND event.eventName = :eventName AND event.endTime >= :now"
     }
     @Query("SELECT * FROM event")
     fun findAll(): LiveData<List<Event>>
@@ -81,28 +81,28 @@ interface EventDao {
     // new for event search n stuff // find by city
     
     @Query("$FIND_UPCOMING_EVENTS_BY_CITY_NAME ORDER BY event.startTime")
-    fun findUpcomingEventsByCityNameSortedByStartTime(idVolunteer: Int, cityName: String): LiveData<List<Event>>
+    fun findUpcomingEventsByCityNameSortedByStartTime(idVolunteer: Int, cityName: String, now: LocalDateTime): LiveData<List<Event>>
 
     @Query("$FIND_UPCOMING_EVENTS_BY_CITY_NAME ORDER BY event.startTime DESC")
-    fun findUpcomingEventsByCityNameSortedByStartTimeDesc(idVolunteer: Int, cityName: String): LiveData<List<Event>>
+    fun findUpcomingEventsByCityNameSortedByStartTimeDesc(idVolunteer: Int, cityName: String, now: LocalDateTime): LiveData<List<Event>>
 
     @Query("$FIND_UPCOMING_EVENTS_BY_CITY_NAME ORDER BY event.eventName")
-    fun findUpcomingEventsByCityNameSortedByEventName(idVolunteer: Int, cityName: String): LiveData<List<Event>>
+    fun findUpcomingEventsByCityNameSortedByEventName(idVolunteer: Int, cityName: String, now: LocalDateTime): LiveData<List<Event>>
 
     @Query("$FIND_UPCOMING_EVENTS_BY_CITY_NAME ORDER BY event.eventName DESC")
-    fun findUpcomingEventsByCityNameSortedByEventNameDesc(idVolunteer: Int, cityName: String): LiveData<List<Event>>
+    fun findUpcomingEventsByCityNameSortedByEventNameDesc(idVolunteer: Int, cityName: String, now: LocalDateTime): LiveData<List<Event>>
 
     //find by event name
 
     @Query("$FIND_UPCOMING_EVENTS_BY_EVENT_NAME ORDER BY event.startTime")
-    fun findUpcomingEventsByEventNameSortedByStartTime(idVolunteer: Int, eventName: String): LiveData<List<Event>>
+    fun findUpcomingEventsByEventNameSortedByStartTime(idVolunteer: Int, eventName: String, now: LocalDateTime): LiveData<List<Event>>
 
     @Query("$FIND_UPCOMING_EVENTS_BY_EVENT_NAME ORDER BY event.startTime DESC")
-    fun findUpcomingEventsByEventNameSortedByStartTimeDesc(idVolunteer: Int, eventName: String): LiveData<List<Event>>
+    fun findUpcomingEventsByEventNameSortedByStartTimeDesc(idVolunteer: Int, eventName: String, now: LocalDateTime): LiveData<List<Event>>
 
     @Query("$FIND_UPCOMING_EVENTS_BY_EVENT_NAME_WITH_JOIN ORDER BY city.cityName")
-    fun findUpcomingEventsByEventNameSortedByCityName(idVolunteer: Int, eventName: String): LiveData<List<Event>>
+    fun findUpcomingEventsByEventNameSortedByCityName(idVolunteer: Int, eventName: String, now: LocalDateTime): LiveData<List<Event>>
 
     @Query("$FIND_UPCOMING_EVENTS_BY_EVENT_NAME_WITH_JOIN ORDER BY city.cityName DESC")
-    fun findUpcomingEventsByEventNameSortedByCityNameDesc(idVolunteer: Int, eventName: String): LiveData<List<Event>>
+    fun findUpcomingEventsByEventNameSortedByCityNameDesc(idVolunteer: Int, eventName: String, now: LocalDateTime): LiveData<List<Event>>
 }

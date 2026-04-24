@@ -234,7 +234,7 @@ class CreateEventActivity : AppCompatActivity() {
         var fileName: String? = null
         context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
             val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            if(nameIndex !=  -1 && cursor.moveToFirst()) {
+            if(nameIndex != -1 && cursor.moveToFirst()) {
                 fileName = cursor.getString(nameIndex)
             }
         }

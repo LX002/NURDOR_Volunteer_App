@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/itemByEventName"
-        android:title="@string/by_event_name" />
+        android:id="@+id/itemDefault"
+        android:title="@string/str_default" />
     <item
-        android:id="@+id/itemByCity"
-        android:title="@string/by_city" />
+        android:id="@+id/itemName"
+        android:title="@string/by_name" />
+    <item
+        android:id="@+id/itemSurname"
+        android:title="@string/by_surname" />
+    <item
+        android:id="@+id/itemPhoneNumber"
+        android:title="@string/by_phone_number" />
+    <item
+        android:id="@+id/itemUsername"
+        android:title="@string/by_username" />
 </menu>

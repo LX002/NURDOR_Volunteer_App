@@ -5,19 +5,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import androidx.work.workDataOf
 import com.example.nurdor_volunteer_app_v3.model.Event
 import com.example.nurdor_volunteer_app_v3.R
 import com.example.nurdor_volunteer_app_v3.utils.ImageUtils
+import com.example.nurdor_volunteer_app_v3.worker.PdfDownloadWorker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class PickEventsAdapter(
     var events: MutableList<Event>,
     val pickOrUnpickEvent: (Event, Boolean) -> Boolean,
-    val getCityNameByZipCode: (String) -> String?
+    val getCityNameByZipCode: suspend (String) -> String?
 ): RecyclerView.Adapter<PickEventsAdapter.EventToPickViewHolder>() {
 
     inner class EventToPickViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -38,11 +48,23 @@ class PickEventsAdapter(
             txtTime.text = time
 
             val txtCity = itemView.findViewById<TextView>(R.id.txtCity)
-            txtCity.text = getCityNameByZipCode(event.city) ?: event.city
+            CoroutineScope(Dispatchers.Main).launch {
+                txtCity.text = getCityNameByZipCode(event.city) ?: event.city
+            }
 
             val cbPickEvent = itemView.findViewById<CheckBox>(R.id.cbPickEvent)
             cbPickEvent.setOnCheckedChangeListener { _, checked ->
                 pickOrUnpickEvent(event, checked)
+            }
+
+            val btnDownloadBrochure = itemView.findViewById<ImageButton>(R.id.btnDownloadBrochure)
+            btnDownloadBrochure.setOnClickListener {
+                val workData = workDataOf("eventId" to event.idEvent, "eventName" to event.eventName)
+                val downloadWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<PdfDownloadWorker>().setInputData(workData).build()
+                if(itemView.context is AppCompatActivity) {
+                    val appContext = itemView.context.applicationContext
+                    WorkManager.getInstance(appContext).enqueue(downloadWorkRequest)
+                }
             }
         }
     }

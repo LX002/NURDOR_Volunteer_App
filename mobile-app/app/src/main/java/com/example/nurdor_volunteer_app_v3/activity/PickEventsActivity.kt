@@ -28,6 +28,7 @@ import com.example.nurdor_volunteer_app_v3.adapters.PickEventsAdapter
 import com.example.nurdor_volunteer_app_v3.fragment.dialog.DisplayMessageDialog
 import com.example.nurdor_volunteer_app_v3.model.Event
 import com.example.nurdor_volunteer_app_v3.viewModel.CityViewModel
+import com.example.nurdor_volunteer_app_v3.viewModel.EventsLogViewModel
 import com.example.nurdor_volunteer_app_v3.viewModel.PickEventsViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
@@ -36,6 +37,7 @@ class PickEventsActivity : AppCompatActivity() {
 
     private lateinit var pickEventsViewModel: PickEventsViewModel
     private lateinit var cityViewModel: CityViewModel
+    private lateinit var eventsLogViewModel: EventsLogViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +59,7 @@ class PickEventsActivity : AppCompatActivity() {
 
         pickEventsViewModel = ViewModelProvider(this)[PickEventsViewModel::class]
         cityViewModel = ViewModelProvider(this)[CityViewModel::class]
+        eventsLogViewModel = ViewModelProvider(this)[EventsLogViewModel::class]
 
         refresh()
 
@@ -72,7 +75,7 @@ class PickEventsActivity : AppCompatActivity() {
         }
 
         Log.i("searchFilterLog", "${pickEventsViewModel.searchFilter.value}")
-        val getCityNameByZipCode: (String) -> String? = { zipCode -> cityViewModel.findByZipCode(zipCode).value?.cityName }
+        val getCityNameByZipCode: suspend (String) -> String? = { zipCode -> cityViewModel.findCityByZipCode(zipCode)?.cityName }
 
         val rcvPickEvents = findViewById<RecyclerView>(R.id.rcvEventsToPick)
         val pickEventsAdapter = PickEventsAdapter(mutableListOf(), pickOrUnpickEvent, getCityNameByZipCode)
@@ -142,7 +145,7 @@ class PickEventsActivity : AppCompatActivity() {
 
     private fun refresh() {
         lifecycleScope.launch {
-            val message = "${pickEventsViewModel.fetchAllEvents()}|${cityViewModel.fetchAll()}"
+            val message = "${cityViewModel.fetchAll()}|${pickEventsViewModel.fetchAllEvents()}|${eventsLogViewModel.fetchAll()}"
             if (!message.contains("SUCCESS")) {
                 DisplayMessageDialog.newInstance(message, false)
                     .show(supportFragmentManager, "displayMessageDialogFragment")

@@ -40,4 +40,8 @@ class CityRepository(db: AppDatabase) {
     fun findAll() = mCityDao.findAll()
 
     fun findByZipCode(zipCode: String) = mCityDao.findByZipCode(zipCode)
+
+    suspend fun findCityByZipCode(zipCode: String) = withContext(Dispatchers.IO) {
+        mCityDao.findCityByZipCode(zipCode)
+    }
 }

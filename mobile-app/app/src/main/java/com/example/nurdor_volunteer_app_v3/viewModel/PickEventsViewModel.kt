@@ -29,7 +29,7 @@ class PickEventsViewModel(application: Application): AndroidViewModel(applicatio
         when(f.findBy) {
             "By event name" -> { findByEventNameResult(f) }
             "By city" -> { findByCityNameResult(f) }
-            else -> eventRepository.findUpcomingEvents()
+            else -> MutableLiveData(listOf())
         }
     }
 
@@ -52,7 +52,7 @@ class PickEventsViewModel(application: Application): AndroidViewModel(applicatio
             "City descending" -> { eventRepository.findUpcomingEventsByEventNameSortedByCityNameDesc(idVolunteer, f.searchTxt) }
             "Start time ascending" -> { eventRepository.findUpcomingEventsByEventNameSortedByStartTime(idVolunteer, f.searchTxt) }
             "Start time descending" -> { eventRepository.findUpcomingEventsByEventNameSortedByStartTimeDesc(idVolunteer, f.searchTxt) }
-            else -> eventRepository.findUpcomingEvents()
+            else -> MutableLiveData(listOf())
         }
     }
 
@@ -62,7 +62,7 @@ class PickEventsViewModel(application: Application): AndroidViewModel(applicatio
             "Event name descending" -> { eventRepository.findUpcomingEventsByCityNameSortedByEventNameDesc(idVolunteer, f.searchTxt) }
             "Start time ascending" -> { eventRepository.findUpcomingEventsByCityNameSortedByStartTime(idVolunteer, f.searchTxt) }
             "Start time descending" -> { eventRepository.findUpcomingEventsByCityNameSortedByStartTimeDesc(idVolunteer, f.searchTxt) }
-            else -> eventRepository.findUpcomingEvents()
+            else -> MutableLiveData(listOf())
         }
     }
 }
