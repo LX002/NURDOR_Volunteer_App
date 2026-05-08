@@ -8,11 +8,11 @@ import java.util.Map;
 
 public class ResponseHandler {
 
-    public static ResponseEntity<Object> generateResponse(String message, HttpStatus status, Object responseObject) {
+    public static ResponseEntity<Map<String, Object>> generateResponse(String message, HttpStatus status, Object responseObject) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("message", message);
         map.put("status", status);
         map.put("data", responseObject);
-        return new ResponseEntity<Object>(map, status);
+        return new ResponseEntity<>(map, status);
     }
 }

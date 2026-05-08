@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -35,32 +36,43 @@ public class AuthController {
     private VolunteerDetailsService volunteerDetailsService;
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@Valid @RequestBody RegisterDTO registerDTO) {
-        if(volunteerDetailsService.findByEmail(registerDTO.getEmail()) != null || volunteerDetailsService.findByUsername(registerDTO.getUsername()) != null) {
-            throw new VolunteerAlreadyExistsException("Cannot register volunteer that already exists!");
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDTO registerDTO) {
+        if(isExistingVolunteer(registerDTO)) {
+            return ResponseHandler.generateResponse("Volunteer with same username / email / phone number already exists!", HttpStatus.CONFLICT, null);
         }
 
-        return ResponseHandler.generateResponse("User registered successfully", HttpStatus.OK, authService.register(registerDTO));
+        System.out.println("Registering with password " + registerDTO.getPassword());
+
+        // [NOTE TO SELF] you are assuming that everything goes well with saving... fix this?
+        return ResponseHandler.generateResponse("Registration successful!", HttpStatus.OK, authService.register(registerDTO));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
-            //remove authenticate?
+            String username = loginDTO.getUsername();
             Authentication authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
-            UserDetails userDetails = volunteerDetailsService.loadUserByUsername(loginDTO.getUsername());
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, loginDTO.getPassword()));
+            UserDetails userDetails = volunteerDetailsService.loadUserByUsername(username);
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .toList();
             String jwt = jwtUtil.generateToken(userDetails.getUsername(), roles);
             LoginResponse loginResponse = LoginResponse
                     .builder()
+                    .volunteerId(volunteerDetailsService.findByUsername(username).getId())
                     .accessToken(jwt)
+                    .tokenType("Bearer")
                     .build();
             return ResponseHandler.generateResponse("Volunteer logged in successfully!", HttpStatus.OK, loginResponse);
         } catch(Exception ex) {
-            return new ResponseEntity<>("Incorrect credentials, try again!", HttpStatus.BAD_REQUEST);
+            return ResponseHandler.generateResponse("Invalid credentials!", HttpStatus.BAD_REQUEST, null);
         }
+    }
+
+    private Boolean isExistingVolunteer(RegisterDTO registerDTO) {
+        return volunteerDetailsService.findByEmail(registerDTO.getEmail()) != null
+                || volunteerDetailsService.findByUsername(registerDTO.getUsername()) != null
+                || volunteerDetailsService.findByPhoneNumber(registerDTO.getPhoneNumber()) != null;
     }
 }

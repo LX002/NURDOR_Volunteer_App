@@ -1,5 +1,6 @@
 package com.nurdor_project.events_log_service.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,8 +20,8 @@ public class EventsLogDto implements Serializable {
     @NotNull
     private final Integer event;
 
-    @Min(1)
     @NotNull
+    @Min(0) @Max(1)
     private final Byte isPresent;
 
     private final String note;

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="@string/running_events"
+        android:id="@+id/itemRunningEvents" />
+    <item
+        android:title="@string/event_archive"
+        android:id="@+id/itemArchivedEvents" />
+    <item
+        android:id="@+id/itemRefresh"
+        android:title="@string/refresh" />
+    <item
+        android:id="@+id/itemSettings"
+        android:title="@string/menu_settings" />
+    <item
+        android:id="@+id/itemLogout"
+        android:title="@string/menu_logout" />
+</menu>

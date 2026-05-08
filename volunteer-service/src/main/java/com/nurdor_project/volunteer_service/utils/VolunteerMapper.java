@@ -18,7 +18,6 @@ public class VolunteerMapper {
                 volunteer.getPhoneNumber(),
                 volunteer.getEmail(),
                 volunteer.getUsername(),
-                volunteer.getPassword(),
                 pic != null ? Base64.getEncoder().encodeToString(pic) : null,
                 volunteer.getNearestCity().getZipCode(),
                 volunteer.getVolunteerRole().getId()

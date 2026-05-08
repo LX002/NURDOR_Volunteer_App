@@ -34,6 +34,6 @@ public class Stand {
     private Integer donations;
 
     @Min(1)
-    @Column(name = "event")
+    @Column(name = "event", nullable = true)
     private Integer idEvent;
 }

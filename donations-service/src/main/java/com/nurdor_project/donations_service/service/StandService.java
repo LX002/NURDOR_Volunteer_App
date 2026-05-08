@@ -10,6 +10,7 @@ import com.nurdor_project.donations_service.repository.StandRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,33 +26,21 @@ public class StandService {
         return standRepository.findById(id).orElseThrow(() -> new StandNotFoundException("Stand not found for id: " + id));
     }
 
+    @Transactional
     public List<Stand> tieStandsToEvent(Integer numberOfStands, Integer idEvent) {
-        List<Stand> standsToSave = new ArrayList<>();
-
         if(numberOfStands != 0) {
-            List<Stand> freeStands = standRepository.findFreeStands(PageRequest.of(0, numberOfStands)).toList();
-            int freeStandsCount = freeStands.size();
+            List<Integer> freeStandsIds = standRepository.findFreeStandsIds(PageRequest.of(0, numberOfStands)).toList();
+            int freeStandsCount = freeStandsIds.size();
 
             if(numberOfStands > freeStandsCount)
                 throw new NotEnoughStandsException("Not enough free stands! There are " + freeStandsCount + " stands left!");
 
-            for(Stand s: freeStands) {
-                s.setIdEvent(idEvent);
-                s.setDonations(0);
-                standsToSave.add(s);
-            }
-            return standRepository.saveAll(standsToSave);
+            Integer affectedRows = standRepository.updateIdEventByStandIds(idEvent, freeStandsIds);
+            return findTakenStands(idEvent);
         } else {
-            standsToSave = findTakenStands(idEvent);
-            System.out.println("stands to save: " + standsToSave);
-            List<Stand> takenStands = standsToSave.stream()
-                    .map(s -> new Stand(s.getId(), s.getStandName(), s.getDonations(), s.getIdEvent()))
-                    .toList();
-            for(Stand s: standsToSave) {
-                s.setIdEvent(null);
-                s.setDonations(0);
-            }
-            standRepository.saveAll(standsToSave);
+            List<Integer> takenStandsIds = standRepository.findTakenStandsIdsByIdEvent(idEvent);
+            List<Stand> takenStands = new ArrayList<>(standRepository.findByIdEvent(idEvent));
+            Integer affectedRows = standRepository.updateIdEventByStandIds(null, takenStandsIds);
             return takenStands;
         }
     }
@@ -63,20 +52,24 @@ public class StandService {
     public String donateToStand(Integer amount, Integer idStand, Integer idEvent) {
         EventDto eventDto = eventProxy.findById(idEvent);
         if(eventDto == null)
-            return "Event not found!";
+            return "ERROR:Event not found!";
 
         if(eventDto.getIsStarted() != (byte) 1)
-            throw new NotValidStandIdException("Cannot donate - event " + idEvent + " not started yet!");
+            throw new NotValidStandIdException("ERROR:Cannot donate - event " + idEvent + " not started yet!");
 
         Stand stand = findById(idStand);
         List<Stand> takenStands = findTakenStands(idEvent);
         if(!takenStands.contains(stand))
-            throw new NotValidStandIdException("STAND_" + idStand + " is not being used in " + eventDto.getEventName());
+            throw new NotValidStandIdException("ERROR:STAND_" + idStand + " is not being used in " + eventDto.getEventName());
 
         Integer currentAmount = stand.getDonations();
         stand.setDonations(currentAmount + amount);
         Stand savedStand = standRepository.save(stand);
 
-        return "Donated " + amount + "RSD on STAND_" + idStand + ". Total stand donations: " + savedStand.getDonations() + "RSD";
+        return "SUCCESS:Donated " + amount + "RSD on STAND_" + idStand + ". Total stand donations: " + savedStand.getDonations() + "RSD";
+    }
+
+    public List<Stand> findAll() {
+        return standRepository.findAll();
     }
 }

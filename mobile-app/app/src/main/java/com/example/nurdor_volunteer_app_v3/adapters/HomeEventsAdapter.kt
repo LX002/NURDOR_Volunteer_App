@@ -1,0 +1,222 @@
+package com.example.nurdor_volunteer_app_v3.adapters
+
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import androidx.work.workDataOf
+import com.example.nurdor_volunteer_app_v3.R
+import com.example.nurdor_volunteer_app_v3.model.Event
+import com.example.nurdor_volunteer_app_v3.utils.DateTimeUtils
+import com.example.nurdor_volunteer_app_v3.utils.ImageUtils
+import com.example.nurdor_volunteer_app_v3.utils.PreferenceHelper
+import java.time.LocalDateTime
+import androidx.core.net.toUri
+import com.example.nurdor_volunteer_app_v3.activity.RunningEventStatisticsActivity
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.EnrolledVolunteersDialog
+import com.example.nurdor_volunteer_app_v3.fragment.dialog.SetUpStandsForEventDialog
+import com.example.nurdor_volunteer_app_v3.worker.PdfDownloadWorker
+
+class HomeEventsAdapter(private var events: MutableList<Event>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private var selectedPosition: Int = -1
+    companion object {
+        private const val NORMAL_LAYOUT = 0
+        private const val EXPANDED_LAYOUT = 1
+
+        private fun isFirstActionButonEnabled(event: Event, itemView: View): Boolean {
+            return if(PreferenceHelper.isAdmin(itemView.context)) {
+                LocalDateTime.now().isAfter(event.startTime)
+                        && LocalDateTime.now().isBefore(event.endTime)
+            } else {
+                LocalDateTime.now().isAfter(event.startTime)
+                        && LocalDateTime.now().isBefore(event.endTime)
+                        && event.isStarted == 1.toByte()
+            }
+        }
+    }
+    val elements: List<Event>
+        get() = events
+
+    var joinEvent: ((Int, Int) -> Unit)? = null
+    var deleteEvent: ((Event) -> Unit)? = null
+
+    class EventViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        fun bind(event: Event) {
+            val txtEventName: TextView = itemView.findViewById(R.id.txtEventName)
+            val txtDate: TextView = itemView.findViewById(R.id.txtDate)
+            val txtTime: TextView = itemView.findViewById(R.id.txtTime)
+            val imageView: ImageView = itemView.findViewById(R.id.eventImageView)
+
+            val formattedStartTime = DateTimeUtils.changeDateFormat(event.startTime, "dd/MM/yyyy HH:mm")
+            txtEventName.text = event.eventName
+            txtDate.text = formattedStartTime.split(" ")[0]
+            txtTime.text = formattedStartTime.split(" ")[1]
+
+            ImageUtils.loadImageIntoIntoImageView(event.eventImg, R.drawable.unknown_event ,imageView, itemView.context)
+        }
+    }
+
+    inner class ExpandedEventViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        fun bind(event: Event) {
+            val isAdmin = PreferenceHelper.isAdmin(itemView.context)
+
+            val txtEventName: TextView = itemView.findViewById(R.id.txtEventName)
+            val txtDate: TextView = itemView.findViewById(R.id.txtDate)
+            val txtTime: TextView = itemView.findViewById(R.id.txtTime)
+            val txtDescription: TextView = itemView.findViewById(R.id.txtDescription)
+            val imageView: ImageView = itemView.findViewById(R.id.eventImageView)
+            val firstActionButton: Button = itemView.findViewById(R.id.btnEndEvent)
+            val btnLocation: Button = itemView.findViewById(R.id.btnLocation)
+            val btnDetails: Button = itemView.findViewById(R.id.btnDetails)
+            val txtDuration: TextView = itemView.findViewById(R.id.txtDuration)
+            val txtLocation: TextView = itemView.findViewById(R.id.txtLocation)
+            val btnDelete: ImageButton = itemView.findViewById(R.id.btnDelete)
+
+            val formattedStartTime = DateTimeUtils.changeDateFormat(event.startTime, "dd/MM/yyyy HH:mm")
+            txtDate.text = formattedStartTime.split(" ")[0]
+            txtTime.text = formattedStartTime.split(" ")[1]
+            txtEventName.text = event.eventName
+            txtDuration.text = "${DateTimeUtils.calculateDuration(event.startTime, event.endTime)} min"
+            txtDescription.text = event.description
+            txtLocation.text = if(!event.locationDesc.isNullOrBlank()) event.locationDesc else "Unknown"
+            firstActionButton.text = if(isAdmin) {
+                itemView.context.resources.getString(R.string.start)
+            } else {
+                itemView.context.resources.getString(R.string.join)
+            }
+
+            firstActionButton.isEnabled = isFirstActionButonEnabled(event, itemView)
+
+            ImageUtils.loadImageIntoIntoImageView(event.eventImg, R.drawable.unknown_event, imageView, itemView.context)
+
+            firstActionButton.setOnClickListener {
+                if(isAdmin) {
+                    val context = itemView.context as AppCompatActivity
+                    event.idEvent?.let {
+                        SetUpStandsForEventDialog
+                            .newInstance(it)
+                            .show(
+                                context.supportFragmentManager,
+                                "setUpStandsForEventDialog"
+                            )
+                    }
+                } else {
+                    event.idEvent?.let { joinEvent?.invoke(PreferenceHelper.getIdVolunteer(itemView.context), event.idEvent) }
+                }
+            }
+
+            btnLocation.setOnClickListener {
+                val googleMapsUri =
+                    "geo:0,0?q=${event.latitude},${event.longitude}(${Uri.encode(event.eventName)})".toUri()
+                val mapIntent = Intent(Intent.ACTION_VIEW, googleMapsUri)
+                mapIntent.setPackage("com.google.android.apps.maps")
+                itemView.context.startActivity(mapIntent)
+            }
+
+            btnDetails.setOnClickListener {
+                val workData = workDataOf("eventId" to event.idEvent, "eventName" to event.eventName)
+                val downloadWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<PdfDownloadWorker>().setInputData(workData).build()
+                if(itemView.context is AppCompatActivity) {
+                    val appContext = itemView.context.applicationContext
+                    WorkManager.getInstance(appContext).enqueue(downloadWorkRequest)
+                }
+            }
+
+            btnDetails.setOnLongClickListener {
+                val context = itemView.context
+                val idEvent = event.idEvent
+                if(context is AppCompatActivity && idEvent != null) {
+                    EnrolledVolunteersDialog.newInstance(idEvent).show(context.supportFragmentManager, "enrolledVolunteersDialog")
+                }
+                true
+            }
+
+            btnDelete.setOnClickListener { deleteEvent?.invoke(event) }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        val type = if(position == selectedPosition) EXPANDED_LAYOUT else NORMAL_LAYOUT
+        return type
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return if(viewType == EXPANDED_LAYOUT) {
+            val view = inflater.inflate(R.layout.item_home_events_expanded, parent, false)
+            ExpandedEventViewHolder(view)
+        } else {
+            val view = inflater.inflate(R.layout.item_home_events, parent, false)
+            EventViewHolder(view)
+        }
+    }
+
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int
+    ) {
+        if(holder is EventViewHolder) {
+            holder.bind(events[position])
+        } else if (holder is ExpandedEventViewHolder) {
+            holder.bind(events[position])
+        }
+
+        holder.itemView.setOnClickListener {
+            val previousPosition = selectedPosition
+            selectedPosition = if(selectedPosition == position) -1 else position
+            notifyItemChanged(previousPosition)
+            notifyItemChanged(selectedPosition)
+        }
+    }
+
+    override fun getItemCount(): Int = elements.size
+
+    fun addEvent(event: Event) {
+        events.add(event)
+        notifyItemChanged(events.size - 1)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun addEvents(eventsToAdd: List<Event>?) {
+        eventsToAdd?.let {
+            val startPosition = if(events.isEmpty()) 0 else events.size
+            events.addAll(eventsToAdd)
+            notifyDataSetChanged()
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun removeEvent(event: Event) {
+        events.isNotEmpty().let {
+            val success = events.remove(event)
+            if(success) notifyDataSetChanged()
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun clear() {
+        events.clear()
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateEvents(events: MutableList<Event>) {
+        this.events = events
+        notifyDataSetChanged()
+    }
+}

@@ -19,6 +19,11 @@ public class StandController {
 
     private StandService standService;
 
+    @GetMapping("/volunteer/stands")
+    public ResponseEntity<List<Stand>> findAll() {
+        return ResponseEntity.ok(standService.findAll());
+    }
+
     @GetMapping("/volunteer/findByIdEvent/{idEvent}")
     public ResponseEntity<List<Stand>> findByIdEvent(@PathVariable @Min(1) Integer idEvent) {
         return ResponseEntity.ok(standService.findTakenStands(idEvent));

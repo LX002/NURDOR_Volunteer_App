@@ -16,7 +16,7 @@ public class RegisterResponse {
     private Integer id;
     private String username;
     private String email;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
     private String message;
 }

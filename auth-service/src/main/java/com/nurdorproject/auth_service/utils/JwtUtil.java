@@ -62,7 +62,7 @@ public class JwtUtil {
                 //.header().empty().add("typ", "JWT")
                 //.and()
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 2))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 96)) // 96 hours = 4 days
                 .signWith(getSigningKey())
                 .compact();
     }

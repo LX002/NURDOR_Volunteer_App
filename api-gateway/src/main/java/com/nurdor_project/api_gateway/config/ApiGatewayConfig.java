@@ -23,6 +23,9 @@ public class ApiGatewayConfig {
                 .route("admin-volunteers", r -> r.path("/volunteer/volunteers")
                         .filters(f -> f.rewritePath("/volunteer/volunteers", "/api/volunteer/volunteers/findAll"))
                         .uri("lb://VOLUNTEER-SERVICE"))
+                .route("all-cities", r -> r.path("/cities")
+                        .filters(f -> f.rewritePath("/cities", "/api/cities"))
+                        .uri("lb://VOLUNTEER-SERVICE"))
 
                 // event-service routes
                 .route("get-event", r -> r.path("/volunteer/event/{idEvent}")
@@ -41,18 +44,40 @@ public class ApiGatewayConfig {
                 .route("end-event", r -> r.path("/admin/end/{idEvent}")
                         .filters(f -> f.rewritePath("/admin/end/(?<idEvent>.*)", "/api/admin/events/end/${idEvent}"))
                         .uri("lb://EVENT-SERVICE"))
+                .route("create-event", r -> r.path("/admin/newEvent")
+                        .filters(f -> f.rewritePath("/admin/newEvent", "/api/admin/events/create"))
+                        .uri("lb://EVENT-SERVICE"))
+                .route("create-event", r -> r.path("/admin/deleteEvent/{idEvent}")
+                        .filters(f -> f.rewritePath("/admin/deleteEvent/(?<idEvent>.*)", "/api/admin/events/delete/${idEvent}"))
+                        .uri("lb://EVENT-SERVICE"))
 
                 // events-log-service routes
                 .route("insert-log", r -> r.path("/volunteer/insertLog")
                         .filters(f -> f.rewritePath("/volunteer/insertLog", "/api/volunteer/eventsLogs/insert"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
+                .route("insert-log", r -> r.path("/volunteer/insertLogs")
+                        .filters(f -> f.rewritePath("/volunteer/insertLogs", "/api/volunteer/eventsLogs/insertLogs"))
+                        .uri("lb://EVENTS-LOG-SERVICE"))
                 .route("update-presence", r -> r.path("/volunteer/updatePresence")
                         .filters(f -> f.rewritePath("/volunteer/updatePresence", "/api/volunteer/eventLogs/updatePresence"))
                         .uri("lb://EVENTS-LOG-SERVICE"))
+                .route("find-all-logs", r -> r.path("/volunteer/allEventsLogs")
+                        .filters(f -> f.rewritePath("/volunteer/allEventsLogs", "/api/volunteer/eventsLogs/findAll"))
+                        .uri("lb://EVENTS-LOG-SERVICE"))
+                .route("update-last-seen", r -> r.path("/volunteer/updateLastSeen")
+                        .filters(f -> f.rewritePath("/volunteer/updateLastSeen", "/api/volunteer/eventsLogs/updateLastSeen"))
+                        .uri("lb://EVENTS-LOG-SERVICE"))
+                .route("delete-log", r -> r.path("/volunteer/deleteLog")
+                        .filters(f -> f.rewritePath("/volunteer/deleteLog", "/api/volunteer/eventsLogs/delete"))
+                        .uri("lb://EVENTS-LOG-SERVICE"))
+
 
                 // donations-service routes
                 .route("donate", r -> r.path("/volunteer/addDonation")
                         .filters(f -> f.rewritePath("/volunteer/addDonation", "/api/volunteer/stands/addDonation"))
+                        .uri("lb://DONATIONS-SERVICE"))
+                .route("all-stands", r -> r.path("/volunteer/stands")
+                        .filters(f -> f.rewritePath("/volunteer/stands", "/api/volunteer/stands"))
                         .uri("lb://DONATIONS-SERVICE"))
 
                 // statistics-service routes

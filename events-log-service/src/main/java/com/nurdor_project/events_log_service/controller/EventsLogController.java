@@ -1,6 +1,7 @@
 package com.nurdor_project.events_log_service.controller;
 
 import com.nurdor_project.events_log_service.dto.EventsLogDto;
+import com.nurdor_project.events_log_service.dto.UpdatePresenceDto;
 import com.nurdor_project.events_log_service.model.EventsLog;
 import com.nurdor_project.events_log_service.service.EventsLogService;
 import com.nurdor_project.events_log_service.utils.EventsLogMapper;
@@ -29,6 +30,12 @@ public class EventsLogController {
                 : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping("/volunteer/eventsLogs/insertLogs")
+    public ResponseEntity<List<EventsLog>> insertLogs(@RequestBody @Valid List<EventsLog> eventsLogs) {
+        List<EventsLog> saved = eventsLogService.insertLogs(eventsLogs);
+        return !saved.isEmpty() ? ResponseEntity.ok(saved) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PatchMapping("/volunteer/eventLogs/updatePresence")
     public ResponseEntity<EventsLog> markAsPresent(@RequestBody @Valid EventsLogDto eventsLogDto) {
         return ResponseEntity.ok(eventsLogService.updatePresence(eventsLogDto));
@@ -50,5 +57,31 @@ public class EventsLogController {
         return results[0].equals("204")
                 ? new ResponseEntity<>(results[1], HttpStatus.NO_CONTENT)
                 : ResponseEntity.ok(results[1]);
+    }
+
+    @GetMapping("/volunteer/eventsLogs/findAll")
+    public ResponseEntity<List<EventsLog>> findAll() {
+        List<EventsLog> eventsLogs = eventsLogService.findAll();
+        return !eventsLogs.isEmpty()
+                ? ResponseEntity.ok(eventsLogs)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/volunteer/eventsLogs/updateLastSeen")
+    public ResponseEntity<String> updateLastSeenTimestamp(@RequestBody UpdatePresenceDto updatePresenceDto) {
+        eventsLogService.updateLastSeenTimestamp(updatePresenceDto);
+        return ResponseEntity.ok("Updated last seen!");
+    }
+
+    @DeleteMapping("/volunteer/eventsLogs/delete")
+    public ResponseEntity<String> deleteLog(@RequestParam("idEvent") Integer idEvent, @RequestParam("idVolunteer") Integer idVolunteer) {
+        eventsLogService.deleteLog(idEvent, idVolunteer);
+        return ResponseEntity.ok("SUCCESS: Deleted log for [idEvent, idVolunteer]: [" + idEvent + ", " + idVolunteer + "]");
+    }
+
+    @DeleteMapping("/volunteer/eventsLogs/deleteLogs")
+    public ResponseEntity<String> deleteLogsByIdEvent(@RequestParam("idEvent") Integer idEvent) {
+        eventsLogService.deleteLogByIdEvent(idEvent);
+        return ResponseEntity.ok("SUCCESS: Deleted logs for idEvent: " + idEvent);
     }
 }

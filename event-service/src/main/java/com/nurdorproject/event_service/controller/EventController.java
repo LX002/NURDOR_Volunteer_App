@@ -50,27 +50,19 @@ public class EventController {
 
     @GetMapping("/volunteer/events/getPdfById/{idEvent}")
     public ResponseEntity<byte[]> downloadEventPdf(@PathVariable @Min(1) int idEvent) {
-        // check exceptions via exception handlers....
-        try {
-            Event event = eventService.findById(idEvent);
-            byte[] eventPdf = eventService.createEventPdf(event);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDisposition(
-                    ContentDisposition.attachment()
-                            .filename("event-" + event.getEventName() + ".pdf")
-                            .build()
-            );
-            return new ResponseEntity<>(eventPdf, headers, HttpStatus.OK);
-        } catch (JRException jre) {
-            System.out.println("Exception during generating pdf:\n" + jre.getMessage());
-            jre.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        System.out.println("download pdf called...");
+        Event event = eventService.findByIdAndReleaseConn(idEvent);
+        byte[] eventPdf = eventService.createEventPdf(event, "ENG"); // temporary solution for language
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentLength(eventPdf.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.attachment()
+                .filename("event-" + event.getEventName() + ".pdf")
+                .build()
+        );
+        return eventPdf != null
+                ? new ResponseEntity<>(eventPdf, headers, HttpStatus.OK)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @PostMapping("/admin/events/start")
@@ -78,7 +70,7 @@ public class EventController {
         int idEvent = startEventDto.getIdEvent();
         updateEvent(idEvent, (byte) 1, 0L);
         return ResponseEntity.ok(new StartEventResultDto(
-                "Started event: " + idEvent,
+                "SUCCESS: Started event " + idEvent,
                 donationsProxy.attachStandsToEvent(startEventDto)
         ));
     }
@@ -89,7 +81,12 @@ public class EventController {
         List<StandDto> stands = donationsProxy.detachStandsFromEvent(idEvent);
         long totalDonations = stands.stream().mapToLong(StandDto::getDonations).sum();
         updateEvent(idEvent, (byte) 0, totalDonations);
-        return ResponseEntity.ok(new EndEventResultDto("Ended event: " + idEvent, totalDonations, stands));
+        return ResponseEntity.ok(new EndEventResultDto("SUCCESS: Ended event " + idEvent, totalDonations, stands));
+    }
+
+    @PostMapping("/admin/events/create")
+    public ResponseEntity<Event> createEvent(@RequestBody @Valid CreateEventDto eventDto) {
+        return ResponseEntity.ok(eventService.save(EventMapper.mapToEventWithoutId(eventDto)));
     }
 
     private void updateEvent(int idEvent, byte isStarted, Long totalDonations) {
@@ -97,5 +94,10 @@ public class EventController {
         event.setIsStarted(isStarted);
         event.setTotalDonations(totalDonations);
         eventService.save(event);
+    }
+
+    @DeleteMapping("/admin/events/delete/{idEvent}")
+    public ResponseEntity<String> deleteEvent(@PathVariable Integer idEvent) {
+        return ResponseEntity.ok(eventService.delete(idEvent));
     }
 }

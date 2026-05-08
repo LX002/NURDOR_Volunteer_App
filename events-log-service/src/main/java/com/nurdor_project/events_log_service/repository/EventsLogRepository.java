@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +29,16 @@ public interface EventsLogRepository extends JpaRepository<EventsLog, Integer> {
     @Modifying
     @Query("update EventsLog set isPresent = 0 where volunteer in :ids")
     void dismissVolunteers(@Param("ids") List<Integer> ids);
+
+    @Modifying
+    @Query("update EventsLog set isPresent = 0, note = 'initLog' where isPresent = 1 and note <= :idleLimit")
+    void dismissInactiveVolunteers(@Param("idleLimit") String idleLimit);
+
+    @Modifying
+    @Query("delete from EventsLog e where e.event = :idEvent and e.volunteer = :idVolunteer")
+    void deleteLog(@Param("idEvent") Integer idEvent, @Param("idVolunteer") Integer idVolunteer);
+
+    @Modifying
+    @Query("delete from EventsLog e where e.event = :idEvent")
+    void deleteByIdEvent(Integer idEvent);
 }

@@ -24,8 +24,6 @@ public class VolunteerDto implements Serializable {
     String email;
     @JsonProperty("username")
     String username;
-    @JsonProperty("password")
-    String password;
     @JsonIgnore
     @JsonProperty("profilePicture")
     String profilePicture;

@@ -32,9 +32,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // add matchers later...
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/volunteer/**").hasAnyRole("ADMIN", "VOLUNTEER")
+                        .requestMatchers("/api/cities", "/cities").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oAuth2 -> oAuth2
