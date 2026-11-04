@@ -1,0 +1,35 @@
+@if(loadedData()) {
+  <div class="main-container container-fluid d-flex justify-content-center">
+    <div class="started-event-body">
+      <div class="row bg-success">
+        <div class="col-12 bg-success d-flex justify-content-center">
+          <h1>{{ event()?.eventName }}</h1>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+          <div class="col-12 bg-white text-black d-flex justify-content-center">
+            <h5>Present volunteers:</h5>
+          </div>
+          <div class="volunteers-list col-12 bg-white text-black d-flex overflow-scroll">
+            @if(volunteers()?.length === 0) {
+              <p>No present volunteers!</p>
+            } @else {
+              @for (v of volunteers(); track $index) {
+                <p>{{ v.name }} {{ v.surname }}</p>
+              }
+            }
+          </div>
+        </div>
+        <div id="donation-section" class="col-lg-6 col-sm-12">
+          @for(s of standIds(); track $index) {
+            <app-donate-form [eventId]="parseInt(this.id())" [standId]="s"></app-donate-form>
+          }
+        </div>
+        <div class="d-flex col-12 justify-content-center leave-footer">
+          <button class="btn btn-secondary" (click)="updatePresence(false)">Leave</button>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <app-loading-screen [message]="'Loading started event...'" />
+}

@@ -37,14 +37,18 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDTO registerDTO) {
-        if(isExistingVolunteer(registerDTO)) {
-            return ResponseHandler.generateResponse("Volunteer with same username / email / phone number already exists!", HttpStatus.CONFLICT, null);
+        try {
+            if(isExistingVolunteer(registerDTO)) {
+                return ResponseHandler.generateResponse("Volunteer with same username / email / phone number already exists!", HttpStatus.CONFLICT, null);
+            }
+
+            System.out.println("Registering with password " + registerDTO.getPassword());
+
+            // [NOTE TO SELF] you are assuming that everything goes well with saving... fix this?
+            return ResponseHandler.generateResponse("Registration successful!", HttpStatus.OK, authService.register(registerDTO));
+        } catch (Exception ex) {
+            return ResponseHandler.generateResponse(ex.getMessage() + "\n exception class: " + ex.getClass(), HttpStatus.BAD_REQUEST, null);
         }
-
-        System.out.println("Registering with password " + registerDTO.getPassword());
-
-        // [NOTE TO SELF] you are assuming that everything goes well with saving... fix this?
-        return ResponseHandler.generateResponse("Registration successful!", HttpStatus.OK, authService.register(registerDTO));
     }
 
     @PostMapping("/login")

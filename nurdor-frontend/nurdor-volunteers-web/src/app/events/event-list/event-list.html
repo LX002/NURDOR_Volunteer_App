@@ -1,0 +1,20 @@
+@if(areEventsLoaded()) {
+  <div class="container-fluid">
+    <div class="row">
+      @for (e of events(); track $index;) {
+        @if((!isEnded(e) && !isAdmin()) || isAdmin()) {
+          <div [ngClass]="expansionFlags[$index] ? expandedState : normalState">
+            <app-event-component
+              [event]="e"
+              [isOnHomePage]="showPickedOnes()"
+              (removeEventOutput)="removeFromList($event)"
+              (onExpand)="expandOrCollapse($index, $event)"
+            />
+          </div>
+        }
+      }
+    </div>
+  </div>
+} @else {
+  <app-loading-screen [message]="'Loading your events...'"/>
+}

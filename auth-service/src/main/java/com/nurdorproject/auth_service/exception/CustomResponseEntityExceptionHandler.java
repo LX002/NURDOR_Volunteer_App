@@ -20,7 +20,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorEntity> handleException(Exception e) {
-        return new ResponseEntity<>(new ErrorEntity(e.getMessage(), LocalDateTime.now()), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorEntity(e.getMessage() + " exception class:" + e.getClass(), LocalDateTime.now()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

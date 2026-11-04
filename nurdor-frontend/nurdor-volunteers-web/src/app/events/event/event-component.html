@@ -1,0 +1,52 @@
+<div class="card event-card">
+  <div (click)="expandInfo()" class="container-fluid d-flex" style="align-content: center; justify-content: center;">
+    <img
+      [src]="'data:image/png;base64,' + event().eventImg" class="card-img-top"
+      [alt]="event().eventName"
+      style="width: 100%; height:10rem; object-fit: cover;"
+    />
+  </div>
+  <div class="card-body">
+    @if(isExpanded) {
+      <h1 class="card-title" [class.ended-title]="isEnded()">{{ displayedName() }}</h1>
+      @if(isEnded()) {
+        <p class="card-text">
+          Total donations: {{ currentEvent().totalDonations | number: '1.2-2'}} RSD
+        </p>
+      }
+      <p class="card-text">Description: {{ currentEvent().description }}</p>
+      <div class="container-fluid d-flex" style="width: 100%; height: 350px;" #mapContainer></div>
+    } @else {
+      <h5 class="card-title" [class.ended-title]="isEnded()">{{ displayedName() }}</h5>
+    }
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">{{ !isEnded()? 'Start time:' : 'Stared:' }} {{ event().startTime }}</li>
+    <li class="list-group-item">{{ !isEnded()? 'End time:' : 'Ended:' }} {{ event().endTime }}</li>
+    <li class="list-group-item">Location: {{ event().locationDesc }}</li>
+  </ul>
+  <div class="card-body event-card-body">
+    @if(!isEnded()) {
+      @if(isOnHomePage()) {
+        @if(currentEvent().isStarted) {
+          <button [routerLink]="['/api/started-event', event().id]" class="btn btn-primary">Join</button>
+        }
+        <button (click)="unpick()" class="btn btn-primary">Unpick</button>
+      } @else {
+        <button (click)="pick()" class="btn btn-primary">Pick</button>
+      }
+    }
+
+    @if(isAdmin()) {
+      @if(isEnded()) {
+        <button class="btn btn-danger" disabled="disabled">ENDED EVENT</button>
+      } @else {
+        @if(!currentEvent().isStarted) {
+          <button (click)="setStartedStatus(true)" class="btn btn-primary" [disabled]="isStartDisabled()">Start event</button>
+        } @else {
+          <button (click)="setStartedStatus(false)" class="btn btn-primary">End event</button>
+        }
+      }
+    }
+  </div>
+</div>

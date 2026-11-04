@@ -21,6 +21,9 @@ public interface EventsLogRepository extends JpaRepository<EventsLog, Integer> {
     @Query("select e.volunteer from EventsLog e where e.event = :idE")
     List<Integer> findVolunteerIdsByIdEvent(@Param("idE") Integer idEvent);
 
+    @Query("select e.volunteer from EventsLog e where e.event = :idE and e.isPresent = 1")
+    List<Integer> findJoinedVolunteerIdsByIdEvent(@Param("idE") Integer idEvent);
+
     @Query("select e from EventsLog e where e.isPresent = 1 and e.event in :ids")
     List<EventsLog> findEventsLogsByActiveEventsIds(@Param("ids") List<Integer> ids);
 

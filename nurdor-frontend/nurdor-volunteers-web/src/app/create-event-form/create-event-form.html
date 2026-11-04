@@ -1,0 +1,72 @@
+<div class="form-container d-flex justify-content-center text-white fw-bold">
+  <div class="form-body row">
+    <div class="col-12 d-flex justify-content-center">
+      <h3>Create event</h3>
+    </div>
+    <form [formGroup]="createEventFormGroup" (ngSubmit)="createEvent()" class="col-12">
+      <div class="mb-3">
+        <label for="eventName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="eventName" formControlName="eventName" aria-describedby="eventNameInfo">
+        @if(createEventFormGroup.get('eventName')?.invalid &&
+        (createEventFormGroup.get('eventName')?.dirty ||
+          createEventFormGroup.get('eventName')?.touched)) {
+          <div id="eventNameInfo" class="form-text text-danger">Event name is required</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="eventDesc" class="form-label">Description</label>
+        <input type="text" class="form-control" id="eventDesc" formControlName="description" aria-describedby="eventDescInfo">
+        @if(createEventFormGroup.get('description')?.invalid &&
+        (createEventFormGroup.get('description')?.dirty ||
+          createEventFormGroup.get('description')?.touched)) {
+          <div id="eventDescInfo" class="form-text text-danger">Event name is required</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="eventStartTime" class="form-label">Start time</label>
+        <input type="datetime-local" class="form-control" id="eventStartTime" formControlName="startTime" aria-describedby="eventStartTimeInfo">
+        @if(createEventFormGroup.get('startTime')?.invalid &&
+        (createEventFormGroup.get('startTime')?.dirty ||
+          createEventFormGroup.get('startTime')?.touched)) {
+          <div id="eventStartTimeInfo" class="form-text text-danger">Event name is required</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="eventEndTime" class="form-label">End time</label>
+        <input type="datetime-local" class="form-control" id="eventEndTime" formControlName="endTime" aria-describedby="eventEndTimeInfo">
+        @if(createEventFormGroup.get('endTime')?.invalid &&
+        (createEventFormGroup.get('endTime')?.dirty ||
+          createEventFormGroup.get('endTime')?.touched)) {
+          <div id="eventEndTimeInfo" class="form-text text-danger">Event name is required</div>
+        }
+      </div>
+      <div>
+        <p>Click on map to pick location</p>
+        <div style="width: 100%; height: 300px;" #pickLocationMap></div>
+        <!--<p>Lat: {{ location().lat }} Lng: {{ location().lng }} Dsc: {{ location().dsc }}</p>-->
+      </div>
+      <div class="mb-3">
+        <label for="eventCity" class="form-label">City</label>
+        <select (change)="onCitySelectionChange($event)" class="form-control" id="eventCity" aria-describedby="cityInfo">
+          <option value=""></option>
+          @for (opt of cities(); track opt.zipCode) {
+            <option [value]="opt.zipCode">{{ opt.cityName }}</option>
+          }
+        </select>
+        @if(zipCode() === "") {
+          <div id="cityInfo" class="form-text text-danger">City is required</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="eventPic" class="form-label">Event picture</label>
+        <input type="file" accept="image/png, image/jpeg" class="form-control" id="eventPic" (change)="onEventPhotoChange($event)" )>
+      </div>
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-success" [disabled]="!createEventFormGroup.valid || zipCode() === ''">Create event</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+

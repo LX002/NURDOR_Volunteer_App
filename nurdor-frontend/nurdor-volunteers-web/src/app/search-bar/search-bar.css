@@ -1,0 +1,13 @@
+.fixed-search-bar {
+  position: fixed;
+  top: 3.5rem;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background: white;
+  padding-bottom: 1rem;
+}
+
+.dropdown-item:hover {
+  cursor: pointer;
+}

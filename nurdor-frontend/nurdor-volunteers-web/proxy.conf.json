@@ -1,0 +1,27 @@
+{
+  "/login": {
+    "target": "http://localhost:8765",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/register": {
+    "target": "http://localhost:8765",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/cities": {
+    "target": "http://localhost:8765",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/volunteer/**": {
+    "target": "http://localhost:8765",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/admin/**": {
+    "target": "http://localhost:8765",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

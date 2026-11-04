@@ -1,0 +1,18 @@
+<div id="message-window-container" class="container-fluid d-flex justify-content-center align-items-center">
+  <div id="message-window-body">
+    <div [ngClass]="'window-header ' + title().toLowerCase() + '-window d-flex justify-content-left align-items-center'">
+      {{ title() }}
+    </div>
+    <div class="window-content d-flex align-items-center">
+      {{ message() }}
+    </div>
+    <div [ngClass]="'window-footer ' + title().toLowerCase() + '-window d-flex justify-content-center align-items-center'">
+      @if(title() !== "Confirmation") {
+        <button class="btn btn-secondary" (click)="close()">OK</button>
+      } @else {
+        <button class="btn btn-secondary" (click)="close()">Yes</button>
+        <button class="btn btn-secondary" (click)="closeWithoutRedir()">No</button>
+      }
+    </div>
+  </div>
+</div>

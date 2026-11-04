@@ -86,13 +86,16 @@ public class EventController {
 
     @PostMapping("/admin/events/create")
     public ResponseEntity<Event> createEvent(@RequestBody @Valid CreateEventDto eventDto) {
-        return ResponseEntity.ok(eventService.save(EventMapper.mapToEventWithoutId(eventDto)));
+        return !eventDto.getStartTime().contains("ANGULAR_SOURCE")
+                ? ResponseEntity.ok(eventService.save(EventMapper.mapToEventWithoutId(eventDto)))
+                : ResponseEntity.ok(eventService.save(EventMapper.mapToEvent(eventDto)));
     }
 
     private void updateEvent(int idEvent, byte isStarted, Long totalDonations) {
         Event event = eventService.findById(idEvent);
         event.setIsStarted(isStarted);
         event.setTotalDonations(totalDonations);
+        if(isStarted == 0) event.setEventName(event.getEventName() + " END_EVENT");
         eventService.save(event);
     }
 

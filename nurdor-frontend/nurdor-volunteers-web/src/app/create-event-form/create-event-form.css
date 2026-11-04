@@ -1,0 +1,12 @@
+.form-body {
+  background-color: rgba(136, 236, 63, 0.85);
+  padding: 1rem;
+}
+
+.form-container {
+  padding: 4rem;
+}
+
+.form-control.ng-invalid.ng-touched {
+  background-color: rgba(255, 0, 0, 0.45);
+}

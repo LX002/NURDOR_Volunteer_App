@@ -1,0 +1,13 @@
+.ended-title {
+  color: red;
+}
+
+.event-card {
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.event-card-body {
+  display: flex;
+  justify-content: space-around;
+}
