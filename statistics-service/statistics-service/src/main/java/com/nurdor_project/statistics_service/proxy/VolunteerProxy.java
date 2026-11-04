@@ -23,6 +23,9 @@ public interface VolunteerProxy {
     @GetMapping("/api/admin/volunteers/findByEvent/{idEvent}")
     List<VolunteerDto> findByIdEvent(@PathVariable Integer idEvent);
 
+    @GetMapping("/api/volunteer/volunteers/findIfJoinedToEvent/{idEvent}")
+    List<VolunteerDto> findIfJoinedToEvent(@PathVariable Integer idEvent);
+
     @GetMapping("/api/admin/volunteers/groupByEvent")
     Map<Integer, PresentVolunteerEventDto> groupPresentVolunteersByEvent();
 }

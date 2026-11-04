@@ -1,0 +1,110 @@
+<div class="form-container d-flex justify-content-center text-white fw-bold">
+  <div class="form-body row">
+    <div class="col-12 d-flex justify-content-center">
+      <h3>Sign up</h3>
+    </div>
+    <form [formGroup]="signInFormGroup" (ngSubmit)="signUp()" class="col-12">
+      <div class="mb-3">
+        <label for="signUpName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="signUpName" formControlName="name" aria-describedby="nameInfo">
+        @if(signInFormGroup.get('name')?.invalid &&
+        (signInFormGroup.get('name')?.dirty ||
+          signInFormGroup.get('name')?.touched)) {
+          <div id="nameInfo" class="form-text text-danger">Name is required</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="signUpSurname" class="form-label">Surname</label>
+        <input type="text" class="form-control" id="signUpSurname" formControlName="surname" aria-describedby="surnameInfo">
+        @if(signInFormGroup.get('surname')?.invalid &&
+        (signInFormGroup.get('surname')?.dirty ||
+          signInFormGroup.get('surname')?.touched)) {
+          <div id="surnameInfo" class="form-text text-danger">Surname is required</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="signUpAddress" class="form-label">Address</label>
+        <input type="text" class="form-control" id="signUpAddress" formControlName="address" aria-describedby="addressInfo">
+        @if(signInFormGroup.get('address')?.invalid &&
+        (signInFormGroup.get('address')?.dirty ||
+          signInFormGroup.get('address')?.touched)) {
+          <div id="addressInfo" class="form-text text-danger">Address is required ([st. name] [st. num.], [zip] [city name])</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="signUpNearestCity" class="form-label">Nearest city</label>
+        <select class="form-control" id="signUpNearestCity" formControlName="nearestCity" aria-describedby="nearestCityInfo">
+          <option value=""></option>
+          @for (opt of cities(); track opt.zipCode) {
+            <option [value]="opt.zipCode">{{ opt.cityName }}</option>
+          }
+        </select>
+        @if(signInFormGroup.get('nearestCity')?.invalid &&
+        (signInFormGroup.get('nearestCity')?.dirty ||
+          signInFormGroup.get('nearestCity')?.touched)) {
+          <div id="nearestCityInfo" class="form-text text-danger">Nearest city is required</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="signUpPhoneNumber" class="form-label">Phone number</label>
+        <input type="text" class="form-control" id="signUpPhoneNumber" formControlName="phoneNumber" aria-describedby="phoneNumberInfo">
+        @if(signInFormGroup.get('phoneNumber')?.invalid &&
+        (signInFormGroup.get('phoneNumber')?.dirty ||
+          signInFormGroup.get('phoneNumber')?.touched)) {
+          <div id="phoneNumberInfo" class="form-text text-danger">Phone number is required / invalid</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="signUpEmail" class="form-label">Email</label>
+        <input type="email" class="form-control" id="signUpEmail" formControlName="email" aria-describedby="emailInfo">
+        @if(signInFormGroup.get('email')?.invalid &&
+        (signInFormGroup.get('email')?.dirty ||
+          signInFormGroup.get('email')?.touched)) {
+          <div id="emailInfo" class="form-text text-danger">Email is required / invalid</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="signUpProfilePic" class="form-label">Profile picture</label>
+        <input type="file" accept="image/png, image/jpeg" class="form-control" id="signUpProfilePic" (change)="onProfilePhotoChange($event)" )>
+      </div>
+      <div class="mb-3">
+        <label for="signUpUsername" class="form-label">Username</label>
+        <input type="text" class="form-control" id="signUpUsername" formControlName="username" aria-describedby="usernameInfo">
+        @if(signInFormGroup.get('username')?.invalid &&
+        (signInFormGroup.get('username')?.dirty ||
+          signInFormGroup.get('username')?.touched)) {
+          <div id="usernameInfo" class="form-text text-danger">Username is required</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="signUpPassword" class="form-label">Password</label>
+        <input type="password" class="form-control" id="signUpPassword" formControlName="password" aria-describedby="passwordInfo">
+        @if(signInFormGroup.get('password')?.invalid &&
+        (signInFormGroup.get('password')?.dirty ||
+          signInFormGroup.get('password')?.touched)) {
+          <div id="passwordInfo" class="form-text text-danger">Password is required</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="signUpRepeatPassword" class="form-label">Repeat password</label>
+        <input type="password" class="form-control" id="signUpRepeatPassword" formControlName="repeatPassword" aria-describedby="repeatPasswordInfo">
+        @if(signInFormGroup.get('repeatPassword')?.dirty || signInFormGroup.get('repeatPassword')?.touched) {
+          @if(!passwordsMatching()) {
+            <div id="repeatPasswordInfo" class="form-text text-danger">Passwords aren't matching</div>
+          } @else {
+            <div id="repeatPasswordInfo" class="form-text text-success">Passwords are matching</div>
+          }
+        }
+      </div>
+      <!-- insert link for sign in here or use another component for it -->
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-success" [disabled]="!signInFormGroup.valid || !passwordsMatching()">Sign up {{ signInFormGroup.valid }}</button>
+      </div>
+      <div class="d-flex justify-content-center">
+        <a routerLink="/api/login">Login page</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+

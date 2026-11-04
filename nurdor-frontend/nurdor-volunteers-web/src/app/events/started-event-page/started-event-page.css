@@ -1,0 +1,17 @@
+.main-container {
+  padding-top: 4rem;
+  height: 100vh;
+}
+
+.started-event-body {
+  min-width: 80vw;
+}
+
+.volunteers-list {
+  min-height: 150px;
+}
+
+.leave-footer {
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+}

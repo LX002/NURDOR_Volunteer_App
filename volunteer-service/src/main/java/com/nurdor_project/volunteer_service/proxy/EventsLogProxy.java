@@ -14,6 +14,9 @@ public interface EventsLogProxy {
     @GetMapping("/api/admin/eventLogs/findVolunteerIds/{idEvent}")
     List<Integer> findVolunteerIds(@PathVariable Integer idEvent);
 
+    @GetMapping("/api/admin/eventLogs/findJoinedVolunteerIds/{idEvent}")
+    List<Integer> findJoinedVolunteerIds(@PathVariable Integer idEvent);
+
     @GetMapping("/api/admin/eventLogs/findPresentVolunteerIds")
     List<EventsLogDto> findEventsLogsByActiveEventsIds();
 }

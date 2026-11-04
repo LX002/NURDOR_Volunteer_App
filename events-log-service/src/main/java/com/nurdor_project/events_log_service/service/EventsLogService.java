@@ -121,4 +121,8 @@ public class EventsLogService {
     public void deleteLogByIdEvent(Integer idEvent) {
         eventsLogRepository.deleteByIdEvent(idEvent);
     }
+
+    public List<Integer> findJoinedVolunteerIdsByIdEvent(Integer idEvent) {
+        return eventsLogRepository.findJoinedVolunteerIdsByIdEvent(idEvent);
+    }
 }

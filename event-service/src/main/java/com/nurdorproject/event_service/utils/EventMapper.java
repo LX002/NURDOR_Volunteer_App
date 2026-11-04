@@ -24,13 +24,13 @@ public class EventMapper {
                 e.getLocationDesc(), e.getTotalDonations(), e.getCity());
     }
 
-    public static Event mapToEvent(EventDto e) {
+    public static Event mapToEvent(CreateEventDto e) {
         String pic = e.getEventImg();
         byte[] decodedPic = pic != null ? Base64.getDecoder().decode(pic) : null;
         return new Event(
-                e.getId(), e.getEventName(), e.getDescription(), e.getIsStarted(),
-                LocalDateTime.parse(e.getStartTime(), mobileFormatter),
-                LocalDateTime.parse(e.getEndTime(), mobileFormatter),
+                null, e.getEventName(), e.getDescription(), e.getIsStarted(),
+                LocalDateTime.parse(e.getStartTime().replace(" ANGULAR_SOURCE", "")),
+                LocalDateTime.parse(e.getEndTime().replace(" ANGULAR_SOURCE", "")),
                 e.getLatitude(), e.getLongitude(), e.getLocationDesc(),
                 decodedPic, e.getTotalDonations(), e.getCity());
     }

@@ -1,0 +1,17 @@
+uradjeno:
+- search / filter volontera (proveri)
+- pick / unpick event
+- start i zavrsetak eventa (vidi sta ces sa totalnom zaradom, najjednostavnije citati kasnije u statistici)
+- logout
+- login
+- demo started event stranice zapocet (stranica event detalja eventa na koji se korisnik pridruzi)
+- sign in
+- vise detalja eventa na klik kartice (slike) eventa
+- prikaz lista volontera na eventu demo (dodaj refresh dugme za njih)
+- donacije na eventu
+- message box;
+- kreacija eventa forma
+- next up: add admin guard / proveri search (i dodaj ako se ukuca ended da se prikazu ended eventovi? nije obavezno al kul ideja)
+
+na kraju ili usput stilizovanje sa bootstrapom, uredi forme u smislu poruka ispod polja, loading screen
+(prati api gateway za funkcionalnosti, ne izmisljaj previse)

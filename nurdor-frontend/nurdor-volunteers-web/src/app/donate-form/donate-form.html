@@ -1,0 +1,14 @@
+<form (ngSubmit)="addDonation()" [formGroup]="donateFormGroup" class="donate-form row">
+  <div class="col-9">
+    <input type="number" id="newDonation" formControlName="donation" aria-describedby="newDonationInfo" class="form-control">
+  </div>
+  <div class="col-3">
+    <button
+      type="submit"
+      class="btn btn-secondary"
+      [disabled]="!donateFormGroup.valid"
+    >
+      Add
+    </button>
+  </div>
+</form>

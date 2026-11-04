@@ -1,0 +1,51 @@
+#message-window-container {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 1080;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#message-window-body {
+  width: 200vw;
+  max-width: 90vw;
+  height: 200px;
+  background-color: #ffffff;
+}
+
+.window-header {
+  padding-left: 0.5rem;
+  height: 35px;
+  color: white;
+  font-weight: bold;
+}
+
+.window-footer {
+  height: 50px;
+}
+
+.window-content {
+  padding: 1rem;
+  height: 115px;
+}
+
+.error-window {
+  background-color: #ff0900;
+}
+
+.success-window {
+  background-color: #43870c;
+}
+
+.info-window {
+  background-color: #00b8ff;
+}
+
+.confirmation-window {
+  background-color: #656a63;
+  color: white;
+}
+
+

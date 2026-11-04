@@ -66,6 +66,16 @@ public class VolunteerController {
                 ? ResponseEntity.ok(volunteerDtos)
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    @GetMapping("/volunteer/volunteers/findIfJoinedToEvent/{idEvent}")
+    public ResponseEntity<List<VolunteerDto>> findIfJoinedToEvent(@PathVariable Integer idEvent) {
+        List<VolunteerDto> volunteerDtos = volunteerService.findIfJoinedToEvent(idEvent).stream()
+                .map(VolunteerMapper::mapToDto)
+                .toList();
+
+        return !volunteerDtos.isEmpty()
+                ? ResponseEntity.ok(volunteerDtos)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
     @GetMapping("/admin/volunteers/groupByEvent")
     public ResponseEntity<Map<Integer, PresentVolunteerEventDto>> groupPresentVolunteersByEvent() {

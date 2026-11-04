@@ -46,6 +46,11 @@ public class EventsLogController {
         return ResponseEntity.ok(eventsLogService.findVolunteerIdsByIdEvent(idEvent));
     }
 
+    @GetMapping("/admin/eventLogs/findJoinedVolunteerIds/{idEvent}")
+    public ResponseEntity<List<Integer>> findJoinedVolunteerIds(@PathVariable Integer idEvent) {
+        return ResponseEntity.ok(eventsLogService.findJoinedVolunteerIdsByIdEvent(idEvent));
+    }
+
     @GetMapping("/admin/eventLogs/findPresentVolunteerIds")
     public ResponseEntity<List<EventsLog>> findEventsLogsByActiveEventsIds() {
         return ResponseEntity.ok(eventsLogService.findEventsLogsByActiveEventsIds());

@@ -1,0 +1,11 @@
+@if (isLoggedIn()) {
+  <app-nav-bar />
+}
+<router-outlet />
+@if(this.messageBox.data(); as d) {
+  <app-message-box
+    [message]="d.message"
+    [title]="d.title"
+
+  />
+}

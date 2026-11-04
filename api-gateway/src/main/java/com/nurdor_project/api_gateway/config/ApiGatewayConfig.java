@@ -79,6 +79,9 @@ public class ApiGatewayConfig {
                 .route("all-stands", r -> r.path("/volunteer/stands")
                         .filters(f -> f.rewritePath("/volunteer/stands", "/api/volunteer/stands"))
                         .uri("lb://DONATIONS-SERVICE"))
+                .route("event-taken-stands", r -> r.path("/volunteer/standsOnEvent/{idEvent}")
+                        .filters(f -> f.rewritePath("/volunteer/standsOnEvent/(?<idEvent>.*)", "/api/volunteer/findByIdEvent/${idEvent}"))
+                        .uri("lb://DONATIONS-SERVICE"))
 
                 // statistics-service routes
                 .route("total-donations", r -> r.path("/admin/donations/{groupType}")
@@ -95,6 +98,9 @@ public class ApiGatewayConfig {
                         .uri("lb://STATISTICS-SERVICE"))
                 .route("count-started-events", r -> r.path("/admin/startedEvents")
                         .filters(f -> f.rewritePath("/admin/startedEvents", "/api/admin/statistics/count/startedEvents"))
+                        .uri("lb://STATISTICS-SERVICE"))
+                .route("volunteers-on-event", r -> r.path("/volunteer/volunteersOnEvent")
+                        .filters(f -> f.rewritePath("/volunteer/volunteersOnEvent", "/api/volunteer/statistics/volunteersOnEvent"))
                         .uri("lb://STATISTICS-SERVICE"))
                 .build();
     }

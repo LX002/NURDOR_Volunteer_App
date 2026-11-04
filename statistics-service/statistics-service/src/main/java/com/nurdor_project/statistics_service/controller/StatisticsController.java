@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/admin/statistics")
 public class StatisticsController {
 
 
@@ -32,7 +31,7 @@ public class StatisticsController {
     private DonationsProxy donationsProxy;
 
     @RateLimiter(name = "calculateTotalDonations", fallbackMethod = "fallback")
-    @GetMapping("/totalDonations/{groupType}")
+    @GetMapping("/api/admin/statistics/totalDonations/{groupType}")
     public ResponseEntity<List<TotalDonationsDto>> calculateTotalDonations(@PathVariable String groupType) {
         List<EventDto> events = eventProxy.findFinishedEvents();
         List<CityDto> cities = volunteerProxy.findAllCities();
@@ -78,7 +77,7 @@ public class StatisticsController {
     }
 
     @RateLimiter(name = "volunteersByCities", fallbackMethod = "fallback")
-    @GetMapping("/count/volunteersByCities")
+    @GetMapping("/api/admin/statistics/count/volunteersByCities")
     public ResponseEntity<Map<String, Long>> countVolunteersByCities() {
         System.out.println(volunteerProxy.findAll());
         return ResponseEntity.ok(volunteerProxy.findAll().stream()
@@ -86,16 +85,24 @@ public class StatisticsController {
     }
 
     @RateLimiter(name = "volunteersOnEvent", fallbackMethod = "fallback")
-    @GetMapping("/count/volunteers")
+    @GetMapping("/api/admin/statistics/count/volunteers")
     public ResponseEntity<VolunteersEventDto> countAndFindVolunteersOnEvent(@RequestParam("idEvent") @Min(1) Integer idEvent) {
         EventDto event = eventProxy.findById(idEvent);
         List<VolunteerDto> volunteers = volunteerProxy.findByIdEvent(idEvent);
         return ResponseEntity.ok(new VolunteersEventDto(event.getEventName(), volunteers.size(), volunteers));
     }
 
+    @RateLimiter(name = "volunteersOnEvent", fallbackMethod = "fallback")
+    @GetMapping("/api/volunteer/statistics/volunteersOnEvent")
+    public ResponseEntity<VolunteersOnEventDto> findVolunteersOnEvent(@RequestParam("idEvent") @Min(1) Integer idEvent) {
+        EventDto event = eventProxy.findById(idEvent);
+        List<VolunteerDto> volunteers = volunteerProxy.findIfJoinedToEvent(idEvent);
+        return ResponseEntity.ok(new VolunteersOnEventDto(event, volunteers));
+    }
+
 
     @RateLimiter(name = "presentVolunteers", fallbackMethod = "fallback")
-    @GetMapping("/count/presentVolunteers")
+    @GetMapping("/api/admin/statistics/count/presentVolunteers")
     public EntityModel<Map<String, PresentVolunteerEventDto>> countPresentVolunteersByEvent() {
         Map<String, PresentVolunteerEventDto> result = volunteerProxy.groupPresentVolunteersByEvent()
                 .entrySet().stream()
@@ -113,7 +120,7 @@ public class StatisticsController {
     }
 
     @RateLimiter(name = "startedEvents", fallbackMethod = "fallback")
-    @GetMapping("/count/startedEvents")
+    @GetMapping("/api/admin/statistics/count/startedEvents")
     public ResponseEntity<EventCountDto> countStartedEvents() {
         List<DetailedEventDto> detailedEventDtos =
                 eventProxy.findStartedEvents().stream()

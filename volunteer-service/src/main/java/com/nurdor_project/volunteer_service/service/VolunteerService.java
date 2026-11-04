@@ -36,6 +36,11 @@ public class VolunteerService {
         return volunteerRepository.findVolunteersByIds(volunteerIds);
     }
 
+    public List<Volunteer> findIfJoinedToEvent(Integer idEvent) {
+        List<Integer> volunteerIds = eventsLogProxy.findJoinedVolunteerIds(idEvent);
+        return volunteerRepository.findVolunteersByIds(volunteerIds);
+    }
+
     public Volunteer findById(Integer id) {
         return volunteerRepository.findById(id).orElseThrow(() -> new VolunteerNotFoundException("Volunteer with id: " + id + " is not found!"));
     }

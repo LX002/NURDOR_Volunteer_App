@@ -1,0 +1,4 @@
+<div class="page-container">
+  <app-search-bar [entityName]="'Event'" (onSearch)="onSearchFilterChange($event)" />
+  <app-event-list [showPickedOnes]="false" [searchFilter]="searchFilter()" />
+</div>
